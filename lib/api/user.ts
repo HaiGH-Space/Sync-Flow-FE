@@ -8,6 +8,7 @@ export interface UserProfile {
   email: string;
   emailVerified: boolean;
   image?: string;
+  hasSeenWelcome: boolean;
 }
 
 export type UpdateMyAvatarParams =
@@ -24,7 +25,9 @@ async function getUserProfile(): Promise<ApiResponse<UserProfile>> {
   return await api.get<UserProfile>(`${USER_BASE_URL}/me`);
 }
 
-async function updateMyAvatar(params: UpdateMyAvatarParams): Promise<ApiResponse<UserProfile>> {
+async function updateMyAvatar(
+  params: UpdateMyAvatarParams,
+): Promise<ApiResponse<UserProfile>> {
   const endpoint = `${USER_BASE_URL}/me/avatar`;
 
   if ("file" in params) {
@@ -42,7 +45,14 @@ async function updateMyAvatar(params: UpdateMyAvatarParams): Promise<ApiResponse
   return await api.post<UserProfile>(endpoint, { image: params.image });
 }
 
+async function markWelcomeSeen(): Promise<ApiResponse<UserProfile>> {
+  return await api.patch<UserProfile>(`${USER_BASE_URL}/me`, {
+    hasSeenWelcome: true,
+  });
+}
+
 export const userService = {
   getUserProfile,
   updateMyAvatar,
+  markWelcomeSeen,
 };

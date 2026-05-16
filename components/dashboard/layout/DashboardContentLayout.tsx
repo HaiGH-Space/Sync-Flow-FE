@@ -22,6 +22,7 @@ import { useParams } from "next/navigation";
 import { createSprintsQueryOptions } from "@/queries/sprint";
 import CreateSprintModal from "@/components/dashboard/comp/CreateSprintModal";
 import { ChatRightPanel } from "@/components/dashboard/layout/ChatRightPanel";
+import NotificationsMenu from "@/components/dashboard/notifications/NotificationsMenu";
 
 export default function DashboardContentLayout({
   children,
@@ -50,6 +51,7 @@ export default function DashboardContentLayout({
         </div>
         <div className="ml-auto flex items-center gap-2 px-2">
           <HeaderSprintSelect />
+          <NotificationsMenu />
           <Button
             variant="ghost"
             size="icon"

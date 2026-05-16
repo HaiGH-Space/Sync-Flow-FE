@@ -78,6 +78,12 @@ const dashboard = {
     sprintLoading: "Đang tải sprint...",
     sprintEmpty: "Chưa có sprint",
   },
+  notifications: {
+    title: "Thông báo",
+    markAll: "Đánh dấu tất cả đã đọc",
+    empty: "Chưa có thông báo",
+    loadMore: "Tải thêm",
+  },
   sprint: {
     create: {
       action: "Tạo sprint",

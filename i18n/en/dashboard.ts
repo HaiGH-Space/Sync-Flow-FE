@@ -78,6 +78,12 @@ const dashboard = {
     sprintLoading: "Loading sprints...",
     sprintEmpty: "No sprints",
   },
+  notifications: {
+    title: "Notifications",
+    markAll: "Mark all as read",
+    empty: "No notifications yet",
+    loadMore: "Load more",
+  },
   sprint: {
     create: {
       action: "Create sprint",

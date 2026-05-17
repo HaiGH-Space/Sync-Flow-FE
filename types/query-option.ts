@@ -13,13 +13,14 @@ export type QueryOptions<T, TData> = Omit<
 export type CustomInfiniteQueryOptions<
   TQueryFnData,
   TData = InfiniteData<TQueryFnData>,
+  TPageParam = string | null,
 > = Omit<
   UseInfiniteQueryOptions<
     TQueryFnData,
     ApiRequestError,
     TData,
     QueryKey,
-    string | null
+    TPageParam
   >,
   "queryKey" | "queryFn" | "initialPageParam" | "getNextPageParam"
 >;

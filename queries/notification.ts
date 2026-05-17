@@ -23,7 +23,7 @@ export function createNotificationsInfiniteOptions<
   TData = InfiniteData<NotificationListResponse>,
 >(
   params?: { limit?: number },
-  options?: CustomInfiniteQueryOptions<NotificationListResponse, TData>,
+  options?: CustomInfiniteQueryOptions<NotificationListResponse, TData, number>,
 ) {
   const limit = params?.limit ?? NOTIFICATION_PAGE_SIZE;
 
@@ -33,11 +33,11 @@ export function createNotificationsInfiniteOptions<
     queryKey: notificationKeys.listByLimit(limit),
     queryFn: ({ pageParam }) =>
       notificationService.getNotifications({
-        page: (pageParam as number) ?? 1,
+        page: pageParam ?? 1,
         limit,
       }),
     initialPageParam: 1,
-    getNextPageParam: (lastPage) => lastPage.nextPage ?? null,
+    getNextPageParam: (lastPage) => lastPage.nextPage,
   });
 }
 

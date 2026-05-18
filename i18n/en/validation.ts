@@ -11,6 +11,10 @@ const validation = {
   },
   workspace: {
     name_required: "Workspace name is required",
+    invite: {
+      email_required: "Email is required",
+      role_required: "Role is required",
+    },
   },
   issue: {
     title_required: "Issue title is required",

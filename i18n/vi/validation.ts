@@ -11,6 +11,10 @@ const validation = {
   },
   workspace: {
     name_required: "Tên workspace là bắt buộc",
+    invite: {
+      email_required: "Email là bắt buộc",
+      role_required: "Vai trò là bắt buộc",
+    },
   },
   issue: {
     title_required: "Tiêu đề issue là bắt buộc",

@@ -2,17 +2,44 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
-import type { Workspace } from "@/lib/api/workspace"
-import { useQuery } from "@tanstack/react-query"
-import { useMemo, useState } from "react"
-import { useTranslations } from "next-intl"
-import { createWorkspaceMemberProfilesQueryOptions } from "@/queries/workspace-member"
-import { AlertTriangle, Loader2, Settings2, Shield, Trash2, Users } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Field, FieldError, FieldLabel } from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Separator } from "@/components/ui/separator"
+import type { RoleMember } from "@/lib/api/member-workspace"
+import type { Workspace } from "@/lib/api/workspace"
+import { useInviteWorkspaceMember } from "@/hooks/mutations/workspace-member"
+import { createWorkspaceMemberProfilesQueryOptions } from "@/queries/workspace-member"
+import { useForm } from "@tanstack/react-form"
+import { useQuery } from "@tanstack/react-query"
+import { AlertTriangle, Loader2, Settings2, Shield, Trash2, Users } from "lucide-react"
+import { useTranslations } from "next-intl"
+import { useEffect, useMemo, useState } from "react"
+import { toast } from "sonner"
+import z from "zod"
 import SettingsDialogShell, { type SettingsTab } from "./SettingsDialogShell"
 
 type WorkspaceRole = 'OWNER' | 'ADMIN' | 'MEMBER'
+
+const inviteRoles = ['ADMIN', 'MEMBER'] as const
+
+const createInviteMemberSchema = (
+    tValidation: ReturnType<typeof useTranslations<'validation'>>,
+) => z.object({
+    email: z
+        .string()
+        .min(1, tValidation('workspace.invite.email_required'))
+        .email(tValidation('auth.email_invalid')),
+    role: z.enum(inviteRoles),
+})
+
+type InviteMemberFormValues = z.infer<ReturnType<typeof createInviteMemberSchema>>
+
+const inviteDefaultValues: InviteMemberFormValues = {
+    email: '',
+    role: 'MEMBER',
+}
 
 type WorkspaceSettingsDialogProps = {
     workspace: Workspace
@@ -33,7 +60,35 @@ export default function WorkspaceSettingsDialog({
 }: WorkspaceSettingsDialogProps) {
     const tDashboard = useTranslations('dashboard')
     const tCommon = useTranslations('common')
+    const tValidation = useTranslations('validation')
     const [confirmDelete, setConfirmDelete] = useState(false)
+    const { mutate: inviteMember, isPending: isInviting } = useInviteWorkspaceMember()
+
+    const inviteSchema = createInviteMemberSchema(tValidation)
+    const canInviteMember = role === 'OWNER' || role === 'ADMIN'
+
+    const inviteForm = useForm({
+        defaultValues: inviteDefaultValues,
+        validators: {
+            onSubmit: inviteSchema,
+            onChange: inviteSchema,
+        },
+        onSubmit: async ({ value }) => {
+            inviteMember({
+                workspaceId: workspace.id,
+                email: value.email.trim(),
+                role: value.role,
+            }, {
+                onSuccess: () => {
+                    toast.success(tDashboard('workspace.invite.toast.sent'))
+                    inviteForm.reset()
+                },
+                onError: () => {
+                    toast.error(tDashboard('workspace.invite.toast.failed'))
+                },
+            })
+        },
+    })
 
     const handleOpenChange = (nextOpen: boolean) => {
         if (!nextOpen) {
@@ -41,6 +96,16 @@ export default function WorkspaceSettingsDialog({
         }
         onOpenChange(nextOpen)
     }
+
+    useEffect(() => {
+        if (!open) {
+            const timer = setTimeout(() => {
+                inviteForm.reset()
+            }, 300)
+
+            return () => clearTimeout(timer)
+        }
+    }, [inviteForm, open])
 
     const { data: memberProfilesResponse } = useQuery(
         createWorkspaceMemberProfilesQueryOptions({ workspaceId: workspace.id }, {
@@ -120,6 +185,90 @@ export default function WorkspaceSettingsDialog({
                         </div>
                         <Badge variant="secondary">{workspaceMembers.length}</Badge>
                     </div>
+
+                    {canInviteMember && (
+                        <div className="border-b px-4 py-4">
+                            <div className="space-y-1">
+                                <p className="text-sm font-medium">{tDashboard('workspace.invite.title')}</p>
+                                <p className="text-xs text-muted-foreground">
+                                    {tDashboard('workspace.invite.description')}
+                                </p>
+                            </div>
+
+                            <form
+                                className="mt-3 grid gap-3 sm:grid-cols-[minmax(0,1fr)_200px_auto] sm:items-end"
+                                onSubmit={(event) => {
+                                    event.preventDefault()
+                                    event.stopPropagation()
+                                    inviteForm.handleSubmit()
+                                }}
+                            >
+                                <inviteForm.Field name="email">
+                                    {(field) => {
+                                        const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
+
+                                        return (
+                                            <Field data-invalid={isInvalid}>
+                                                <FieldLabel>{tDashboard('workspace.invite.emailLabel')}</FieldLabel>
+                                                <Input
+                                                    type="email"
+                                                    value={field.state.value}
+                                                    onChange={(event) => field.handleChange(event.target.value)}
+                                                    placeholder={tDashboard('workspace.invite.emailPlaceholder')}
+                                                    autoComplete="email"
+                                                />
+                                                <div className="min-h-5">
+                                                    <FieldError errors={field.state.meta.errors} />
+                                                </div>
+                                            </Field>
+                                        )
+                                    }}
+                                </inviteForm.Field>
+
+                                <inviteForm.Field name="role">
+                                    {(field) => {
+                                        const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
+
+                                        return (
+                                            <Field data-invalid={isInvalid}>
+                                                <FieldLabel>{tDashboard('workspace.invite.roleLabel')}</FieldLabel>
+                                                <Select
+                                                    value={field.state.value}
+                                                    onValueChange={(value) => field.handleChange(value as RoleMember)}
+                                                >
+                                                    <SelectTrigger className="w-full">
+                                                        <SelectValue placeholder={tDashboard('workspace.invite.rolePlaceholder')} />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="MEMBER">
+                                                            {tDashboard('sidebar.role.member')}
+                                                        </SelectItem>
+                                                        <SelectItem value="ADMIN">
+                                                            {tDashboard('sidebar.role.admin')}
+                                                        </SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                                <div className="min-h-5">
+                                                    <FieldError errors={field.state.meta.errors} />
+                                                </div>
+                                            </Field>
+                                        )
+                                    }}
+                                </inviteForm.Field>
+
+                                <Button type="submit" size="sm" className="sm:mb-0.5" disabled={isInviting}>
+                                    {isInviting ? (
+                                        <>
+                                            <Loader2 className="mr-2 size-4 animate-spin" />
+                                            {tDashboard('workspace.invite.submitting')}
+                                        </>
+                                    ) : (
+                                        tDashboard('workspace.invite.submit')
+                                    )}
+                                </Button>
+                            </form>
+                        </div>
+                    )}
 
                     <div className="divide-y">
                         {memberProfiles.length > 0 ? memberProfiles.map((member) => {
@@ -268,7 +417,21 @@ export default function WorkspaceSettingsDialog({
                 </>
             ),
         },
-    ], [tDashboard, tCommon, workspace, role, roleLabel, memberProfiles, workspaceMembers, confirmDelete, isDeleting, onDelete])
+    ], [
+        tDashboard,
+        tCommon,
+        workspace,
+        role,
+        roleLabel,
+        memberProfiles,
+        workspaceMembers,
+        confirmDelete,
+        isDeleting,
+        onDelete,
+        canInviteMember,
+        inviteForm,
+        isInviting,
+    ])
 
     return (
         <SettingsDialogShell

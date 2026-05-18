@@ -253,6 +253,20 @@ const dashboard = {
       copied: "Workspace ID copied",
       copyFailed: "Failed to copy workspace ID",
     },
+    invite: {
+      title: "Invite member",
+      description: "Send an invitation to join this workspace.",
+      emailLabel: "Email address",
+      emailPlaceholder: "name@company.com",
+      roleLabel: "Role",
+      rolePlaceholder: "Select role",
+      submit: "Send invite",
+      submitting: "Sending...",
+      toast: {
+        sent: "Invitation sent",
+        failed: "Failed to send invitation",
+      },
+    },
     toast: {
       created: "Workspace created successfully",
       createFailed: "Failed to create workspace",

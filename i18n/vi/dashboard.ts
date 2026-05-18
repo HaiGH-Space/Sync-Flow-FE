@@ -256,6 +256,20 @@ const dashboard = {
       copied: "Đã sao chép ID workspace",
       copyFailed: "Không thể sao chép ID workspace",
     },
+    invite: {
+      title: "Mời thành viên",
+      description: "Gửi lời mời tham gia workspace này.",
+      emailLabel: "Địa chỉ email",
+      emailPlaceholder: "ten@congty.com",
+      roleLabel: "Vai trò",
+      rolePlaceholder: "Chọn vai trò",
+      submit: "Gửi lời mời",
+      submitting: "Đang gửi...",
+      toast: {
+        sent: "Đã gửi lời mời",
+        failed: "Gửi lời mời thất bại",
+      },
+    },
     toast: {
       created: "Tạo workspace thành công",
       createFailed: "Tạo workspace thất bại",

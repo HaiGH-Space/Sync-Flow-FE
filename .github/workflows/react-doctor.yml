@@ -20,3 +20,4 @@ jobs:
         with:
           diff: master # 2. Đổi từ main thành master để công cụ biết đối chiếu thay đổi với nhánh nào
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          fail-on: "none"

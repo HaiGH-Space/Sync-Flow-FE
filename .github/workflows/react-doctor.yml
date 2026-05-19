@@ -18,7 +18,7 @@ jobs:
           fetch-depth: 0 # BẮT BUỘC phải là 0 nếu bạn muốn dùng chế độ 'diff' (chỉ quét file bị thay đổi)
 
       - name: React Doctor
-        uses: millionco/react-doctor@react-doctor@0.0.38 # Hoặc dùng @main để luôn có bản mới nhất
+        uses: uses: millionco/react-doctor@0.0.38 # Hoặc dùng @main để luôn có bản mới nhất
         with:
           # Token giúp bot bình luận kết quả trực tiếp lên Pull Request
           github-token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,33 @@
+name: React Doctor Scan
+
+on:
+  pull_request:
+    branches: ["main", "master"] # Chạy khi có người tạo Pull Request vào nhánh chính
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write # BẮT BUỘC có quyền write để Action có thể tự động comment lỗi vào PR
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # BẮT BUỘC phải là 0 nếu bạn muốn dùng chế độ 'diff' (chỉ quét file bị thay đổi)
+
+      - name: React Doctor
+        uses: millionco/react-doctor@react-doctor@0.0.38 # Hoặc dùng @main để luôn có bản mới nhất
+        with:
+          # Token giúp bot bình luận kết quả trực tiếp lên Pull Request
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+          # Tùy chọn quét thư mục cụ thể nếu repo của bạn là monorepo (ví dụ: 'apps/web')
+          # directory: '.'
+
+          # Chỉ quét những file có thay đổi so với nhánh main, giúp chạy nhanh hơn
+          diff: "main"
+
+          # Báo lỗi và đánh fail CI nếu phát hiện lỗi (error, warning, hoặc none)
+          fail-on: "error"

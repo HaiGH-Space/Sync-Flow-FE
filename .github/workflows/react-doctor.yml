@@ -26,9 +26,5 @@ jobs:
 
           # Tùy chọn quét thư mục cụ thể nếu repo của bạn là monorepo (ví dụ: 'apps/web')
           # directory: '.'
-
-          # Chỉ quét những file có thay đổi so với nhánh main, giúp chạy nhanh hơn
-          diff: "main"
-
           # Báo lỗi và đánh fail CI nếu phát hiện lỗi (error, warning, hoặc none)
           fail-on: "error"

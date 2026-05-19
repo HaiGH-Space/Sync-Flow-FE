@@ -1,30 +1,22 @@
-name: React Doctor Scan
+name: React Doctor
 
 on:
-  push:
-    branches: ["**"]
   pull_request:
-    branches: ["main", "master"]
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: read
+  pull-requests: write # required to post PR comments
+
 jobs:
-  diagnose:
+  react-doctor:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: write # BẮT BUỘC có quyền write để Action có thể tự động comment lỗi vào PR
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
-          fetch-depth: 0 # BẮT BUỘC phải là 0 nếu bạn muốn dùng chế độ 'diff' (chỉ quét file bị thay đổi)
-
-      - name: React Doctor
-        uses: millionco/react-doctor@0.0.38
+          fetch-depth: 0 # required for `diff`
+      - uses: millionco/react-doctor@main
         with:
-          # Token giúp bot bình luận kết quả trực tiếp lên Pull Request
+          diff: main
           github-token: ${{ secrets.GITHUB_TOKEN }}
-
-          # Tùy chọn quét thư mục cụ thể nếu repo của bạn là monorepo (ví dụ: 'apps/web')
-          # directory: '.'
-          # Báo lỗi và đánh fail CI nếu phát hiện lỗi (error, warning, hoặc none)
-          fail-on: "error"

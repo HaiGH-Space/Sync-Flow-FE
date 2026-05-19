@@ -1,6 +1,5 @@
 'use client'
-import { Variants } from "motion";
-import { AnimatePresence, motion } from "motion/react"
+import { AnimatePresence, LazyMotion, domAnimation, m, type Variants } from "framer-motion"
 import { useState } from "react";
 import LightBeam from "./LightBeam";
 import z from "zod";
@@ -149,105 +148,107 @@ const AuthCard = () => {
     }
   });
 
-  return <motion.div
-    layout
-    transition={{ type: "spring", stiffness: 300, damping: 30 }}
-    className="shadow-primary/20 relative w-full max-w-xs sm:max-w-md bg-card/80 backdrop-blur-xl border border-border rounded-2xl p-8 shadow-md"
-  >
-    <LightBeam />
-    <AnimatePresence mode="wait">
-      {
-        authState === "success" ? (<>
-          <motion.div key="success" initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: "spring", stiffness: 300, damping: 30 }} className="text-center">
-            <SuccessState isLogin={mode === "login"} userName={userProfile?.name} />
-          </motion.div>
-        </>) : (
-          <motion.div initial="hidden" animate="visible" exit="exit" key={mode} variants={containerVariants} >
-            <motion.div variants={itemVariants} className="text-center mb-6">
-              <LogoAppAnimation />
-              <p className="mt-2 text-sm text-muted-foreground">
-                {mode === "login"
-                  ? tAuth('login.subtitle')
-                  : tAuth('register.subtitle')}
-              </p>
-            </motion.div>
-            <form id="auth-form" onSubmit={(e) => {
-              e.preventDefault();
-              form.handleSubmit();
-            }}
-            >
-              <AnimatePresence key={'form'}>
-                {mode === "register" && (
-                  <AuthField
-                    form={form}
-                    name="name"
-                    key="name"
-                    variants={itemVariants}
-                    placeholder={tAuth('register.name_placeholder')}
-                    icon={UserIcon}
-                  />
-                )}
-              </AnimatePresence>
-              <AuthField
-                form={form}
-                name="email"
-                key="email"
-                variants={itemVariants}
-                placeholder={mode === "login" ? tAuth('login.email_placeholder') : tAuth('register.email_placeholder')}
-                icon={MailIcon}
-              />
-              <AuthField
-                form={form}
-                name="password"
-                type="password"
-                key="password"
-                variants={itemVariants}
-                placeholder={mode === "login" ? tAuth('login.password_placeholder') : tAuth('register.password_placeholder')}
-                icon={LockIcon}
-              />
-              <motion.div variants={itemVariants} className="mt-4">
-                <Button className="w-full h-10 cursor-pointer" type="submit">
-                  {mode === "login" ? tAuth('login.submit') : tAuth('register.submit')}
-                </Button>
-              </motion.div>
-
-              {/* Divider */}
-              <motion.div variants={itemVariants} className="flex items-center gap-4 py-2">
-                <div className="flex-1 h-px bg-border" />
-                <span className="uppercase text-xs text-muted-foreground tracking-wider">
-                  {tAuth('login.divider_text')}
-                </span>
-                <div className="flex-1 h-px bg-border" />
-              </motion.div>
-
-              <motion.p variants={itemVariants} className="mt-4 text-sm text-center text-muted-foreground"
+  return <LazyMotion features={domAnimation}>
+    <m.div
+      layout
+      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      className="shadow-primary/20 relative w-full max-w-xs sm:max-w-md bg-card/80 backdrop-blur-xl border border-border rounded-2xl p-8 shadow-md"
+    >
+      <LightBeam />
+      <AnimatePresence mode="wait">
+        {
+          authState === "success" ? (<>
+            <m.div key="success" initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: "spring", stiffness: 300, damping: 30 }} className="text-center">
+              <SuccessState isLogin={mode === "login"} userName={userProfile?.name} />
+            </m.div>
+          </>) : (
+            <m.div initial="hidden" animate="visible" exit="exit" key={mode} variants={containerVariants} >
+              <m.div variants={itemVariants} className="text-center mb-6">
+                <LogoAppAnimation />
+                <p className="mt-2 text-sm text-muted-foreground">
+                  {mode === "login"
+                    ? tAuth('login.subtitle')
+                    : tAuth('register.subtitle')}
+                </p>
+              </m.div>
+              <form id="auth-form" onSubmit={(e) => {
+                e.preventDefault();
+                form.handleSubmit();
+              }}
               >
-                {mode === "login" ? (
-                  <>
-                    {tAuth('login.no_account')}{" "}
-                    <span
-                      onClick={() => switchMode("register")}
-                      className="text-primary hover:text-primary/80 cursor-pointer mt-4"
-                    >
-                      {tAuth('login.go_to_register')}
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    {tAuth('login.have_account')}{" "}
-                    <span
-                      onClick={() => switchMode("login")}
-                      className="text-primary hover:text-primary/80 cursor-pointer mt-4"
-                    >
-                      {tAuth('login.go_to_login')}
-                    </span>
-                  </>
-                )}
-              </motion.p>
-            </form>
-          </motion.div>
-        )}
-    </AnimatePresence >
-  </motion.div >
+                <AnimatePresence key={'form'}>
+                  {mode === "register" && (
+                    <AuthField
+                      form={form}
+                      name="name"
+                      key="name"
+                      variants={itemVariants}
+                      placeholder={tAuth('register.name_placeholder')}
+                      icon={UserIcon}
+                    />
+                  )}
+                </AnimatePresence>
+                <AuthField
+                  form={form}
+                  name="email"
+                  key="email"
+                  variants={itemVariants}
+                  placeholder={mode === "login" ? tAuth('login.email_placeholder') : tAuth('register.email_placeholder')}
+                  icon={MailIcon}
+                />
+                <AuthField
+                  form={form}
+                  name="password"
+                  type="password"
+                  key="password"
+                  variants={itemVariants}
+                  placeholder={mode === "login" ? tAuth('login.password_placeholder') : tAuth('register.password_placeholder')}
+                  icon={LockIcon}
+                />
+                <m.div variants={itemVariants} className="mt-4">
+                  <Button className="w-full h-10 cursor-pointer" type="submit">
+                    {mode === "login" ? tAuth('login.submit') : tAuth('register.submit')}
+                  </Button>
+                </m.div>
+
+                {/* Divider */}
+                <m.div variants={itemVariants} className="flex items-center gap-4 py-2">
+                  <div className="flex-1 h-px bg-border" />
+                  <span className="uppercase text-xs text-muted-foreground tracking-wider">
+                    {tAuth('login.divider_text')}
+                  </span>
+                  <div className="flex-1 h-px bg-border" />
+                </m.div>
+
+                <m.p variants={itemVariants} className="mt-4 text-sm text-center text-muted-foreground"
+                >
+                  {mode === "login" ? (
+                    <>
+                      {tAuth('login.no_account')}{" "}
+                      <span
+                        onClick={() => switchMode("register")}
+                        className="text-primary hover:text-primary/80 cursor-pointer mt-4"
+                      >
+                        {tAuth('login.go_to_register')}
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      {tAuth('login.have_account')}{" "}
+                      <span
+                        onClick={() => switchMode("login")}
+                        className="text-primary hover:text-primary/80 cursor-pointer mt-4"
+                      >
+                        {tAuth('login.go_to_login')}
+                      </span>
+                    </>
+                  )}
+                </m.p>
+              </form>
+            </m.div>
+          )}
+      </AnimatePresence >
+    </m.div >
+  </LazyMotion>
 }
 export default AuthCard;

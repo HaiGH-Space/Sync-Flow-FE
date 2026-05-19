@@ -19,7 +19,7 @@ import type { Project } from "@/lib/api/project";
 import type { Sprint } from "@/lib/api/sprint";
 import EditSprintModal from "@/components/dashboard/comp/EditSprintModal";
 import { Search } from "@/components/shared/Search";
-import { AnimatePresence, motion, Variants } from "motion/react";
+import { AnimatePresence, LazyMotion, domAnimation, m, type Variants } from "framer-motion";
 import {
   NavigationSidebarFooter,
   NavigationSidebarHeader,
@@ -213,116 +213,118 @@ export const NavigationSidebar = memo(function NavigationSidebar({
   );
 
   return (
-    <>
-      <AnimatePresence mode="wait">
-        {isOpenSidebarLeft && (
-          <motion.aside
-            className="border-r border-border/70 whitespace-nowrap bg-background text-foreground h-full overflow-hidden"
-            variants={sidebarContainerVariants}
-            initial="hidden"
-            animate="visible"
-            exit="hidden"
-          >
-            <div className="h-full flex flex-col w-62.5">
-              <NavigationSidebarHeader
-                workspaceDetail={workspaceDetail}
-                role={currentWorkspaceRole}
-                canManageProject={canManageProject}
-              />
+    <LazyMotion features={domAnimation}>
+      <>
+        <AnimatePresence mode="wait">
+          {isOpenSidebarLeft && (
+            <m.aside
+              className="border-r border-border/70 whitespace-nowrap bg-background text-foreground h-full overflow-hidden"
+              variants={sidebarContainerVariants}
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+            >
+              <div className="h-full flex flex-col w-62.5">
+                <NavigationSidebarHeader
+                  workspaceDetail={workspaceDetail}
+                  role={currentWorkspaceRole}
+                  canManageProject={canManageProject}
+                />
 
-              <div className="p-4 flex-1 flex flex-col mt-4 overflow-y-auto">
-                <div className="mb-4">
-                  <Search
-                    placeholder={t("sidebar.searchPlaceholder")}
-                    onSearch={searchHandle}
-                  />
+                <div className="p-4 flex-1 flex flex-col mt-4 overflow-y-auto">
+                  <div className="mb-4">
+                    <Search
+                      placeholder={t("sidebar.searchPlaceholder")}
+                      onSearch={searchHandle}
+                    />
+                  </div>
+
+                  <div className="flex-1 overflow-y-auto">
+                    <NavigationSidebarProjectList
+                      canLoadProjects={canLoadProjects}
+                      isProjectsLoading={isProjectsLoading}
+                      projects={projectsResponse?.data ?? []}
+                      filteredProjects={filteredProjects}
+                      workspaceId={workspaceDetail?.id ?? ""}
+                      expandedProjectId={expandedProjectId}
+                      onExpandProjectAction={setExpandedProjectId}
+                      onOpenProjectSettingsAction={setSettingsProject}
+                      sprints={sprintsResponse?.data}
+                      isSprintsFetching={isSprintsFetching}
+                      sprintsError={sprintsError}
+                      selectedSprintId={selectedSprintId}
+                      onSelectSprintAction={handleSprintSelect}
+                      onEditSprintAction={setEditingSprint}
+                      channels={channelsResponse?.data}
+                      isChannelsFetching={isChannelsFetching}
+                      channelsError={channelsError}
+                      selectedChannelId={selectedChannelId}
+                      onSelectChannelAction={handleChannelSelect}
+                    />
+                  </div>
                 </div>
 
-                <div className="flex-1 overflow-y-auto">
-                  <NavigationSidebarProjectList
-                    canLoadProjects={canLoadProjects}
-                    isProjectsLoading={isProjectsLoading}
-                    projects={projectsResponse?.data ?? []}
-                    filteredProjects={filteredProjects}
-                    workspaceId={workspaceDetail?.id ?? ""}
-                    expandedProjectId={expandedProjectId}
-                    onExpandProjectAction={setExpandedProjectId}
-                    onOpenProjectSettingsAction={setSettingsProject}
-                    sprints={sprintsResponse?.data}
-                    isSprintsFetching={isSprintsFetching}
-                    sprintsError={sprintsError}
-                    selectedSprintId={selectedSprintId}
-                    onSelectSprintAction={handleSprintSelect}
-                    onEditSprintAction={setEditingSprint}
-                    channels={channelsResponse?.data}
-                    isChannelsFetching={isChannelsFetching}
-                    channelsError={channelsError}
-                    selectedChannelId={selectedChannelId}
-                    onSelectChannelAction={handleChannelSelect}
-                  />
-                </div>
+                <NavigationSidebarFooter />
               </div>
+            </m.aside>
+          )}
+        </AnimatePresence>
 
-              <NavigationSidebarFooter />
-            </div>
-          </motion.aside>
+        {settingsProject && workspaceDetail?.id && (
+          <ProjectSettingsDialog
+            project={settingsProject}
+            canManage={canManageProject}
+            open={!!settingsProject}
+            onOpenChange={(open) => {
+              if (!open && !isDeletingProject) {
+                setSettingsProject(null);
+              }
+            }}
+            onDelete={() => {
+              if (!settingsProject || !workspaceDetail?.id) {
+                return;
+              }
+
+              deleteProject(
+                {
+                  workspaceId: workspaceDetail.id,
+                  projectId: settingsProject.id,
+                },
+                {
+                  onSuccess: (_response, variables) => {
+                    toast.success(t("project.toast.deleted"));
+
+                    if (projectId === variables.projectId) {
+                      setExpandedProjectId(null);
+                      router.push(`/dashboard/${workspaceDetail.id}`);
+                    }
+
+                    setSettingsProject(null);
+                  },
+                  onError: () => {
+                    toast.error(t("project.toast.deleteFailed"));
+                  },
+                },
+              );
+            }}
+            isDeleting={isDeletingProject}
+          />
         )}
-      </AnimatePresence>
 
-      {settingsProject && workspaceDetail?.id && (
-        <ProjectSettingsDialog
-          project={settingsProject}
-          canManage={canManageProject}
-          open={!!settingsProject}
-          onOpenChange={(open) => {
-            if (!open && !isDeletingProject) {
-              setSettingsProject(null);
-            }
-          }}
-          onDelete={() => {
-            if (!settingsProject || !workspaceDetail?.id) {
-              return;
-            }
-
-            deleteProject(
-              {
-                workspaceId: workspaceDetail.id,
-                projectId: settingsProject.id,
-              },
-              {
-                onSuccess: (_response, variables) => {
-                  toast.success(t("project.toast.deleted"));
-
-                  if (projectId === variables.projectId) {
-                    setExpandedProjectId(null);
-                    router.push(`/dashboard/${workspaceDetail.id}`);
-                  }
-
-                  setSettingsProject(null);
-                },
-                onError: () => {
-                  toast.error(t("project.toast.deleteFailed"));
-                },
-              },
-            );
-          }}
-          isDeleting={isDeletingProject}
-        />
-      )}
-
-      {editingSprint && workspaceDetail?.id && (
-        <EditSprintModal
-          key={editingSprint.id}
-          projectId={editingSprint.projectId}
-          sprint={editingSprint}
-          open={!!editingSprint}
-          onOpenChangeAction={(open) => {
-            if (!open) {
-              setEditingSprint(null);
-            }
-          }}
-        />
-      )}
-    </>
+        {editingSprint && workspaceDetail?.id && (
+          <EditSprintModal
+            key={editingSprint.id}
+            projectId={editingSprint.projectId}
+            sprint={editingSprint}
+            open={!!editingSprint}
+            onOpenChangeAction={(open) => {
+              if (!open) {
+                setEditingSprint(null);
+              }
+            }}
+          />
+        )}
+      </>
+    </LazyMotion>
   );
 });

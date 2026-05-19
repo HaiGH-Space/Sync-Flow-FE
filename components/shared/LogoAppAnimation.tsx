@@ -1,7 +1,8 @@
 'use client'
-import { motion } from "motion/react";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 const LogoAppAnimation = () => {
-  return <motion.h1 className="bg-clip-text text-3xl font-bold bg-linear-to-r from-foreground via-primary to-foreground text-transparent"
+  return <LazyMotion features={domAnimation}>
+    <m.h1 className="bg-clip-text text-3xl font-bold bg-linear-to-r from-foreground via-primary to-foreground text-transparent"
             style={{
               backgroundSize: "200% 100%",
             }}
@@ -15,7 +16,8 @@ const LogoAppAnimation = () => {
             }}
           >
             Sync Flow
-          </motion.h1>
+          </m.h1>
+  </LazyMotion>
 }
 
 export default LogoAppAnimation;

@@ -1,5 +1,5 @@
 'use client'
-import { AnimatePresence, motion } from "motion/react"
+import { AnimatePresence, LazyMotion, domAnimation, m } from "framer-motion"
 import { FieldError } from "../ui/field"
 
 type FieldErrorAnimationProps = {
@@ -8,13 +8,15 @@ type FieldErrorAnimationProps = {
 }
 
 const FieldErrorAnimation = ({ isInvalid, errors }: FieldErrorAnimationProps) => {
-    return <AnimatePresence mode="wait">
-        {isInvalid && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
-                <FieldError errors={errors} />
-            </motion.div>
-        )}
-    </AnimatePresence>
+    return <LazyMotion features={domAnimation}>
+        <AnimatePresence mode="wait">
+            {isInvalid && (
+                <m.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
+                    <FieldError errors={errors} />
+                </m.div>
+            )}
+        </AnimatePresence>
+    </LazyMotion>
 }
 
 export default FieldErrorAnimation;

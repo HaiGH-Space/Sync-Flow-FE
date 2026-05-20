@@ -1,4 +1,4 @@
-import {routing} from "@/i18n/routing";
+import { routing } from "@/i18n/routing";
 import en from "@/i18n/en";
 import { ApiRequestError } from "@/lib/api/api";
 
@@ -9,7 +9,7 @@ declare module "next-intl" {
   }
 }
 
-declare module '@tanstack/react-query' {
+declare module "@tanstack/react-query" {
   interface Register {
     defaultError: ApiRequestError;
   }

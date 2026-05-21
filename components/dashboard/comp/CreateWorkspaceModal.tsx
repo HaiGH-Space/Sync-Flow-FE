@@ -67,7 +67,7 @@ function CreateWorkspaceDialog(props: {
     const tDashboard = useTranslations("dashboard");
     const tCommon = useTranslations("common");
     const tValidation = useTranslations("validation");
-    const router = useRouter();
+    const { push } = useRouter();
     const handleSubmit = (e: BaseSyntheticEvent) => {
         e.preventDefault();
         const trimmedName = workspaceName.trim();
@@ -87,7 +87,7 @@ function CreateWorkspaceDialog(props: {
                 props.onClose(false);
                 setWorkspaceName("");
                 setNameError(null);
-                router.push(`/dashboard/${response.data.id}`);
+                push(`/dashboard/${response.data.id}`);
             },
             onError: () => {
                 toast.error(tDashboard("workspace.toast.createFailed"));

@@ -19,9 +19,10 @@ interface SuccessStateProps {
 }
 
 const SuccessState = ({ isLogin, userName }: SuccessStateProps) => {
-  const router = useRouter();
+  const { push } = useRouter();
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get("redirectTo") || "/dashboard";
+  const { get } = searchParams;
+  const redirectTo = get("redirectTo") || "/dashboard";
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { data: profile } = useProfile();
   const markWelcomeSeenMutation = useMarkWelcomeSeen();
@@ -42,11 +43,11 @@ const SuccessState = ({ isLogin, userName }: SuccessStateProps) => {
     }
 
     const timer = window.setTimeout(() => {
-      router.push(redirectTo);
+      push(redirectTo);
     }, 3000);
 
     return () => window.clearTimeout(timer);
-  }, [redirectTo, router, shouldAutoRedirect]);
+  }, [redirectTo, push, shouldAutoRedirect]);
 
   const markWelcomeSeen = async () => {
     if (
@@ -112,7 +113,7 @@ const SuccessState = ({ isLogin, userName }: SuccessStateProps) => {
       }
     }
 
-    router.push(redirectTo);
+    push(redirectTo);
   };
 
   const onContinue = () => {
@@ -179,7 +180,7 @@ const SuccessState = ({ isLogin, userName }: SuccessStateProps) => {
             transition={{ delay: 0.4 }}
             className="mt-2 text-sm text-muted-foreground"
           >
-            Redirecting you to your login in 3 seconds...
+            Redirecting you to your login in 3 seconds…
           </m.p>
         </m.div>
       </LazyMotion>
@@ -325,7 +326,7 @@ const SuccessState = ({ isLogin, userName }: SuccessStateProps) => {
           >
             <p className="text-sm text-muted-foreground">
               You have already completed the welcome step. Redirecting you to
-              the dashboard in 3 seconds...
+              the dashboard in 3 seconds…
             </p>
           </m.div>
         )}

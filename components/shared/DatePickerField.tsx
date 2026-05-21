@@ -28,7 +28,8 @@ export default function DatePickerField({
           (field: any) => {
             const isInvalid =
               field.state.meta.isTouched && !field.state.meta.isValid;
-            const selectedDate = field.state.value
+            const selectedDate =
+              typeof window !== "undefined" && field.state.value
               ? new Date(field.state.value)
               : undefined;
 

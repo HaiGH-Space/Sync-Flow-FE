@@ -93,7 +93,7 @@ export default function NotificationsMenu() {
         <Separator />
         <ScrollArea className="max-h-105">
           {isLoading ? (
-            <div className="space-y-3 px-3 py-3">
+            <div className="space-y-3 p-3">
               {Array.from({ length: 3 }).map((_, index) => (
                 <div key={index} className="space-y-2">
                   <Skeleton className="h-4 w-3/4" />
@@ -111,7 +111,7 @@ export default function NotificationsMenu() {
                 <button
                   key={notification.id}
                   type="button"
-                  className="flex w-full gap-3 px-3 py-3 text-left transition hover:bg-muted/50"
+                  className="flex w-full gap-3 p-3 text-left transition hover:bg-muted/50"
                   onClick={() => handleMarkRead(notification)}
                 >
                   <span

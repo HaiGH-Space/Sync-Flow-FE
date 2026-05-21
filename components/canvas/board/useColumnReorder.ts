@@ -59,7 +59,7 @@ export function useColumnReorder({
       );
       if (!currentCols) return true;
 
-      const sortedColumns = [...currentCols.data].sort(
+      const sortedColumns = currentCols.data.toSorted(
         (a, b) => a.order - b.order,
       );
       const sourceIndex = sortedColumns.findIndex(

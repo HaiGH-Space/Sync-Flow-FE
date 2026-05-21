@@ -21,20 +21,20 @@ const findNotificationInCache = (
   const cachedLists = queryClient.getQueriesData<
     InfiniteData<NotificationListResponse>
   >({ queryKey: notificationKeys.list() });
+  const notificationsById = new Map<string, Notification>();
 
   for (const [, data] of cachedLists) {
     if (!data) {
       continue;
     }
     for (const page of data.pages) {
-      const match = page.data.find((item) => item.id === notificationId);
-      if (match) {
-        return match;
+      for (const item of page.data) {
+        notificationsById.set(item.id, item);
       }
     }
   }
 
-  return null;
+  return notificationsById.get(notificationId) ?? null;
 };
 
 const prependNotification = (

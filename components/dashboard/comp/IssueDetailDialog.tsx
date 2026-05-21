@@ -510,7 +510,7 @@ function IssueDetailEditableContent({
               {tDashboard("issue.detail.commentsLabel")}
             </h3>
             <div className="flex gap-3">
-              <Avatar className="w-8 h-8">
+              <Avatar className="size-8">
                 <AvatarImage src={currentUser?.image} />
                 <AvatarFallback>
                   {(currentUser?.name ?? "U").charAt(0).toUpperCase()}
@@ -870,8 +870,8 @@ function IssueDetailSkeleton() {
               </div>
             </div>
             <div className="space-y-3">
-              {[1, 2].map((i) => (
-                <div key={i} className="flex gap-3 rounded-lg border p-3">
+              {[1, 2].map((item) => (
+                <div key={item} className="flex gap-3 rounded-lg border p-3">
                   <Skeleton className="h-8 w-8 rounded-full" />
                   <div className="flex-1 space-y-2">
                     <div className="flex justify-between gap-2">
@@ -887,8 +887,8 @@ function IssueDetailSkeleton() {
           </div>
         </div>
         <div className="space-y-6">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="space-y-2">
+          {[1, 2, 3].map((item) => (
+            <div key={item} className="space-y-2">
               <Skeleton className="h-3 w-16" />
               <Skeleton className="h-8 w-full" />
             </div>

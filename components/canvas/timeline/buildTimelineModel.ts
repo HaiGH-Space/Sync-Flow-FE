@@ -55,14 +55,12 @@ export function buildTimelineModel({
   for (const g of issuesBySprint.values())
     g.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
 
-  const sprintCards = [...sprints]
-    .sort((a, b) => {
-      const aStart = toDate(a.startDate)?.getTime() ?? Number.MAX_SAFE_INTEGER;
-      const bStart = toDate(b.startDate)?.getTime() ?? Number.MAX_SAFE_INTEGER;
-      if (aStart !== bStart) return aStart - bStart;
-      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-    })
-    .map((sprint) => {
+  const sprintCards = sprints.toSorted((a, b) => {
+    const aStart = toDate(a.startDate)?.getTime() ?? Number.MAX_SAFE_INTEGER;
+    const bStart = toDate(b.startDate)?.getTime() ?? Number.MAX_SAFE_INTEGER;
+    if (aStart !== bStart) return aStart - bStart;
+    return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+  }).map((sprint) => {
       const sprintIssues = issuesBySprint.get(sprint.id) ?? [];
       const startDate = toDate(sprint.startDate);
       const endDate = toDate(sprint.endDate);

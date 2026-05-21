@@ -25,7 +25,7 @@ type WorkspaceSettingsMenuProps = {
 export default function WorkspaceSettingsMenu({ role }: WorkspaceSettingsMenuProps) {
     const { activeWorkspace: workspace } = useCurrentWorkspace()
     const tDashboard = useTranslations('dashboard')
-    const router = useRouter()
+    const { push } = useRouter()
     const [isSettingsOpen, setIsSettingsOpen] = useState(false)
     const { mutate: deleteWorkspace, isPending: isDeletingWorkspace } = useDeleteWorkspace()
 
@@ -78,7 +78,7 @@ export default function WorkspaceSettingsMenu({ role }: WorkspaceSettingsMenuPro
                         onSuccess: () => {
                             toast.success(tDashboard('workspace.toast.deleted'))
                             setIsSettingsOpen(false)
-                            router.push('/dashboard')
+                            push('/dashboard')
                         },
                         onError: () => {
                             toast.error(tDashboard('workspace.toast.deleteFailed'))

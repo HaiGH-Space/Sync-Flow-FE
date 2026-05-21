@@ -51,7 +51,7 @@ export const useUpdateColumnOrderMutation = (projectId: string) => {
 				const restored = old.data.map((col) =>
 					col.id === vars.id ? { ...col, order: vars.originalOrder } : col,
 				);
-				return { ...old, data: restored.sort((a, b) => a.order - b.order) };
+				return { ...old, data: restored.toSorted((a, b) => a.order - b.order) };
 			});
 		},
 	});
@@ -79,7 +79,7 @@ export const useRebalanceColumnsMutation = (projectId: string) => {
 			toast.error('Failed to reorder columns. Please try again.');
 			queryClient.setQueryData<ApiResponse<Column[]>>(columnKeys.list(projectId), (old) => {
 				if (!old) return old;
-				return { ...old, data: [...vars.previousColumns].sort((a, b) => a.order - b.order) };
+				return { ...old, data: vars.previousColumns.toSorted((a, b) => a.order - b.order) };
 			});
 		},
 	});

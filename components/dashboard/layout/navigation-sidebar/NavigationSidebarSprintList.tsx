@@ -30,7 +30,7 @@ export function NavigationSidebarSprintList({
   onEditSprintAction,
 }: NavigationSidebarSprintListProps) {
   const t = useTranslations("dashboard");
-  const router = useRouter();
+  const { push } = useRouter();
 
   return (
     <div className="mt-2 pl-3">
@@ -88,7 +88,7 @@ export function NavigationSidebarSprintList({
                 )}
                 onClick={() => {
                   onSelectSprintAction(sprint.id);
-                  router.push(`/dashboard/${workspaceId}/${projectId}`);
+                  push(`/dashboard/${workspaceId}/${projectId}`);
                 }}
                 aria-pressed={isSprintSelected}
               >

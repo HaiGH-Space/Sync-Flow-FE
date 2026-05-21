@@ -19,13 +19,17 @@ import type { Project } from "@/lib/api/project";
 import type { Sprint } from "@/lib/api/sprint";
 import EditSprintModal from "@/components/dashboard/comp/EditSprintModal";
 import { Search } from "@/components/shared/Search";
-import { AnimatePresence, LazyMotion, domAnimation, m, type Variants } from "framer-motion";
 import {
-  NavigationSidebarFooter,
-  NavigationSidebarHeader,
-  NavigationSidebarProjectList,
-  type WorkspaceRole,
-} from "./navigation-sidebar";
+  AnimatePresence,
+  LazyMotion,
+  domAnimation,
+  m,
+  type Variants,
+} from "framer-motion";
+import { NavigationSidebarFooter } from "./navigation-sidebar/NavigationSidebarFooter";
+import { NavigationSidebarHeader } from "./navigation-sidebar/NavigationSidebarHeader";
+import { NavigationSidebarProjectList } from "./navigation-sidebar/NavigationSidebarProjectList";
+import type { WorkspaceRole } from "./navigation-sidebar/navigation-sidebar.types";
 
 const sidebarContainerVariants: Variants = {
   hidden: {

@@ -5,6 +5,8 @@ const LOCALE_MAP: Record<string, string> = {
 
 export type DateInput = string | number | Date;
 
+const DateTimeFormat = Intl.DateTimeFormat;
+
 const formatterCache = new Map<string, Intl.DateTimeFormat>();
 
 function normalizeLocale(locale: string): string {
@@ -19,7 +21,7 @@ export function createDateFormatter(
   let formatter = formatterCache.get(cacheKey);
 
   if (!formatter) {
-    formatter = new Intl.DateTimeFormat(normalizeLocale(locale), {
+    formatter = new DateTimeFormat(normalizeLocale(locale), {
       day: "2-digit",
       month: "short",
       year: "numeric",

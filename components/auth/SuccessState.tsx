@@ -8,21 +8,18 @@ import { useProfile } from "@/hooks/use-profile";
 import { useUserStore } from "@/lib/store/use-user-profile";
 import { Camera, Check, Loader2 } from "lucide-react";
 import { LazyMotion, domAnimation, m } from "framer-motion";
-import { useSearchParams } from "next/navigation";
 import type { ChangeEvent } from "react";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { toast } from "sonner";
 
 interface SuccessStateProps {
   isLogin: boolean;
   userName?: string;
+  redirectTo: string;
 }
 
-const SuccessState = ({ isLogin, userName }: SuccessStateProps) => {
+const SuccessState = ({ isLogin, userName, redirectTo }: SuccessStateProps) => {
   const { push } = useRouter();
-  const searchParams = useSearchParams();
-  const { get } = searchParams;
-  const redirectTo = get("redirectTo") || "/dashboard";
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { data: profile } = useProfile();
   const markWelcomeSeenMutation = useMarkWelcomeSeen();
@@ -35,19 +32,6 @@ const SuccessState = ({ isLogin, userName }: SuccessStateProps) => {
   const avatarFallback = displayName.charAt(0).toUpperCase();
   const shouldShowAvatarPrompt =
     isLogin && displayProfile?.hasSeenWelcome === false;
-  const shouldAutoRedirect = isLogin && displayProfile?.hasSeenWelcome === true;
-
-  useEffect(() => {
-    if (!shouldAutoRedirect) {
-      return;
-    }
-
-    const timer = window.setTimeout(() => {
-      push(redirectTo);
-    }, 3000);
-
-    return () => window.clearTimeout(timer);
-  }, [redirectTo, push, shouldAutoRedirect]);
 
   const markWelcomeSeen = async () => {
     if (
@@ -136,7 +120,7 @@ const SuccessState = ({ isLogin, userName }: SuccessStateProps) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
-            className="relative w-20 h-20 mb-6"
+            className="relative size-20 mb-6"
           >
             <m.div
               initial={{ scale: 0.95, opacity: 0 }}
@@ -160,7 +144,7 @@ const SuccessState = ({ isLogin, userName }: SuccessStateProps) => {
                 }}
               >
                 <Check
-                  className="w-10 h-10 text-primary-foreground"
+                  className="size-10 text-primary-foreground"
                   strokeWidth={3}
                 />
               </m.div>
@@ -198,7 +182,7 @@ const SuccessState = ({ isLogin, userName }: SuccessStateProps) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ type: "spring", stiffness: 300, damping: 20 }}
-          className="mx-auto relative w-20 h-20 mb-2"
+          className="mx-auto relative size-20 mb-2"
         >
           <m.div
             initial={{ scale: 0.95, opacity: 0 }}
@@ -222,7 +206,7 @@ const SuccessState = ({ isLogin, userName }: SuccessStateProps) => {
               }}
             >
               <Check
-                className="w-10 h-10 text-primary-foreground"
+                className="size-10 text-primary-foreground"
                 strokeWidth={3}
               />
             </m.div>
@@ -284,9 +268,9 @@ const SuccessState = ({ isLogin, userName }: SuccessStateProps) => {
                   className="inline-flex items-center gap-2 rounded-md border border-border px-4 py-2 text-sm font-medium transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {updateAvatarMutation.isPending ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <Loader2 className="size-4 animate-spin" />
                   ) : (
-                    <Camera className="h-4 w-4" />
+                    <Camera className="size-4" />
                   )}
                   Change avatar
                 </button>

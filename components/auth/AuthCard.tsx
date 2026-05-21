@@ -7,6 +7,7 @@ import {
   type Variants,
 } from "framer-motion";
 import { useState } from "react";
+import { useRef } from "react";
 import LightBeam from "./LightBeam";
 import z from "zod";
 import { toast } from "sonner";
@@ -20,6 +21,7 @@ import { useUserStore } from "@/lib/store/use-user-profile";
 import { authService } from "@/lib/api/auth";
 import SuccessState from "./SuccessState";
 import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
 
 type AuthMode = "login" | "register";
 type AuthState = "idle" | "loading" | "error" | "success";
@@ -58,6 +60,7 @@ const createLoginSchema = (
   z.object({
     email: z.email(tValidation("auth.email_invalid")),
     password: z.string().min(1, tValidation("auth.password_required")),
+    name: z.string(),
   });
 
 const createRegisterSchema = (
@@ -90,17 +93,22 @@ const defaultValues = {
 
 const AuthCard = () => {
   const queryClient = useQueryClient();
+  const { push } = useRouter();
   const [mode, setMode] = useState<AuthMode>("login");
   const [authState, setAuthState] = useState<AuthState>("idle");
   const tAuth = useTranslations("auth");
   const tValidation = useTranslations("validation");
   const { setUserProfile, userProfile } = useUserStore();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const currentSchema = (
+  const autoRedirectTimerRef = useRef<number | null>(null);
+  const redirectTo =
+    typeof window === "undefined"
+      ? "/dashboard"
+      : new URLSearchParams(window.location.search).get("redirectTo") ||
+        "/dashboard";
+  const currentSchema =
     mode === "login"
       ? createLoginSchema(tValidation)
-      : createRegisterSchema(tValidation)
-  ) as z.ZodType<any, any, any>;
+      : createRegisterSchema(tValidation);
   const switchMode = (newMode: AuthMode) => {
     setMode(newMode);
     form.reset();
@@ -113,6 +121,16 @@ const AuthCard = () => {
       setUserProfile(response.data);
       setAuthState("success");
       toast.dismiss(toastId);
+
+      if (response.data.hasSeenWelcome) {
+        if (autoRedirectTimerRef.current !== null) {
+          window.clearTimeout(autoRedirectTimerRef.current);
+        }
+
+        autoRedirectTimerRef.current = window.setTimeout(() => {
+          push(redirectTo);
+        }, 3000);
+      }
     },
     onError: (error: Error) => {
       toast.error(error.message, { id: toastId });
@@ -183,6 +201,7 @@ const AuthCard = () => {
                 <SuccessState
                   isLogin={mode === "login"}
                   userName={userProfile?.name}
+                  redirectTo={redirectTo}
                 />
               </m.div>
             </>

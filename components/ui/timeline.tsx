@@ -4,7 +4,8 @@ import {
   createContext,
   HTMLAttributes,
   useCallback,
-  useContext,
+  useMemo,
+  use,
   useState,
 } from "react";
 import { Slot } from "radix-ui";
@@ -23,7 +24,7 @@ const TimelineContext = createContext<TimelineContextValue | undefined>(
 );
 
 const useTimeline = () => {
-  const context = useContext(TimelineContext);
+  const context = use(TimelineContext);
   if (!context) {
     throw new Error("useTimeline must be used within a Timeline");
   }
@@ -60,11 +61,13 @@ function Timeline({
   );
 
   const currentStep = value ?? activeStep;
+  const contextValue = useMemo(
+    () => ({ activeStep: currentStep, setActiveStep }),
+    [currentStep, setActiveStep],
+  );
 
   return (
-    <TimelineContext.Provider
-      value={{ activeStep: currentStep, setActiveStep }}
-    >
+    <TimelineContext.Provider value={contextValue}>
       <div
         className={cn(
           "group/timeline flex data-[orientation=horizontal]:w-full data-[orientation=horizontal]:flex-row data-[orientation=vertical]:flex-col",
@@ -197,6 +200,7 @@ function TimelineSeparator({
 
 // TimelineTitle
 function TimelineTitle({
+  children,
   className,
   ...props
 }: HTMLAttributes<HTMLHeadingElement>) {
@@ -205,7 +209,9 @@ function TimelineTitle({
       className={cn("text-sm font-medium", className)}
       data-slot="timeline-title"
       {...props}
-    />
+    >
+      {children}
+    </h3>
   );
 }
 

@@ -86,7 +86,7 @@ export default function NotificationsMenu() {
             onClick={() => markAllRead()}
             disabled={!hasUnread || isMarkingAll}
           >
-            <CheckCheck className="h-4 w-4" />
+            <CheckCheck className="size-4" />
             {t("notifications.markAll")}
           </Button>
         </div>

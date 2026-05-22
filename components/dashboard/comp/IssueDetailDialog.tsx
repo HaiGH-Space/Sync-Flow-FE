@@ -570,7 +570,7 @@ function IssueDetailEditableContent({
                       key={comment.id}
                       className="flex gap-3 rounded-lg border p-3 bg-muted/20"
                     >
-                      <Avatar className="w-8 h-8">
+                      <Avatar className="size-8">
                         <AvatarImage src={member?.image} />
                         <AvatarFallback>
                           {commenterName.charAt(0).toUpperCase()}
@@ -711,10 +711,10 @@ function IssueDetailEditableContent({
                 </SelectContent>
               </Select>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Avatar className="w-6 h-6">
+                <Avatar className="size-6">
                   <AvatarImage src="" />
                   <AvatarFallback>
-                    <User2 className="w-3 h-3" />
+                    <User2 className="size-3" />
                   </AvatarFallback>
                 </Avatar>
                 <span>
@@ -861,7 +861,7 @@ function IssueDetailSkeleton() {
           <div className="space-y-4">
             <Skeleton className="h-4 w-32" />
             <div className="flex gap-3">
-              <Skeleton className="h-8 w-8 rounded-full" />
+              <Skeleton className="size-8 rounded-full" />
               <div className="flex-1 space-y-2">
                 <Skeleton className="h-20 w-full" />
                 <div className="flex justify-end">
@@ -872,7 +872,7 @@ function IssueDetailSkeleton() {
             <div className="space-y-3">
               {[1, 2].map((item) => (
                 <div key={item} className="flex gap-3 rounded-lg border p-3">
-                  <Skeleton className="h-8 w-8 rounded-full" />
+                  <Skeleton className="size-8 rounded-full" />
                   <div className="flex-1 space-y-2">
                     <div className="flex justify-between gap-2">
                       <Skeleton className="h-4 w-30" />

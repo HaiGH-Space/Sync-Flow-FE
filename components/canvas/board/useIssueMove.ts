@@ -25,7 +25,7 @@ export function useIssueMove({ projectId }: UseIssueMoveParams): UseIssueMoveRes
     const queryClient = useQueryClient();
     const issueDebounceMap = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
-    const updateIssueMutation = useMutation({
+    const { mutate: updateIssue } = useMutation({
         mutationFn: ({ issueId, columnId }: { issueId: string; columnId: string; originalColumnId: string }) =>
             issueService.updateIssue({ projectId, issueId, issueData: { columnId } }),
         onMutate: async () => {
@@ -94,7 +94,7 @@ export function useIssueMove({ projectId }: UseIssueMoveParams): UseIssueMoveRes
                 issueId,
                 setTimeout(() => {
                     issueDebounceMap.current.delete(issueId);
-                    updateIssueMutation.mutate({
+                    updateIssue({
                         issueId,
                         columnId: targetColumnId as string,
                         originalColumnId,
@@ -104,7 +104,7 @@ export function useIssueMove({ projectId }: UseIssueMoveParams): UseIssueMoveRes
 
             return true;
         },
-        [projectId, queryClient, updateIssueMutation],
+        [projectId, queryClient, updateIssue],
     );
 
     return { clearPendingIssueUpdates, handleTaskDrop };

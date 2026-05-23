@@ -31,7 +31,7 @@ export function useChatChannel(channelId?: string) {
     isLoading,
     error,
   } = useQuery<GetMessagesResponse, Error>({
-    queryKey: channelId ? messageQueryKey(channelId) : ["channel-messages"],
+    queryKey: ["channel-messages", channelId ?? ""],
     enabled: !!channelId,
     queryFn: () => messageService.getMessages(channelId ?? "", null),
   });

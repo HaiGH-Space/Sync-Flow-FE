@@ -16,7 +16,7 @@ export function createIssueQueryOptions<
     return queryOptions({
         staleTime: 1000 * 60 * 5,
         ...options,
-        queryKey: issueKeys.list(projectId).concat(issueId),
+        queryKey: ['issues', projectId, issueId] as const,
         queryFn: () => issueService.getIssueById({ projectId, issueId }),
     });
 }

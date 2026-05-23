@@ -203,13 +203,15 @@ export default function IssueDetailDialog({
               currentUser={profile}
               comments={comments}
               memberById={memberById}
-              isUpdating={isUpdating}
-              isCreatingComment={isCreatingComment}
-              isDeletingComment={isDeletingComment}
-              deletingCommentId={deletingCommentId}
-              isUpdatingComment={isUpdatingComment}
-              updatingCommentId={updatingCommentId}
-              isDeletingIssue={isDeletingIssue}
+              mutationState={{
+                isUpdating,
+                isCreatingComment,
+                isDeletingComment,
+                deletingCommentId,
+                isUpdatingComment,
+                updatingCommentId,
+                isDeletingIssue,
+              }}
               onSave={(values) => {
                 updateIssue(
                   {
@@ -338,13 +340,15 @@ interface IssueDetailEditableContentProps {
   currentUser?: UserProfile;
   comments: Comment[];
   memberById: Map<string, UserProfile>;
-  isUpdating: boolean;
-  isCreatingComment: boolean;
-  isDeletingComment: boolean;
-  deletingCommentId: string | null;
-  isUpdatingComment: boolean;
-  updatingCommentId: string | null;
-  isDeletingIssue: boolean;
+  mutationState: {
+    isUpdating: boolean;
+    isCreatingComment: boolean;
+    isDeletingComment: boolean;
+    deletingCommentId: string | null;
+    isUpdatingComment: boolean;
+    updatingCommentId: string | null;
+    isDeletingIssue: boolean;
+  };
   onSave: (values: {
     description: string;
     assigneeId: string | null;
@@ -428,13 +432,7 @@ function IssueDetailEditableContent({
   currentUser,
   comments,
   memberById,
-  isUpdating,
-  isCreatingComment,
-  isDeletingComment,
-  deletingCommentId,
-  isUpdatingComment,
-  updatingCommentId,
-  isDeletingIssue,
+  mutationState,
   onSave,
   onDeleteIssue,
   onUpdateComment,
@@ -467,6 +465,16 @@ function IssueDetailEditableContent({
   const priorityLabel =
     priorityOptions.find((option) => option.value === state.priority)?.label ??
     state.priority;
+
+  const {
+    isUpdating,
+    isCreatingComment,
+    isDeletingComment,
+    deletingCommentId,
+    isUpdatingComment,
+    updatingCommentId,
+    isDeletingIssue,
+  } = mutationState;
 
   const normalizedAssigneeId =
     state.assigneeId === "UNASSIGNED" ? null : state.assigneeId;

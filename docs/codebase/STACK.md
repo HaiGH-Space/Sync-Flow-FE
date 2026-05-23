@@ -36,7 +36,7 @@
 | `eslint`                        | Linting                      | `package.json`, `eslint.config.mjs`  |
 | `eslint-config-next`            | Next.js lint rules           | `package.json`, `eslint.config.mjs`  |
 | `typescript`                    | Type checking                | `package.json`, `tsconfig.json`      |
-| `@tanstack/eslint-plugin-query` | Query-specific lint rules    | `package.json`                       |
+| `@tanstack/eslint-plugin-query` | Query-specific lint rules    | `package.json`, `eslint.config.mjs`  |
 | `@tailwindcss/postcss`          | Tailwind PostCSS integration | `package.json`, `postcss.config.mjs` |
 | `babel-plugin-react-compiler`   | React Compiler support       | `package.json`, `next.config.ts`     |
 

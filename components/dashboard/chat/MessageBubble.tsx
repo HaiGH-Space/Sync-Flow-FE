@@ -1,6 +1,7 @@
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import type { ChatMessage } from "./types";
+import { useUserStore } from "@/lib/store/use-user-profile";
 
 type MessageBubbleProps = {
   message: ChatMessage;
@@ -8,6 +9,7 @@ type MessageBubbleProps = {
 };
 
 export function MessageBubble({ message, isMine }: MessageBubbleProps) {
+  const userProfile = useUserStore((state) => state.userProfile);
   return (
     <div
       className={cn(
@@ -16,6 +18,10 @@ export function MessageBubble({ message, isMine }: MessageBubbleProps) {
       )}
     >
       <Avatar size="default">
+        <AvatarImage
+          src={isMine ? userProfile?.image : message.sender.image}
+          alt={message.sender.name}
+        />
         <AvatarFallback>
           {message.sender.name.slice(0, 2).toUpperCase()}
         </AvatarFallback>

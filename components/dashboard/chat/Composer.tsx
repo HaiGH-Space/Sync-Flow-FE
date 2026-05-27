@@ -21,12 +21,14 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { ActionIcon } from "./ActionIcon";
 import { EmojiPicker } from "./EmojiPicker";
+import { useTranslations } from "next-intl";
 
 type ComposerProps = {
   onSendAction?: (value: string, file?: File | null) => void;
 };
 
 export function Composer({ onSendAction }: ComposerProps) {
+  const t = useTranslations("dashboard");
   const [value, setValue] = useState("");
   const [isEmojiOpen, setIsEmojiOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -102,7 +104,7 @@ export function Composer({ onSendAction }: ComposerProps) {
             <div className="relative size-24 overflow-hidden rounded-md border border-border">
               <Image
                 src={imagePreview}
-                alt="Preview"
+                alt={t("chatRightPanel.imagePreviewAlt")}
                 fill
                 unoptimized
                 sizes="96px"
@@ -112,7 +114,7 @@ export function Composer({ onSendAction }: ComposerProps) {
             <button
               type="button"
               onClick={handleRemoveImage}
-              aria-label="Remove attached image"
+              aria-label={t("chatRightPanel.removeImageAriaLabel")}
               className="absolute -right-2 -top-2 rounded-full bg-destructive p-1 text-destructive-foreground shadow-sm hover:bg-destructive/90 transition-colors"
             >
               <X className="size-3" />
@@ -121,11 +123,11 @@ export function Composer({ onSendAction }: ComposerProps) {
         )}
 
         <div className="flex flex-wrap items-center gap-2">
-          <ActionIcon label="Attach file">
+          <ActionIcon label={t("chatRightPanel.attachFile")}>
             <Paperclip className="size-4" />
           </ActionIcon>
           <ActionIcon
-            label="Add image"
+            label={t("chatRightPanel.addImage")}
             onClick={() => fileInputRef.current?.click()}
           >
             <ImageIcon className="size-4" />
@@ -134,7 +136,7 @@ export function Composer({ onSendAction }: ComposerProps) {
             type="file"
             accept="image/*"
             ref={fileInputRef}
-            aria-label="Attach image"
+            aria-label={t("chatRightPanel.attachImageAriaLabel")}
             className="hidden"
             onChange={handleFileChange}
           />
@@ -146,7 +148,7 @@ export function Composer({ onSendAction }: ComposerProps) {
                 variant="ghost"
                 size="icon"
                 className="size-8"
-                aria-label="Insert emoji"
+                aria-label={t("chatRightPanel.insertEmojiAriaLabel")}
               >
                 <Smile
                   className={`size-5 transition-colors ${
@@ -173,10 +175,10 @@ export function Composer({ onSendAction }: ComposerProps) {
             </PopoverContent>
           </Popover>
 
-          <ActionIcon label="Sticker">
+          <ActionIcon label={t("chatRightPanel.sticker")}>
             <Sticker className="size-4" />
           </ActionIcon>
-          <ActionIcon label="Voice">
+          <ActionIcon label={t("chatRightPanel.voice")}>
             <Mic className="size-4" />
           </ActionIcon>
         </div>
@@ -185,7 +187,7 @@ export function Composer({ onSendAction }: ComposerProps) {
           <Textarea
             ref={textareaRef}
             rows={2}
-            placeholder="Viết tin nhắn..."
+            placeholder={t("chatRightPanel.messagePlaceholder")}
             className="min-h-11 flex-1 resize-none rounded-lg bg-background border-none focus-visible:ring-1 transition-all"
             value={value}
             onChange={(e) => setValue(e.target.value)}
@@ -206,7 +208,7 @@ export function Composer({ onSendAction }: ComposerProps) {
             className="h-9 px-4 active:scale-95 transition-transform"
           >
             <Send className="size-4 mr-2" />
-            Gửi
+            {t("chatRightPanel.send")}
           </Button>
         </div>
       </div>

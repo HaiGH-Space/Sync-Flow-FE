@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import type { ChatMessage } from "./types";
 import { MessageBubble } from "./MessageBubble";
+import { useTranslations } from "next-intl";
 
 type MessageListProps = {
   messages: ChatMessage[];
@@ -13,6 +14,7 @@ type MessageListProps = {
 
 export function MessageList({ messages, currentUserId }: MessageListProps) {
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  const t = useTranslations("dashboard");
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
@@ -21,7 +23,7 @@ export function MessageList({ messages, currentUserId }: MessageListProps) {
   if (messages.length === 0) {
     return (
       <div className="flex flex-1 items-center justify-center py-4 text-sm text-muted-foreground">
-        No messages yet.
+        {t("chatRightPanel.noMessages")}
       </div>
     );
   }

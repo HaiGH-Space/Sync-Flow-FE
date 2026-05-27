@@ -11,8 +11,10 @@ import { MessageList } from "@/components/dashboard/chat/MessageList";
 import { Composer } from "@/components/dashboard/chat/Composer";
 import { useChatChannel } from "@/hooks/chat/use-chat-channel";
 import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 export function ChatRightPanel() {
+  const t = useTranslations("dashboard");
   const isOpenSidebarRight = useDashboard((state) => state.isOpenSidebarRight);
   const setOpenSidebarRight = useDashboard(
     (state) => state.setOpenSidebarRight,
@@ -35,9 +37,11 @@ export function ChatRightPanel() {
     <aside className="flex h-full min-h-0 w-96 shrink-0 flex-col border-l border-border/70 bg-background">
       <div className="flex items-center justify-between border-b border-border/70 px-4 py-3">
         <div>
-          <p className="text-sm font-semibold">Chat</p>
+          <p className="text-sm font-semibold">{t("chatRightPanel.title")}</p>
           <p className="text-xs text-muted-foreground">
-            {selectedChannelId ? "Active channel" : "No channel selected"}
+            {selectedChannelId
+              ? t("chatRightPanel.activeChannel")
+              : t("chatRightPanel.noChannelSelected")}
           </p>
         </div>
         <Button
@@ -45,7 +49,7 @@ export function ChatRightPanel() {
           variant="ghost"
           size="icon-sm"
           onClick={() => setOpenSidebarRight(false)}
-          aria-label="Close chat panel"
+          aria-label={t("chatRightPanel.closeAriaLabel")}
         >
           <X className="size-4" />
         </Button>
@@ -56,8 +60,12 @@ export function ChatRightPanel() {
         className="flex h-full min-h-0 flex-col overflow-hidden"
       >
         <TabsList variant="line" className="px-4 pt-2">
-          <TabsTrigger value="chat">Chat</TabsTrigger>
-          <TabsTrigger value="activity">Activity</TabsTrigger>
+          <TabsTrigger value="chat">
+            {t("chatRightPanel.tabs.chat")}
+          </TabsTrigger>
+          <TabsTrigger value="activity">
+            {t("chatRightPanel.tabs.activity")}
+          </TabsTrigger>
         </TabsList>
         <TabsContent
           value="chat"
@@ -66,7 +74,7 @@ export function ChatRightPanel() {
           {selectedChannelId ? (
             <div className="flex h-full min-h-0 flex-col px-4 pb-4">
               <div className="shrink-0">
-                <ChannelHeader title="Channel" />
+                <ChannelHeader title={t("chatRightPanel.channelTitle")} />
               </div>
               {error ? (
                 <div className="flex-1 min-h-0 py-4 text-sm text-destructive">
@@ -74,7 +82,7 @@ export function ChatRightPanel() {
                 </div>
               ) : isLoading ? (
                 <div className="flex-1 min-h-0 py-4 text-sm text-muted-foreground">
-                  Loading messages…
+                  {t("chatRightPanel.loadingMessages")}
                 </div>
               ) : (
                 <MessageList
@@ -88,7 +96,7 @@ export function ChatRightPanel() {
             </div>
           ) : (
             <div className="flex h-full items-center justify-center px-6 text-center text-sm text-muted-foreground">
-              Select a channel on the left to start chatting.
+              {t("chatRightPanel.selectChannelHint")}
             </div>
           )}
         </TabsContent>
@@ -97,7 +105,7 @@ export function ChatRightPanel() {
           className="flex h-full min-h-0 flex-col overflow-hidden"
         >
           <div className="flex h-full items-center justify-center px-6 text-center text-sm text-muted-foreground">
-            Activity feed coming soon.
+            {t("chatRightPanel.activitySoon")}
           </div>
         </TabsContent>
       </Tabs>

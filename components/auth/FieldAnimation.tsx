@@ -68,7 +68,7 @@ export const InputAnimation = ({
                   )}
                   <Input
                     type={type}
-                    className={cn(Icon ? "pl-10" : "", "h-10")}
+                    className={cn(Icon ? "pl-10" : "", "h-11 rounded-xl")}
                     id={field.name}
                     name={field.name}
                     value={field.state.value}

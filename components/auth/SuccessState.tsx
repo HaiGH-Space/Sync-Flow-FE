@@ -11,6 +11,7 @@ import { LazyMotion, domAnimation, m } from "framer-motion";
 import type { ChangeEvent } from "react";
 import { useRef } from "react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 interface SuccessStateProps {
   isLogin: boolean;
@@ -73,19 +74,19 @@ function SuccessAvatarPrompt({
               onClick={onPickAvatar}
               disabled={isUpdatingAvatar}
               className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-offset-background"
-              aria-label="Update avatar"
+              aria-label={tAuth("success.avatar.update_aria")}
             >
               <AvatarWithBadge
-                alt={`${displayName} avatar`}
+                alt={tAuth("success.avatar.alt", { name: displayName })}
                 src={avatarSrc}
                 avtFallback={avatarFallback}
                 status="online"
               />
             </button>
             <div>
-              <p className="font-medium">Avatar</p>
+              <p className="font-medium">{tAuth("success.avatar.label")}</p>
               <p className="text-sm text-muted-foreground">
-                Tap the avatar to upload a new photo.
+                {tAuth("success.avatar.support")}
               </p>
             </div>
           </div>
@@ -101,7 +102,7 @@ function SuccessAvatarPrompt({
             ) : (
               <Camera className="size-4" />
             )}
-            Change avatar
+            {tAuth("success.avatar.change")}
           </button>
         </div>
       </m.div>
@@ -118,7 +119,7 @@ function SuccessAvatarPrompt({
           disabled={isCompleting}
           className="inline-flex items-center justify-center rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
         >
-          Continue to dashboard
+          {tAuth("success.avatar.continue")}
         </button>
         <button
           type="button"
@@ -126,7 +127,7 @@ function SuccessAvatarPrompt({
           disabled={isCompleting}
           className="inline-flex items-center justify-center rounded-md border border-border px-5 py-2.5 text-sm font-medium transition-colors hover:bg-muted"
         >
-          Skip avatar for now
+          {tAuth("success.avatar.skip")}
         </button>
       </m.div>
     </>
@@ -228,6 +229,7 @@ function SuccessCheckHero({
 const SuccessState = ({ isLogin, userName, redirectTo }: SuccessStateProps) => {
   const { push } = useRouter();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const tAuth = useTranslations("auth");
   const { data: profile } = useProfile();
   const markWelcomeSeenMutation = useMarkWelcomeSeen();
   const updateAvatarMutation = useUpdateMyAvatar();
@@ -266,11 +268,11 @@ const SuccessState = ({ isLogin, userName, redirectTo }: SuccessStateProps) => {
     if (!file) return;
 
     const toastId = "welcome-update-avatar";
-    toast.loading("Updating avatar...", { id: toastId });
+    toast.loading(tAuth("success.avatar.uploading"), { id: toastId });
 
     try {
       await updateAvatarMutation.mutateAsync({ file, filename: file.name });
-      toast.success("Avatar updated", { id: toastId });
+      toast.success(tAuth("success.avatar.updated"), { id: toastId });
     } catch {
       try {
         const uploadRes = await uploadService.uploadFile({
@@ -280,14 +282,14 @@ const SuccessState = ({ isLogin, userName, redirectTo }: SuccessStateProps) => {
         });
 
         await updateAvatarMutation.mutateAsync({ image: uploadRes.data.url });
-        toast.success("Avatar updated", { id: toastId });
+        toast.success(tAuth("success.avatar.updated"), { id: toastId });
       } catch (fallbackErr) {
         const message =
           fallbackErr instanceof ApiRequestError
             ? fallbackErr.message
             : fallbackErr instanceof Error
               ? fallbackErr.message
-              : "Update avatar failed";
+              : tAuth("success.avatar.update_failed");
         toast.error(message, { id: toastId });
       }
     }
@@ -303,7 +305,7 @@ const SuccessState = ({ isLogin, userName, redirectTo }: SuccessStateProps) => {
             ? error.message
             : error instanceof Error
               ? error.message
-              : "Failed to save welcome state";
+              : tAuth("success.welcome_saved_error");
         toast.error(message);
       }
     }
@@ -323,8 +325,8 @@ const SuccessState = ({ isLogin, userName, redirectTo }: SuccessStateProps) => {
     return (
       <SuccessCheckHero
         wrapperClassName="flex flex-col py-8 items-center justify-center text-center"
-        title="Account Created Successfully!"
-        subtitle="Redirecting you to your login in 3 seconds…"
+        title={tAuth("success.created_title")}
+        subtitle={tAuth("success.created_subtitle")}
       />
     );
   }
@@ -377,7 +379,7 @@ const SuccessState = ({ isLogin, userName, redirectTo }: SuccessStateProps) => {
           transition={{ delay: 0.25 }}
           className="text-2xl font-semibold"
         >
-          Welcome back, {derived.displayName}!
+          {tAuth("success.welcome_back", { name: derived.displayName })}
         </m.h2>
 
         {derived.shouldShowAvatarPrompt ? (
@@ -394,7 +396,7 @@ const SuccessState = ({ isLogin, userName, redirectTo }: SuccessStateProps) => {
             onSkipAvatar={onSkipAvatar}
           />
         ) : (
-          <SuccessRedirectNotice text="You have already completed the welcome step. Redirecting you to the dashboard in 3 seconds…" />
+          <SuccessRedirectNotice text={tAuth("success.welcome_redirect")} />
         )}
       </m.div>
     </LazyMotion>

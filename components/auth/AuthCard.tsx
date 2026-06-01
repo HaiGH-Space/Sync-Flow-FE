@@ -186,8 +186,9 @@ const AuthCard = () => {
       <m.div
         layout
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="shadow-primary/20 relative w-full max-w-xs sm:max-w-md bg-card/80 backdrop-blur-xl border border-border rounded-2xl p-8 shadow-md"
+        className="relative w-full max-w-md overflow-hidden rounded-[1.75rem] border border-border/70 bg-card/90 p-6 shadow-[0_28px_80px_-36px_rgba(15,23,42,0.55)] backdrop-blur-xl sm:p-8"
       >
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(20,184,166,0.08),transparent_42%)] dark:bg-[radial-gradient(circle_at_top,rgba(20,184,166,0.14),transparent_42%)]" />
         <LightBeam />
         <AnimatePresence mode="wait">
           {authState === "success" ? (
@@ -213,19 +214,25 @@ const AuthCard = () => {
               exit="exit"
               key={mode}
               variants={containerVariants}
+              className="relative"
             >
-              <m.div variants={itemVariants} className="text-center mb-6">
-                <LogoAppAnimation />
-                <p className="mt-2 text-sm text-muted-foreground">
+              <m.div variants={itemVariants} className="mb-8 space-y-4">
+                <div className="space-y-2 text-center sm:text-left">
+                  <p className="text-xs font-medium tracking-[0.24em] text-muted-foreground/80">
+                    {tAuth("workspace_access")}
+                  </p>
+                  <LogoAppAnimation />
+                </div>
+                <p className="max-w-sm text-center text-sm leading-6 text-muted-foreground sm:text-left text-balance">
                   {mode === "login"
                     ? tAuth("login.subtitle")
                     : tAuth("register.subtitle")}
                 </p>
+                <p className="text-center text-xs text-muted-foreground sm:text-left">
+                  {tAuth("workspace_support")}
+                </p>
               </m.div>
-              <form
-                id="auth-form"
-                action={form.handleSubmit}
-              >
+              <form id="auth-form" action={form.handleSubmit} className="space-y-4">
                 <AnimatePresence key={"form"}>
                   {mode === "register" && (
                     <AuthField
@@ -264,7 +271,10 @@ const AuthCard = () => {
                   icon={LockIcon}
                 />
                 <m.div variants={itemVariants} className="mt-4">
-                  <Button className="w-full h-10 cursor-pointer" type="submit">
+                  <Button
+                    className="h-11 w-full cursor-pointer rounded-xl text-sm font-medium transition-all hover:-translate-y-0.5 hover:shadow-lg active:translate-y-px"
+                    type="submit"
+                  >
                     {mode === "login"
                       ? tAuth("login.submit")
                       : tAuth("register.submit")}
@@ -272,12 +282,9 @@ const AuthCard = () => {
                 </m.div>
 
                 {/* Divider */}
-                <m.div
-                  variants={itemVariants}
-                  className="flex items-center gap-4 py-2"
-                >
+                <m.div variants={itemVariants} className="flex items-center gap-4 py-2">
                   <div className="flex-1 h-px bg-border" />
-                  <span className="uppercase text-xs text-muted-foreground tracking-wider">
+                  <span className="text-xs font-medium tracking-[0.18em] text-muted-foreground">
                     {tAuth("login.divider_text")}
                   </span>
                   <div className="flex-1 h-px bg-border" />
@@ -285,7 +292,7 @@ const AuthCard = () => {
 
                 <m.p
                   variants={itemVariants}
-                  className="mt-4 text-sm text-center text-muted-foreground"
+                  className="text-center text-sm text-muted-foreground"
                 >
                   {mode === "login" ? (
                     <>
@@ -293,13 +300,7 @@ const AuthCard = () => {
                       <button
                         type="button"
                         onClick={() => switchMode("register")}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" || e.key === " ") {
-                            e.preventDefault();
-                            switchMode("register");
-                          }
-                        }}
-                        className="text-primary hover:text-primary/80 cursor-pointer mt-4 bg-transparent p-0 font-[inherit]"
+                        className="cursor-pointer rounded-sm bg-transparent p-0 font-medium text-primary transition-colors hover:text-primary/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
                       >
                         {tAuth("login.go_to_register")}
                       </button>
@@ -310,13 +311,7 @@ const AuthCard = () => {
                       <button
                         type="button"
                         onClick={() => switchMode("login")}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" || e.key === " ") {
-                            e.preventDefault();
-                            switchMode("login");
-                          }
-                        }}
-                        className="text-primary hover:text-primary/80 cursor-pointer mt-4 bg-transparent p-0 font-[inherit]"
+                        className="cursor-pointer rounded-sm bg-transparent p-0 font-medium text-primary transition-colors hover:text-primary/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
                       >
                         {tAuth("login.go_to_login")}
                       </button>

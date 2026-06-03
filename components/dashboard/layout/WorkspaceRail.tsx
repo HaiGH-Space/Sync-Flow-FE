@@ -18,7 +18,7 @@ export function WorkspaceRail({
   workspaceActiveId,
 }: WorkspaceRailProps) {
   return (
-    <div className="border-r border-slate-200/80 dark:border-slate-800/80 w-20 h-full bg-slate-100 dark:bg-slate-950 flex flex-col items-center gap-4 p-4">
+    <div className="border-r border-zinc-200/80 dark:border-zinc-800/80 w-20 h-full bg-zinc-100 dark:bg-zinc-950 flex flex-col items-center gap-4 p-4">
       {isPending ? (
         <>
           {Array.from({ length: 3 }).map((_, index) => (
@@ -62,7 +62,7 @@ function WorkspaceItem({ name, isActive, id }: WorkspaceItemProps) {
           "relative size-10 flex items-center justify-center rounded-xl font-medium text-sm transition-all duration-200 overflow-hidden",
           isActive
             ? "bg-primary text-primary-foreground shadow-md scale-100"
-            : "bg-slate-200/60 text-slate-500 hover:bg-slate-200 hover:text-slate-800 dark:bg-slate-900/50 dark:text-slate-400 dark:hover:bg-slate-900 dark:hover:text-slate-100 hover:scale-105",
+            : "bg-zinc-200/60 text-zinc-500 hover:bg-zinc-200 hover:text-zinc-800 dark:bg-zinc-900/50 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-100 hover:scale-105",
         )}
       >
         {getFirstLetters(name)}

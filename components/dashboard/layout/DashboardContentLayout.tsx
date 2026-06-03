@@ -39,8 +39,8 @@ export default function DashboardContentLayout({
   }, []);
 
   return (
-    <div className="flex flex-col flex-1 h-full overflow-hidden bg-background">
-      <header className="text-lg flex items-center h-14 border-b border-border/70 bg-background/90 backdrop-blur">
+    <div className="flex flex-col flex-1 h-full overflow-hidden bg-white dark:bg-background">
+      <header className="text-lg flex items-center h-14 border-b border-slate-200/80 dark:border-slate-800/80 bg-white/90 dark:bg-background/90 backdrop-blur">
         <Button
           variant="ghost"
           size="icon"
@@ -69,7 +69,7 @@ export default function DashboardContentLayout({
         </div>
       </header>
       <div className="flex flex-1 min-h-0 overflow-hidden">
-        <main className="flex-1 p-6 overflow-y-auto bg-background">
+        <main className="flex-1 p-6 overflow-y-auto bg-white dark:bg-background">
           {children}
         </main>
         <ChatRightPanel />

@@ -83,6 +83,9 @@ const dashboard = {
     markAll: "Mark all as read",
     empty: "No notifications yet",
     loadMore: "Load more",
+      acceptWorkspace: "Accept workspace",
+      workspaceAccepted: "Workspace invitation accepted",
+      workspaceAcceptFailed: "Failed to accept workspace invitation",
   },
   chatRightPanel: {
     title: "Chat",

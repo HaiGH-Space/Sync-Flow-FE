@@ -2,8 +2,9 @@
 
 import { useMemo } from "react";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { Bell, CheckCheck } from "lucide-react";
+import { Bell, CheckCheck, Loader2 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
+import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,7 @@ import {
   useMarkAllNotificationsRead,
   useMarkNotificationRead,
 } from "@/hooks/mutations/notification";
+import { useAcceptWorkspace } from "@/hooks/mutations/workspace";
 import { useNotificationChannel } from "@/hooks/notifications/use-notification-channel";
 import { createDateFormatter } from "@/lib/format-date";
 import { type Notification } from "@/lib/api/notification";
@@ -43,6 +45,8 @@ export default function NotificationsMenu() {
   const { mutate: markRead } = useMarkNotificationRead();
   const { mutate: markAllRead, isPending: isMarkingAll } =
     useMarkAllNotificationsRead();
+  const { mutate: acceptWorkspace, isPending: isAcceptingWorkspace } =
+    useAcceptWorkspace();
 
   const notifications = useMemo(
     () => data?.pages.flatMap((page) => page.data) ?? [],
@@ -56,6 +60,31 @@ export default function NotificationsMenu() {
       markRead(notification.id);
     }
   };
+
+  const handleAcceptWorkspace = (notification: Notification) => {
+    const token = notification.workspaceInvite?.token;
+
+    if (!token) {
+      return;
+    }
+
+    acceptWorkspace(
+      { token },
+      {
+        onSuccess: () => {
+          toast.success(t("notifications.workspaceAccepted"));
+          handleMarkRead(notification);
+        },
+        onError: () => {
+          toast.error(t("notifications.workspaceAcceptFailed"));
+        },
+      },
+    );
+  };
+
+  const isWorkspaceInvite = (notification: Notification) =>
+    notification.type === "WORKSPACE_INVITE" &&
+    !!notification.workspaceInvite?.token;
 
   return (
     <DropdownMenu>
@@ -108,10 +137,9 @@ export default function NotificationsMenu() {
           ) : (
             <div className="divide-y">
               {notifications.map((notification) => (
-                <button
+                <div
                   key={notification.id}
-                  type="button"
-                  className="flex w-full gap-3 p-3 text-left transition hover:bg-muted/50"
+                  className="flex gap-3 p-3 transition hover:bg-muted/50"
                   onClick={() => handleMarkRead(notification)}
                 >
                   <span
@@ -130,8 +158,25 @@ export default function NotificationsMenu() {
                     <p className="text-[11px] text-muted-foreground">
                       {formatDate(notification.createdAt)}
                     </p>
+                    {isWorkspaceInvite(notification) ? (
+                      <Button
+                        type="button"
+                        size="sm"
+                        className="mt-2 gap-2"
+                        disabled={isAcceptingWorkspace}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleAcceptWorkspace(notification);
+                        }}
+                      >
+                        {isAcceptingWorkspace ? (
+                          <Loader2 className="size-4 animate-spin" />
+                        ) : null}
+                        {t("notifications.acceptWorkspace")}
+                      </Button>
+                    ) : null}
                   </div>
-                </button>
+                </div>
               ))}
             </div>
           )}

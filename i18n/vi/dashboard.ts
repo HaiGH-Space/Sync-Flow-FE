@@ -83,6 +83,9 @@ const dashboard = {
     markAll: "Đánh dấu tất cả đã đọc",
     empty: "Chưa có thông báo",
     loadMore: "Tải thêm",
+      acceptWorkspace: "Chấp nhận workspace",
+      workspaceAccepted: "Đã chấp nhận lời mời workspace",
+      workspaceAcceptFailed: "Không thể chấp nhận lời mời workspace",
   },
   chatRightPanel: {
     title: "Trò chuyện",

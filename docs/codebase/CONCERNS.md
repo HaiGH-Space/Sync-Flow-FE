@@ -6,9 +6,9 @@
 
 | Severity | Concern                                                                                      | Evidence                                                                                                    | Impact                                                                              | Suggested action                                                                        |
 | -------- | -------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| high     | No automated test suite or test config was found                                             | `package.json`, `docs/codebase/.codebase-scan.txt`, file search results                                     | Regressions in routing, drag-and-drop, and API wrappers are likely to slip through  | Add at least one focused test layer for query/mutation and board ordering behavior      |
+| high     | No automated test suite or test config was found                                             | `package.json`, `eslint.config.mjs`, `pnpm-lock.yaml`                                                       | Regressions in routing, drag-and-drop, and API wrappers are likely to slip through  | Add at least one focused test layer for query/mutation and board ordering behavior      |
 | high     | Board reorder logic relies on optimistic updates, debounced persistence, and sparse ordering | `components/canvas/board/useColumnReorder.ts`, `components/canvas/board/useIssueMove.ts`, `lib/ordering.ts` | Race conditions or backend order collisions can leave the UI and server out of sync | Add targeted tests for midpoint insertion, rebalance fallback, and rollback paths       |
-| medium   | Backend and intent docs referenced by the scan are absent from the workspace root            | `docs/codebase/.codebase-scan.txt`, file search results                                                     | Product intent and backend contract cannot be verified from this workspace alone    | Restore or link the missing docs, or mark the authoritative source elsewhere [ASK USER] |
+| medium   | Backend and intent docs referenced by the scan are absent from the workspace root            | `AGENTS.md`, file search results for `README`/`PRD`/`ROADMAP`/`DESIGN`                                      | Product intent and backend contract cannot be verified from this workspace alone    | Restore or link the missing docs, or mark the authoritative source elsewhere [ASK USER] |
 
 ### 2) Technical Debt
 
@@ -19,17 +19,17 @@
 
 ### 3) Security Concerns
 
-| Risk                                                                               | OWASP category (if applicable) | Evidence                      | Current mitigation                                     | Gap                                                                                        |
-| ---------------------------------------------------------------------------------- | ------------------------------ | ----------------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
-| Session cookie is used for auth decisions in the client-side proxy and chat socket | N/A                            | `proxy.ts`, `lib/api/chat.ts` | Route gating and socket auth both read `session_token` | No repo-local security policy, secret template, or redaction guidance was found            |
-| No security/compliance config was detected                                         | N/A                            | scan output                   | [TODO]                                                 | No documented secret-scanning, dependency-audit, or security policy files in the workspace |
+| Risk                                                                               | OWASP category (if applicable) | Evidence                                             | Current mitigation                                     | Gap                                                                                        |
+| ---------------------------------------------------------------------------------- | ------------------------------ | ---------------------------------------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
+| Session cookie is used for auth decisions in the client-side proxy and chat socket | N/A                            | `proxy.ts`, `lib/api/chat.ts`                        | Route gating and socket auth both read `session_token` | No repo-local security policy, secret template, or redaction guidance was found            |
+| No security/compliance config was detected                                         | N/A                            | `package.json`, `.github/workflows/react-doctor.yml` | [TODO]                                                 | No documented secret-scanning, dependency-audit, or security policy files in the workspace |
 
 ### 4) Performance and Scaling Concerns
 
-| Concern                                                         | Evidence                                                                                 | Current symptom                                       | Scaling risk                                                      | Suggested improvement                                                               |
-| --------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| Optimistic board reorder is sensitive to timing and cache state | `components/canvas/board/useColumnReorder.ts`, `components/canvas/board/useIssueMove.ts` | Temporary inconsistencies can appear during drag/drop | Higher interaction volume increases the chance of race conditions | Add focused tests and keep the sparse ordering helper as the single source of truth |
-| High-churn dashboard and translation files                      | scan output high-churn section                                                           | Frequent edits suggest hidden complexity              | Small changes can have wide UI impact                             | Treat these files as high-risk and change them with narrow diffs                    |
+| Concern                                                         | Evidence                                                                                            | Current symptom                                       | Scaling risk                                                      | Suggested improvement                                                               |
+| --------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Optimistic board reorder is sensitive to timing and cache state | `components/canvas/board/useColumnReorder.ts`, `components/canvas/board/useIssueMove.ts`            | Temporary inconsistencies can appear during drag/drop | Higher interaction volume increases the chance of race conditions | Add focused tests and keep the sparse ordering helper as the single source of truth |
+| High-churn dashboard and translation files                      | `i18n/en/dashboard.ts`, `i18n/vi/dashboard.ts`, `components/dashboard/layout/NavigationSidebar.tsx` | Frequent edits suggest hidden complexity              | Small changes can have wide UI impact                             | Treat these files as high-risk and change them with narrow diffs                    |
 
 ### 5) Fragile/High-Churn Areas
 
@@ -48,7 +48,6 @@
 
 ### 7) Evidence
 
-- `docs/codebase/.codebase-scan.txt`
 - `package.json`
 - `components/canvas/board/useColumnReorder.ts`
 - `components/canvas/board/useIssueMove.ts`

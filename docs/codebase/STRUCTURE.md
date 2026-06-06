@@ -4,19 +4,19 @@
 
 ### 1) Top-Level Map
 
-| Path             | Purpose                                                         | Evidence                                           |
-| ---------------- | --------------------------------------------------------------- | -------------------------------------------------- |
-| `app/`           | Next.js App Router route tree and root styles                   | `docs/codebase/.codebase-scan.txt`, `app/*`        |
-| `components/`    | Shared UI, auth, dashboard, and canvas feature components       | `docs/codebase/.codebase-scan.txt`, `components/*` |
-| `hooks/`         | Client hooks and mutation wrappers                              | `docs/codebase/.codebase-scan.txt`, `hooks/*`      |
-| `i18n/`          | Locale routing and translation bundles                          | `docs/codebase/.codebase-scan.txt`, `i18n/*`       |
-| `lib/`           | API clients, utilities, ordering helpers, and client store code | `docs/codebase/.codebase-scan.txt`, `lib/*`        |
-| `queries/`       | React Query option factories and query keys                     | `docs/codebase/.codebase-scan.txt`, `queries/*`    |
-| `types/`         | Shared TypeScript types                                         | `docs/codebase/.codebase-scan.txt`, `types/*`      |
-| `docs/codebase/` | Generated repository documentation for this task                | `docs/codebase/.codebase-scan.txt`                 |
-| `next.config.ts` | Next.js runtime config and rewrite rules                        | `next.config.ts`                                   |
-| `proxy.ts`       | Locale/auth request gate                                        | `proxy.ts`                                         |
-| `package.json`   | Scripts and dependency manifest                                 | `package.json`                                     |
+| Path             | Purpose                                                         | Evidence                                                                                |
+| ---------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `app/`           | Next.js App Router route tree and root styles                   | `app/[locale]/layout.tsx`, `app/globals.css`                                            |
+| `components/`    | Shared UI, auth, dashboard, and canvas feature components       | `components/auth/*`, `components/dashboard/*`, `components/canvas/*`                    |
+| `hooks/`         | Client hooks and mutation wrappers                              | `hooks/*`                                                                               |
+| `i18n/`          | Locale routing and translation bundles                          | `i18n/*`                                                                                |
+| `lib/`           | API clients, utilities, ordering helpers, and client store code | `lib/*`                                                                                 |
+| `queries/`       | React Query option factories and query keys                     | `queries/*`                                                                             |
+| `types/`         | Shared TypeScript types                                         | `types/*`                                                                               |
+| `docs/codebase/` | Generated repository documentation for this task                | `docs/codebase/STACK.md`, `docs/codebase/STRUCTURE.md`, `docs/codebase/ARCHITECTURE.md` |
+| `next.config.ts` | Next.js runtime config and rewrite rules                        | `next.config.ts`                                                                        |
+| `proxy.ts`       | Locale/auth request gate                                        | `proxy.ts`                                                                              |
+| `package.json`   | Scripts and dependency manifest                                 | `package.json`                                                                          |
 
 ### 2) Entry Points
 
@@ -45,7 +45,6 @@
 
 ### 5) Evidence
 
-- `docs/codebase/.codebase-scan.txt`
 - `app/[locale]/layout.tsx`
 - `app/[locale]/(home)/page.tsx`
 - `app/[locale]/auth/page.tsx`

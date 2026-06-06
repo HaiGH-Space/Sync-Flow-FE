@@ -43,6 +43,5 @@ pnpm build
 ### 6) Evidence
 
 - `package.json`
-- `docs/codebase/.codebase-scan.txt`
 - `eslint.config.mjs`
 - `pnpm-lock.yaml`

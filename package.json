@@ -9,6 +9,9 @@
     "start": "next start",
     "lint": "eslint"
   },
+  "resolutions": {
+    "undici-types": "6.20.0"
+  },
   "dependencies": {
     "@dnd-kit/react": "^0.3.2",
     "@tanstack/react-form": "^1.28.0",

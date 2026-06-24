@@ -22,21 +22,21 @@
 ### 3) Secrets and Credentials Handling
 
 - Credential sources: `NEXT_PUBLIC_API_URL` is read from the environment; `VERCEL_URL` is used when present on the server; `session_token` is read from cookies
-- Hardcoding checks: no secret values were found in the scanned source; no `.env.example` or `.env.template` file was present [TODO]
-- Rotation or lifecycle notes: [TODO]
+- Hardcoding checks: no secret values were found in the scanned source; `.env.example` is provided in the workspace root
+- Rotation or lifecycle notes: Session cookies are managed and rotated by the backend; the frontend reads the session token for WebSocket authentication and route protection but does not handle rotation directly
 
 ### 4) Reliability and Failure Behavior
 
 - Retry/backoff behavior: React Query retries queries twice by default in `components/ui/query-provider.tsx`
-- Timeout policy: no explicit timeout layer was found in the client API wrapper [TODO]
-- Circuit-breaker or fallback behavior: none found [TODO]
+- Timeout policy: No explicit request timeout is set in the client-side fetch wrapper (relies on browser default timeouts)
+- Circuit-breaker or fallback behavior: None implemented in the client wrapper; relies on React Query query retries and cache fallbacks
 - Failure handling: `lib/api/api.ts` parses non-OK responses and throws `ApiRequestError`; UI layers show toasts or empty/error states
 
 ### 5) Observability for Integrations
 
-- Logging around external calls: `next.config.ts` logs API rewrite targets; `lib/api/chat.ts` logs socket state in development
-- Metrics/tracing coverage: none found [TODO]
-- Missing visibility gaps: no dedicated metrics, tracing, or structured log pipeline was found in the workspace
+- Logging around external calls: `next.config.ts` logs API rewrite targets; `lib/api/chat.ts` and `lib/api/notification.ts` log socket state in development
+- Metrics/tracing coverage: No client-side APM or tracing configured
+- Missing visibility gaps: No dedicated metrics, tracing, or structured log pipeline was found in the workspace
 
 ### 6) Evidence
 

@@ -7,7 +7,7 @@
 | Area                | Value                                                     | Evidence                                                       |
 | ------------------- | --------------------------------------------------------- | -------------------------------------------------------------- |
 | Primary language    | TypeScript / TSX                                          | `package.json`, `tsconfig.json`, `app/`, `components/`         |
-| Runtime + version   | Next.js 16.1.6 and React 19.2.3; Node.js version [TODO]   | `package.json`, `next.config.ts`                               |
+| Runtime + version   | Next.js 16.1.6 and React 19.2.3; Node.js v18+ (v24.12.0 in local dev) | `package.json`, `next.config.ts`                               |
 | Package manager     | pnpm                                                      | `pnpm-lock.yaml`, `pnpm-workspace.yaml`                        |
 | Module/build system | Next.js App Router with TypeScript and ESLint flat config | `app/`, `next.config.ts`, `eslint.config.mjs`, `tsconfig.json` |
 
@@ -52,10 +52,10 @@ pnpm lint
 ### 5) Environment and Config
 
 - Config sources: `next.config.ts`, `proxy.ts`, `i18n/routing.ts`, `i18n/request.ts`, `tsconfig.json`, `components.json`, `eslint.config.mjs`
-- Required env vars: `NEXT_PUBLIC_API_URL` [TODO], `VERCEL_URL` [provided by deployment environment]
-- Runtime cookies: `session_token` is read by `proxy.ts` and `lib/api/chat.ts`
+- Required env vars: `NEXT_PUBLIC_API_URL` (backend API endpoint, defaults to `http://localhost:8000`), `VERCEL_URL` [provided by deployment environment]
+- Runtime cookies: `session_token` is read by `proxy.ts`, `lib/api/chat.ts`, and `lib/api/notification.ts`
 - Deployment/runtime constraints: locale-aware routing is active for `en` and `vi`; API requests are routed through `/api-proxy`
-- No `.env.example` or `.env.template` file was found in the workspace
+- The environment variable template is documented in `.env.example` at the workspace root.
 
 ### 6) Evidence
 

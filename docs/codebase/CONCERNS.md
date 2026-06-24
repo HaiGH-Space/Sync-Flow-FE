@@ -22,7 +22,7 @@
 | Risk                                                                               | OWASP category (if applicable) | Evidence                                             | Current mitigation                                     | Gap                                                                                        |
 | ---------------------------------------------------------------------------------- | ------------------------------ | ---------------------------------------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
 | Session cookie is used for auth decisions in the client-side proxy and chat socket | N/A                            | `proxy.ts`, `lib/api/chat.ts`                        | Route gating and socket auth both read `session_token` | No repo-local security policy, secret template, or redaction guidance was found            |
-| No security/compliance config was detected                                         | N/A                            | `package.json`, `.github/workflows/react-doctor.yml` | [TODO]                                                 | No documented secret-scanning, dependency-audit, or security policy files in the workspace |
+| No security/compliance config was detected                                         | N/A                            | `package.json`, `.github/workflows/react-doctor.yml` | React Doctor CI workflow audits pull requests; ESLint type-safety and syntax checks are enforced | No documented secret-scanning, dependency-audit, or security policy files in the workspace |
 
 ### 4) Performance and Scaling Concerns
 
@@ -43,8 +43,8 @@
 
 ### 6) `[ASK USER]` Questions
 
-1. `[ASK USER]` Should the missing README, ROADMAP, and DESIGN files be treated as intentionally absent, or are they expected to exist outside this workspace?
-2. `[ASK USER]` Is the absence of a test suite intentional for this repo, or should tests be documented from a different project boundary?
+1. `[ASK USER]` Should the missing ROADMAP and DESIGN files be treated as intentionally absent from the frontend repository, or are they expected to be restored later?
+2. `[ASK USER]` Is the lack of a frontend-specific test runner (e.g., Vitest or Cypress) permanent, or should a test framework be initialized in this repository?
 
 ### 7) Evidence
 

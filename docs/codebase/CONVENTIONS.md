@@ -28,13 +28,13 @@
 
 - Error strategy by layer: `lib/api/api.ts` throws `ApiRequestError` on non-OK responses; UI layers show errors with `toast.error`; route gating uses `notFound()` or `redirect()`; mutation hooks invalidate or restore cache on success/error
 - Logging style and required context fields: `lib/api/api.ts` and `lib/api/chat.ts` use `console.log`/`console.debug` in runtime paths, mostly for rewrite and socket diagnostics
-- Sensitive-data redaction rules: no centralized redaction helper or logging policy file was found [TODO]
+- Sensitive-data redaction rules: Sockets and API services avoid logging credentials or payload contents. Socket connection diagnostic logs are restricted to development mode and do not record raw token payloads.
 
 ### 5) Testing Conventions
 
-- Test file naming/location rule: no test files or test directories were found in the workspace [TODO]
-- Mocking strategy norm: [TODO]
-- Coverage expectation: [TODO]
+- Test file naming/location rule: The frontend project currently does not configure a local test runner or test directories. (Note: The adjacent `be` backend uses NestJS/Jest spec tests under `src/`).
+- Mocking strategy norm: None implemented on the frontend.
+- Coverage expectation: No coverage thresholds are enforced on the frontend; validation is driven by lint and build pipelines.
 
 ### 6) Evidence
 

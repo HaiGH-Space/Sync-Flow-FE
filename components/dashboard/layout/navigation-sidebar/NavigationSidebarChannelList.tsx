@@ -7,6 +7,7 @@ import { ChannelType } from "@/lib/api/channel";
 import { cn } from "@/lib/utils";
 import { Hash, Loader2, MessageCircle, PlusIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { NavigationSidebarItem } from "./NavigationSidebarItem";
 
 type NavigationSidebarChannelListProps = {
   channels?: Channel[];
@@ -75,50 +76,34 @@ export function NavigationSidebarChannelList({
             : t("sidebar.untitledChannel");
 
           return (
-            <Button
+            <NavigationSidebarItem
               key={channel.id}
-              type="button"
-              variant="ghost"
-              size="sm"
-              className={cn(
-                "group h-auto w-full justify-start gap-2 text-left border-l-2 transition-all px-2 py-1.5",
-                isChannelSelected
-                  ? "bg-primary/10 text-foreground font-medium border-primary rounded-r-md"
-                  : "border-transparent hover:bg-sidebar-accent/50 text-sidebar-foreground/75 progress-left-pad",
-              )}
-              aria-pressed={isChannelSelected}
+              isSelected={isChannelSelected}
               onClick={() => onSelectChannelAction(projectId, channel.id)}
+              icon={
+                channel.type === ChannelType.DIRECT ? (
+                  <MessageCircle
+                    className={cn(
+                      "size-3.5 shrink-0 transition-colors",
+                      isChannelSelected
+                        ? "text-primary"
+                        : "text-muted-foreground/70 group-hover:text-foreground/75"
+                    )}
+                  />
+                ) : (
+                  <Hash
+                    className={cn(
+                      "size-3.5 shrink-0 transition-colors",
+                      isChannelSelected
+                        ? "text-primary"
+                        : "text-muted-foreground/70 group-hover:text-foreground/75"
+                    )}
+                  />
+                )
+              }
             >
-              {channel.type === ChannelType.DIRECT ? (
-                <MessageCircle
-                  className={cn(
-                    "size-3.5 shrink-0",
-                    isChannelSelected
-                      ? "text-primary"
-                      : "text-muted-foreground/70 group-hover:text-foreground/70",
-                  )}
-                />
-              ) : (
-                <Hash
-                  className={cn(
-                    "size-3.5 shrink-0",
-                    isChannelSelected
-                      ? "text-primary"
-                      : "text-muted-foreground/70 group-hover:text-foreground/70",
-                  )}
-                />
-              )}
-              <span
-                className={cn(
-                  "min-w-0 flex-1 truncate text-sm",
-                  isChannelSelected
-                    ? "font-medium text-foreground"
-                    : "text-muted-foreground group-hover:text-foreground",
-                )}
-              >
-                {channelName}
-              </span>
-            </Button>
+              {channelName}
+            </NavigationSidebarItem>
           );
         })}
       </div>

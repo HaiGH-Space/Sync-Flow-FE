@@ -25,7 +25,7 @@ export function NavigationSidebarItem({
   return (
     <div
       className={cn(
-        "group flex items-center gap-2 border-l-2 transition-all px-2 py-1.5",
+        "group flex h-8 items-center gap-2 border-l-2 transition-all px-2 py-0",
         isSelected
           ? "bg-primary/10 text-foreground font-medium border-primary rounded-r-md"
           : "border-transparent hover:bg-sidebar-accent/50 text-sidebar-foreground/75 progress-left-pad",
@@ -35,7 +35,7 @@ export function NavigationSidebarItem({
       <button
         type="button"
         className={cn(
-          "min-w-0 flex flex-1 items-center gap-2 truncate text-left text-sm transition-colors outline-none",
+          "min-w-0 flex h-full flex-1 items-center gap-2 truncate text-left text-sm transition-colors outline-none",
           isSelected
             ? "font-medium text-foreground"
             : "text-muted-foreground group-hover:text-foreground"

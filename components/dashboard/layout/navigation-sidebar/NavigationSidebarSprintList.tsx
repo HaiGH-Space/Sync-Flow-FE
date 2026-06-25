@@ -7,6 +7,7 @@ import type { Sprint } from "@/lib/api/sprint";
 import { cn } from "@/lib/utils";
 import { Loader2, PlusIcon, Settings2 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { NavigationSidebarItem } from "./NavigationSidebarItem";
 
 type NavigationSidebarSprintListProps = {
   workspaceId: string;
@@ -71,57 +72,45 @@ export function NavigationSidebarSprintList({
           const isSprintSelected = selectedSprintId === sprint.id;
 
           return (
-            <div
+            <NavigationSidebarItem
               key={sprint.id}
-              className={cn(
-                "group flex items-center gap-2 border-l-2 transition-all px-2 py-1.5",
-                isSprintSelected
-                  ? "bg-primary/10 text-foreground font-medium border-primary rounded-r-md"
-                  : "border-transparent hover:bg-sidebar-accent/50 text-sidebar-foreground/75 progress-left-pad",
-              )}
-            >
-              <button
-                type="button"
-                className={cn(
-                  "min-w-0 flex flex-1 items-center gap-2 truncate text-left text-sm transition-colors",
-                  isSprintSelected
-                    ? "font-medium text-foreground"
-                    : "text-muted-foreground group-hover:text-foreground",
-                )}
-                onClick={() => {
-                  onSelectSprintAction(projectId, sprint.id);
-                  push(`/dashboard/${workspaceId}/${projectId}`);
-                }}
-                aria-pressed={isSprintSelected}
-              >
+              isSelected={isSprintSelected}
+              onClick={() => {
+                onSelectSprintAction(projectId, sprint.id);
+                push(`/dashboard/${workspaceId}/${projectId}`);
+              }}
+              icon={
                 <span
                   className={cn(
                     "size-1.5 shrink-0 rounded-full transition-colors",
                     isSprintSelected
                       ? "bg-primary"
-                      : "bg-sidebar-foreground/30 group-hover:bg-sidebar-foreground/60",
+                      : "bg-sidebar-foreground/30 group-hover:bg-sidebar-foreground/60"
                   )}
                 />
-                {sprint.name}
-              </button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon-sm"
-                className={cn(
-                  "shrink-0 text-muted-foreground transition-colors hover:text-foreground",
-                  isSprintSelected && "text-foreground",
-                )}
-                aria-label={t("sprint.edit.action")}
-                onClick={(event) => {
-                  event.preventDefault();
-                  event.stopPropagation();
-                  onEditSprintAction(sprint);
-                }}
-              >
-                <Settings2 className="size-4" />
-              </Button>
-            </div>
+              }
+              actions={
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-sm"
+                  className={cn(
+                    "shrink-0 text-muted-foreground transition-colors hover:text-foreground",
+                    isSprintSelected && "text-foreground"
+                  )}
+                  aria-label={t("sprint.edit.action")}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    onEditSprintAction(sprint);
+                  }}
+                >
+                  <Settings2 className="size-4" />
+                </Button>
+              }
+            >
+              {sprint.name}
+            </NavigationSidebarItem>
           );
         })}
       </div>

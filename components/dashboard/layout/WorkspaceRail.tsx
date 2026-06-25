@@ -18,7 +18,7 @@ export function WorkspaceRail({
   workspaceActiveId,
 }: WorkspaceRailProps) {
   return (
-    <div className="border-r border-zinc-200/80 dark:border-zinc-800/80 w-20 h-full bg-zinc-100 dark:bg-zinc-950 flex flex-col items-center gap-4 p-4">
+    <div className="border-r border-sidebar-border w-20 h-full bg-sidebar flex flex-col items-center gap-4 p-4">
       {isPending ? (
         <>
           {Array.from({ length: 3 }).map((_, index) => (
@@ -62,15 +62,15 @@ function WorkspaceItem({ name, isActive, id }: WorkspaceItemProps) {
           "relative size-10 flex items-center justify-center rounded-xl font-medium text-sm transition-all duration-200 overflow-hidden",
           isActive
             ? "bg-primary text-primary-foreground shadow-md scale-100"
-            : "bg-zinc-200/60 text-zinc-500 hover:bg-zinc-200 hover:text-zinc-800 dark:bg-zinc-900/50 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-100 hover:scale-105",
+            : "bg-sidebar-accent/50 text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground hover:scale-105",
         )}
       >
         {getFirstLetters(name)}
       </Link>
 
-      <div className="absolute left-14 z-50 hidden px-2 py-1 text-xs font-medium text-white bg-black/90 rounded opacity-0 group-hover:opacity-100 group-hover:block whitespace-nowrap transition-opacity animate-in fade-in slide-in-from-left-2">
+      <div className="absolute left-14 z-50 hidden px-2 py-1 text-xs font-medium text-popover-foreground bg-popover border border-border rounded opacity-0 group-hover:opacity-100 group-hover:block whitespace-nowrap transition-opacity animate-in fade-in slide-in-from-left-2 shadow-md">
         {name}
-        <div className="absolute top-1/2 -left-2 -mt-1 border-4 border-transparent border-r-black/90" />
+        <div className="absolute top-1/2 -left-1.5 -mt-1 border-4 border-transparent border-r-border" />
       </div>
     </div>
   );

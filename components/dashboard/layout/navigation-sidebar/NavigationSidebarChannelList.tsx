@@ -81,10 +81,10 @@ export function NavigationSidebarChannelList({
               variant="ghost"
               size="sm"
               className={cn(
-                "group h-auto w-full justify-start gap-2 text-left transition-all",
+                "group h-auto w-full justify-start gap-2 text-left border-l-2 transition-all px-2 py-1.5",
                 isChannelSelected
-                  ? "bg-primary/10 text-foreground font-medium border-l-2 border-primary rounded-r-md px-2 py-1.5"
-                  : "hover:bg-sidebar-accent/50 text-sidebar-foreground/75 progress-left-pad px-2 py-1.5",
+                  ? "bg-primary/10 text-foreground font-medium border-primary rounded-r-md"
+                  : "border-transparent hover:bg-sidebar-accent/50 text-sidebar-foreground/75 progress-left-pad",
               )}
               aria-pressed={isChannelSelected}
               onClick={() => onSelectChannelAction(projectId, channel.id)}

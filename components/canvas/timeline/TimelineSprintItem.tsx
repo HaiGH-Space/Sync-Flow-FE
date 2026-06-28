@@ -58,12 +58,22 @@ function TimelineSprintItem({ step, item }: TimelineSprintItemProps) {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-border/70 bg-card/80 p-4 shadow-sm">
+        <div className="rounded-2xl border border-border/70 bg-card p-4 shadow-sm">
           <div className="flex items-start justify-between gap-2">
-            <Badge variant={item.statusVariant}>{item.statusLabel}</Badge>
+            <Badge
+              variant={item.statusVariant}
+              className={cn(
+                item.statusVariant === "default" && "bg-primary/10 text-primary border-primary/20 hover:bg-primary/15 shadow-none",
+              )}
+            >
+              {item.statusLabel}
+            </Badge>
             <Badge
               variant={item.phaseVariant}
-              className="text-[11px] uppercase tracking-[0.16em]"
+              className={cn(
+                "text-[11px] uppercase tracking-[0.16em]",
+                item.phaseVariant === "default" && "bg-primary/10 text-primary border-primary/20 hover:bg-primary/15 shadow-none",
+              )}
             >
               {item.phaseLabel}
             </Badge>

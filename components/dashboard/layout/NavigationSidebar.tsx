@@ -201,7 +201,7 @@ export const NavigationSidebar = memo(function NavigationSidebar({
         <AnimatePresence mode="wait">
           {isOpenSidebarLeft && (
             <m.aside
-              className="border-r border-zinc-200/80 dark:border-zinc-800/80 whitespace-nowrap bg-zinc-50 dark:bg-zinc-900 text-foreground h-full overflow-hidden"
+              className="border-r border-sidebar-border whitespace-nowrap bg-sidebar text-foreground h-full overflow-hidden"
               variants={sidebarContainerVariants}
               initial="hidden"
               animate="visible"

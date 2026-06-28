@@ -7,6 +7,7 @@ import { ChannelType } from "@/lib/api/channel";
 import { cn } from "@/lib/utils";
 import { Hash, Loader2, MessageCircle, PlusIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { NavigationSidebarItem } from "./NavigationSidebarItem";
 
 type NavigationSidebarChannelListProps = {
   channels?: Channel[];
@@ -32,7 +33,7 @@ export function NavigationSidebarChannelList({
   return (
     <div className="mt-2 pl-3">
       <div className="border-l border-border pl-3 space-y-1">
-        <div className="sticky top-0 z-10 -ml-3 border-b border-border/60 bg-background/95 px-3 pb-2 pt-2 backdrop-blur">
+        <div className="sticky top-0 z-10 -ml-3 border-b border-sidebar-border/60 bg-sidebar/95 px-3 pb-2 pt-2 backdrop-blur">
           <CreateChannelModal
             workspaceId={workspaceId}
             projectId={projectId}
@@ -75,48 +76,34 @@ export function NavigationSidebarChannelList({
             : t("sidebar.untitledChannel");
 
           return (
-            <Button
+            <NavigationSidebarItem
               key={channel.id}
-              type="button"
-              variant="ghost"
-              size="sm"
-              className={cn(
-                "group h-auto w-full justify-start gap-2 rounded-lg px-2 py-1.5 text-left transition-colors",
-                isChannelSelected ? "bg-primary/10" : "hover:bg-accent/50",
-              )}
-              aria-pressed={isChannelSelected}
+              isSelected={isChannelSelected}
               onClick={() => onSelectChannelAction(projectId, channel.id)}
+              icon={
+                channel.type === ChannelType.DIRECT ? (
+                  <MessageCircle
+                    className={cn(
+                      "size-3.5 shrink-0 transition-colors",
+                      isChannelSelected
+                        ? "text-primary"
+                        : "text-muted-foreground/70 group-hover:text-foreground/75"
+                    )}
+                  />
+                ) : (
+                  <Hash
+                    className={cn(
+                      "size-3.5 shrink-0 transition-colors",
+                      isChannelSelected
+                        ? "text-primary"
+                        : "text-muted-foreground/70 group-hover:text-foreground/75"
+                    )}
+                  />
+                )
+              }
             >
-              {channel.type === ChannelType.DIRECT ? (
-                <MessageCircle
-                  className={cn(
-                    "size-3.5 shrink-0",
-                    isChannelSelected
-                      ? "text-primary"
-                      : "text-muted-foreground/70 group-hover:text-foreground/70",
-                  )}
-                />
-              ) : (
-                <Hash
-                  className={cn(
-                    "size-3.5 shrink-0",
-                    isChannelSelected
-                      ? "text-primary"
-                      : "text-muted-foreground/70 group-hover:text-foreground/70",
-                  )}
-                />
-              )}
-              <span
-                className={cn(
-                  "min-w-0 flex-1 truncate text-sm",
-                  isChannelSelected
-                    ? "font-medium text-foreground"
-                    : "text-muted-foreground group-hover:text-foreground",
-                )}
-              >
-                {channelName}
-              </span>
-            </Button>
+              {channelName}
+            </NavigationSidebarItem>
           );
         })}
       </div>

@@ -124,3 +124,10 @@
     @apply bg-background text-foreground;
   }
 }
+
+@utility progress-left-pad {
+  transition: padding-left 200ms ease, background-color 200ms ease;
+  &:hover {
+    padding-left: 0.75rem !important;
+  }
+}

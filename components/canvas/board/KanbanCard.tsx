@@ -33,7 +33,7 @@ function KanbanCard(props: KanbanCardProps) {
         onClick={openDetail}
         ref={ref}
         className={cn(
-          "duration-200 hover:border-primary cursor-grab w-full min-w-48 p-3 mb-2 flex flex-col bg-card border rounded-lg text-left",
+          "duration-200 border-border/70 hover:border-border hover:shadow-xs focus-visible:ring-2 focus-visible:ring-ring cursor-grab w-full min-w-48 p-3 mb-2 flex flex-col bg-card border rounded-lg text-left transition-all",
           isDragging && "opacity-90 border-dashed",
         )}
       >
@@ -47,13 +47,14 @@ function KanbanCard(props: KanbanCardProps) {
           <div>
             {props.priority && (
               <Badge
+                variant="outline"
                 className={cn(
-                  "mr-2",
+                  "mr-2 hover:bg-transparent shadow-none border font-normal py-0.5 px-1.5",
                   props.priority === Priority.HIGH
-                    ? "bg-red-900 text-red-300"
+                    ? "bg-destructive/15 text-destructive border-destructive/20 dark:bg-destructive/20"
                     : props.priority === Priority.MEDIUM
-                      ? "bg-yellow-900 text-yellow-300"
-                      : "bg-green-900 text-green-300",
+                      ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/20"
+                      : "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
                 )}
               >
                 {props.priority.charAt(0).toUpperCase() +

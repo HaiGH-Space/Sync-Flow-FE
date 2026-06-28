@@ -55,8 +55,8 @@ const PlanningIssuesColumn = function PlanningIssuesColumn({
     <section
       ref={dropRef}
       className={cn(
-        "flex h-full min-h-0 flex-col overflow-hidden rounded-lg border border-transparent p-2 transition-colors",
-        isDropTarget && "border-primary/40 bg-muted/30",
+        "flex h-full min-h-0 flex-col overflow-hidden rounded-lg border border-border/40 bg-muted/30 p-3 transition-all",
+        isDropTarget ? "bg-muted/60 ring-2 ring-primary/40" : "bg-muted/30",
       )}
     >
       <div className="flex shrink-0 items-center justify-between gap-3 pb-2">

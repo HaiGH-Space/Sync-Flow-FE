@@ -66,8 +66,8 @@ function KanbanColumn(props: ColumnProps) {
     <div
       ref={dropRef}
       className={cn(
-        "min-w-52 flex flex-col flex-1 bg-muted/50 rounded-lg duration-200",
-        isDropTarget ? "bg-muted/80 ring-2 ring-primary/50" : "bg-muted/50",
+        "min-w-52 flex flex-col flex-1 bg-muted/30 rounded-lg duration-200",
+        isDropTarget ? "bg-muted/60 ring-2 ring-primary/40" : "bg-muted/30",
         isDragging && "opacity-50 border-dashed border-2 border-primary",
       )}
     >

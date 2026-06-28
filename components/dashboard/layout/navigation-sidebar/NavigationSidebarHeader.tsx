@@ -20,7 +20,7 @@ export function NavigationSidebarHeader({
   const t = useTranslations("dashboard");
 
   return (
-    <div className="h-14 px-4 flex flex-row justify-between items-center gap-2 border-b border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50/90 dark:bg-zinc-900/90 backdrop-blur overflow-hidden min-w-0">
+    <div className="h-14 px-4 flex flex-row justify-between items-center gap-2 border-b border-sidebar-border bg-sidebar/90 backdrop-blur overflow-hidden min-w-0">
       {workspaceDetail ? (
         <>
           <WorkspaceSettingsMenu role={role} />

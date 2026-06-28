@@ -15,9 +15,9 @@ type BacklogTableColumnsParams = {
 }
 
 function getPriorityBadgeClass(priority: Priority) {
-  if (priority === Priority.HIGH) return 'bg-red-900 text-red-300'
-  if (priority === Priority.MEDIUM) return 'bg-yellow-900 text-yellow-300'
-  return 'bg-green-900 text-green-300'
+  if (priority === Priority.HIGH) return 'bg-destructive/15 text-destructive border-destructive/20 dark:bg-destructive/20'
+  if (priority === Priority.MEDIUM) return 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/20'
+  return 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
 }
 
 export function createBacklogTableColumns({
@@ -63,7 +63,10 @@ export function createBacklogTableColumns({
       accessorKey: 'priority',
       header: tDashboard('backlog.columns.priority'),
       cell: ({ row }) => (
-        <Badge className={getPriorityBadgeClass(row.original.priority)}>
+        <Badge
+          variant="outline"
+          className={`${getPriorityBadgeClass(row.original.priority)} hover:bg-transparent shadow-none border font-normal py-0.5 px-1.5`}
+        >
           {row.original.priority}
         </Badge>
       ),

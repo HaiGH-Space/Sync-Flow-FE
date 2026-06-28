@@ -29,10 +29,10 @@ function TimelineCanvasHeader({
   completedCount,
 }: TimelineCanvasHeaderProps) {
   return (
-    <div className="rounded-2xl border border-border/70 bg-card/70 px-4 py-3 shadow-sm">
+    <div className="rounded-2xl border border-border/70 bg-card px-4 py-3 shadow-sm">
       <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
         <div className="space-y-2">
-          <div className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/80 px-3 py-0.5 text-[11px] font-medium uppercase tracking-[0.24em] text-muted-foreground backdrop-blur">
+          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-muted/60 px-3 py-0.5 text-[11px] font-medium uppercase tracking-[0.24em] text-muted-foreground">
             <Clock3 className="size-3.5" />
             {timelineLabel}
           </div>
@@ -45,7 +45,7 @@ function TimelineCanvasHeader({
         </div>
 
         <div className="flex flex-wrap items-start justify-start gap-2 lg:justify-end">
-          <Badge variant="default" className="gap-1.5 text-[11px]">
+          <Badge variant="outline" className="gap-1.5 text-[11px] bg-primary/10 text-primary border-primary/20 hover:bg-primary/15 shadow-none">
             <CheckCircle2 className="size-3.5" />
             {activeLabel}: {activeCount}
           </Badge>

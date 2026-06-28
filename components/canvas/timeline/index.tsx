@@ -37,7 +37,7 @@ export default function TimelineCanvas({ projectId }: TimelineCanvasProps) {
   return (
     <div className="flex h-full min-h-0 flex-col gap-3 overflow-hidden">
       <TimelineCanvasHeader {...model.header} />
-      <ScrollArea className="w-full flex-1 min-h-0 rounded-2xl border border-border/70 bg-card/70 shadow-sm">
+      <ScrollArea className="w-full flex-1 min-h-0 rounded-2xl border border-border/70 bg-card shadow-sm">
         <div className="px-4 py-5 pr-6">
           <TimelineSprintRail
             activeStep={model.activeStep}

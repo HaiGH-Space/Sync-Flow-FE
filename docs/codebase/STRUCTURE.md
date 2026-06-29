@@ -39,16 +39,16 @@
 
 ### 4) Naming and Organization Rules
 
-- File naming pattern: feature components use PascalCase (`BoardCanvas.tsx`, `NavigationSidebar.tsx`); utility modules use kebab or lowercase names (`format-date.ts`, `use-dashboard.ts`)
-- Directory organization pattern: feature-oriented folders under `components/`, with dashboard and canvas split by product area
+- File naming pattern: feature components use PascalCase (`BoardCanvas.tsx`, `NavigationSidebar.tsx`); utility modules and hooks use kebab or lowercase names (`format-date.ts`, `use-dashboard.ts`, `use-navigation-sidebar.ts`, `use-issue-detail.ts`)
+- Directory organization pattern: feature-oriented folders under `components/`, with dashboard and canvas split by product area. High-traffic dashboard components (e.g. NavigationSidebar, IssueDetailDialog) are refactored into dedicated subdirectories (`components/dashboard/layout/navigation-sidebar/`, `components/dashboard/comp/issue-detail/`) containing an orchestrator component, a custom hook for state management, and smaller, single-responsibility subcomponents.
 - Import aliasing or path conventions: `@/*` maps to the repository root via `tsconfig.json`
 
 ### 5) Evidence
 
 - `app/[locale]/layout.tsx`
-- `app/[locale]/(home)/page.tsx`
-- `app/[locale]/auth/page.tsx`
-- `app/[locale]/(home)/dashboard/page.tsx`
-- `proxy.ts`
+- `components/dashboard/layout/NavigationSidebar.tsx`
+- `components/dashboard/layout/navigation-sidebar/use-navigation-sidebar.ts`
+- `components/dashboard/comp/IssueDetailDialog.tsx`
+- `components/dashboard/comp/issue-detail/use-issue-detail.ts`
 - `tsconfig.json`
 - `package.json`

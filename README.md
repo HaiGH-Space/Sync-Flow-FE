@@ -73,11 +73,33 @@ Sync Flow is a premium, real-time collaboration workspace designed for issue tra
 
 ### Quality Assurance
 
-Validate type safety and linting compliance before committing:
+Validate type safety, linting compliance, and code quality diagnostics before committing:
 
 ```bash
-pnpm lint   # Run ESLint validation
-pnpm build  # Perform a full production build
+pnpm lint     # Run ESLint validation
+pnpm doctor   # Run React Doctor codebase audit
+pnpm build    # Perform a full Next.js production build
+```
+
+## Directory Structure
+
+An overview of the frontend project organization:
+
+```text
+app/                      # Next.js App Router route tree & layout providers
+components/               # UI components split by feature area
+  ├── auth/               # Animated login layout and visual components
+  ├── canvas/             # Board (Kanban), Backlog, Planning, and Timeline rails
+  ├── dashboard/          # Chat channels, notification lists, and layouts
+  │   ├── comp/           # Dialogs (includes the modular issue-detail/ folder)
+  │   └── layout/         # Shell and sidebars (includes the navigation-sidebar/ folder)
+  ├── shared/             # Reusable UI widgets and layout animations
+  └── ui/                 # Atomic design system tokens and Radix/shadcn primitives
+hooks/                    # App-wide hooks and TanStack mutation hooks
+i18n/                     # Bilingual translation bundles (en/vi) and routing configuration
+lib/                      # API transport layer, Zustand state stores, and reordering helpers
+queries/                  # TanStack Query keys and options factories
+types/                    # Global TypeScript interfaces
 ```
 
 ## How It Works
@@ -96,9 +118,10 @@ pnpm build  # Perform a full production build
        └─► [lib/api/chat] ────► (Real-time WebSockets) ──────────────────────────────► [Backend WebSockets]
 ```
 
-- **Authentication**: Gated at the middleware layer (`proxy.ts`) which validates the `session_token` cookie.
+- **Authentication**: Gated at the middleware layer (`proxy.ts`) which validates the `session_token` cookie and enforces locale redirections.
 - **WebSocket Auth**: Sockets connect to `/chat` and `/notifications` using `withCredentials: true` and the client's `session_token` cookie.
 - **State Flow**: The board reordering logic runs optimistically using midpoint insertion calculations (`lib/ordering.ts`) and is persisted asynchronously to prevent interface lag.
+- **Presenter/Hook Pattern**: Complex components (such as `NavigationSidebar` and `IssueDetailDialog`) are split into subfolders. Logic and API state are isolated in custom hooks (`useNavigationSidebar`, `useIssueDetail`), keeping view components focused solely on rendering.
 
 ## Codebase Documentation
 

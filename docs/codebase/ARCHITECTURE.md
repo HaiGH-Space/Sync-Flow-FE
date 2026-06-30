@@ -46,7 +46,7 @@ request -> proxy.ts locale/auth gate -> app/[locale]/layout.tsx providers -> rou
 
 - Board ordering is implemented with optimistic updates, debounced writes, and sparse ordering helpers; this is the most fragile interaction path and can drift if server writes fail or arrive out of order
 - Backend URL handling is split between `next.config.ts` rewrites and `lib/api/api.ts` server-side base URL resolution, so changes to deployment hosts can break requests if both paths are not kept aligned
-- The repo does not include a documented backend contract or intent docs in the workspace, so some high-level product assumptions remain unverified
+- The repo does not include a documented backend contract or intent docs in the workspace; the backend API contract and codebase structure are documented in the backend repository at https://github.com/HaiGH-Space/Sync-Flow-BE (static PRD and ROADMAP documents do not exist in either repository)
 
 ### 6) Evidence
 

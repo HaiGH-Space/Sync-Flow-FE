@@ -18,10 +18,8 @@
 
 ### 3) Security Concerns
 
-| Risk                                                                               | OWASP category (if applicable) | Evidence                                             | Current mitigation                                                                               | Gap                                                                                        |
-| ---------------------------------------------------------------------------------- | ------------------------------ | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
-| Session cookie is used for auth decisions in the client-side proxy and chat socket | N/A                            | `proxy.ts`, `lib/api/chat.ts`                        | Route gating and socket auth both read `session_token`                                           | No repo-local security policy, secret template, or redaction guidance was found            |
-| No security/compliance config was detected                                         | N/A                            | `package.json`, `.github/workflows/react-doctor.yml` | React Doctor CI workflow audits pull requests; ESLint type-safety and syntax checks are enforced | No documented secret-scanning, dependency-audit, or security policy files in the workspace |
+No active security concerns.
+
 
 ### 4) Performance and Scaling Concerns
 

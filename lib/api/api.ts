@@ -25,29 +25,13 @@ export class ApiRequestError extends Error implements ApiError {
   }
 }
 
-// const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-const API_PREFIX = "/api-proxy";
-const getBaseUrl = () => {
-  if (typeof window !== "undefined") return "";
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
-  return "http://localhost:3000"; // Server Local
-};
+import { resolveApiUrl } from "./api-config";
+
 async function request<T>(
   endpoint: string,
   options: RequestInit = {},
 ): Promise<ApiResponse<T>> {
-  let fullUrl = "";
-  const baseUrl = getBaseUrl();
-  if (endpoint.startsWith("http")) {
-    fullUrl = endpoint;
-  } else {
-    const path = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
-    const finalPath = path.startsWith(API_PREFIX)
-      ? path
-      : `${API_PREFIX}${path}`;
-
-    fullUrl = `${baseUrl}${finalPath}`;
-  }
+  const fullUrl = resolveApiUrl(endpoint);
   const isFormDataBody =
     typeof FormData !== "undefined" &&
     typeof options.body !== "undefined" &&

@@ -1,6 +1,7 @@
 import { io, type Socket } from "socket.io-client";
 
 import { api } from "./api";
+import { getWebSocketUrl } from "./api-config";
 
 export type NotificationType = "WORKSPACE_INVITE";
 
@@ -108,17 +109,6 @@ const getCookieValue = (name: string) => {
   return undefined;
 };
 
-const resolveNotificationBaseUrl = () => {
-  const raw = process.env.NEXT_PUBLIC_API_URL;
-  if (raw && raw.trim()) {
-    return raw.replace(/\/+$/, "").replace(/\/notifications$/, "");
-  }
-  if (typeof window !== "undefined") {
-    return window.location.origin;
-  }
-  return "";
-};
-
 export const getNotificationSocket = () => {
   if (notificationSocket) {
     if (process.env.NODE_ENV !== "production") {
@@ -132,15 +122,15 @@ export const getNotificationSocket = () => {
     return notificationSocket;
   }
 
-  const baseUrl = resolveNotificationBaseUrl();
+  const socketUrl = getWebSocketUrl("notifications");
   const sessionToken = getCookieValue("session_token");
   if (process.env.NODE_ENV !== "production") {
     console.debug("[notifications] create socket", {
-      baseUrl,
+      socketUrl,
       hasSessionToken: !!sessionToken,
     });
   }
-  notificationSocket = io(`${baseUrl}/notifications`, {
+  notificationSocket = io(socketUrl, {
     withCredentials: true,
     autoConnect: true,
     auth: sessionToken ? { session_token: sessionToken } : undefined,

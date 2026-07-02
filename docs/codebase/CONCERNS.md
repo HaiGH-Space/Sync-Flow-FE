@@ -12,9 +12,7 @@
 
 ### 2) Technical Debt
 
-| Debt item                    | Why it exists                                                                                          | Where                              | Risk if ignored                                                   | Suggested fix                                                  |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------ | ---------------------------------- | ----------------------------------------------------------------- | -------------------------------------------------------------- |
-| Mixed request base URL logic | API routing is split between `next.config.ts` rewrites and `lib/api/api.ts` server-side URL resolution | `next.config.ts`, `lib/api/api.ts` | Environment changes can break requests in only one execution path | Consolidate the base URL contract and document it in one place |
+No active technical debt.
 
 ### 3) Security Concerns
 
@@ -48,8 +46,6 @@ No active security concerns.
 - `components/canvas/board/useColumnReorder.ts`
 - `components/canvas/board/useIssueMove.ts`
 - `lib/ordering.ts`
-- `next.config.ts`
-- `lib/api/api.ts`
 - `components/dashboard/layout/NavigationSidebar.tsx`
 - `components/dashboard/comp/IssueDetailDialog.tsx`
 - `i18n/en/dashboard.ts`

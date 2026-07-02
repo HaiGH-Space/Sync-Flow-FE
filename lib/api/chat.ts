@@ -1,6 +1,7 @@
 import { io, type Socket } from "socket.io-client";
 
 import type { Message } from "@/lib/api/message";
+import { getWebSocketUrl } from "./api-config";
 
 type ChatServerEvents = {
   new_message: (message: Message) => void;
@@ -32,17 +33,6 @@ const getCookieValue = (name: string) => {
   return undefined;
 };
 
-const resolveChatBaseUrl = () => {
-  const raw = process.env.NEXT_PUBLIC_API_URL;
-  if (raw && raw.trim()) {
-    return raw.replace(/\/+$/, "").replace(/\/chat$/, "");
-  }
-  if (typeof window !== "undefined") {
-    return window.location.origin;
-  }
-  return "";
-};
-
 export const getChatSocket = () => {
   if (chatSocket) {
     if (process.env.NODE_ENV !== "production") {
@@ -56,15 +46,15 @@ export const getChatSocket = () => {
     return chatSocket;
   }
 
-  const baseUrl = resolveChatBaseUrl();
+  const socketUrl = getWebSocketUrl("chat");
   const sessionToken = getCookieValue("session_token");
   if (process.env.NODE_ENV !== "production") {
     console.debug("[chat] create socket", {
-      baseUrl,
+      socketUrl,
       hasSessionToken: !!sessionToken,
     });
   }
-  chatSocket = io(`${baseUrl}/chat`, {
+  chatSocket = io(socketUrl, {
     withCredentials: true,
     autoConnect: true,
     auth: sessionToken ? { session_token: sessionToken } : undefined,

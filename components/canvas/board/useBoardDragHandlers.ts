@@ -22,17 +22,17 @@ interface UseBoardDragHandlersResult {
 
 export function useBoardDragHandlers({ projectId }: UseBoardDragHandlersParams): UseBoardDragHandlersResult {
     const queryClient = useQueryClient();
-    const { clearPendingColumnUpdates, handleColumnDrop } = useColumnReorder({ projectId });
-    const { clearPendingIssueUpdates, handleTaskDrop } = useIssueMove({ projectId });
+    const { flushPendingColumnUpdates, handleColumnDrop } = useColumnReorder({ projectId });
+    const { flushPendingIssueUpdates, handleTaskDrop } = useIssueMove({ projectId });
 
     const onDragStart: DragStartHandler = useCallback(() => {
-        clearPendingColumnUpdates();
-        clearPendingIssueUpdates();
+        flushPendingColumnUpdates();
+        flushPendingIssueUpdates();
 
         // Cancel in-flight requests so stale responses cannot overwrite optimistic cache updates.
         queryClient.cancelQueries({ queryKey: ['issues', projectId] });
         queryClient.cancelQueries({ queryKey: ['columns', projectId] });
-    }, [clearPendingColumnUpdates, clearPendingIssueUpdates, projectId, queryClient]);
+    }, [flushPendingColumnUpdates, flushPendingIssueUpdates, projectId, queryClient]);
 
     const onDragEnd: DragEndHandler = useCallback(
         (event) => {

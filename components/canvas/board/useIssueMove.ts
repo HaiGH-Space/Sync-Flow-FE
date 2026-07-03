@@ -1,7 +1,7 @@
 'use client'
 
 import type { ComponentProps } from 'react';
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useEffect } from 'react';
 import { DragDropProvider } from '@dnd-kit/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -17,13 +17,24 @@ interface UseIssueMoveParams {
 }
 
 interface UseIssueMoveResult {
-    clearPendingIssueUpdates: () => void;
+    flushPendingIssueUpdates: () => void;
     handleTaskDrop: (event: DragEndEvent) => boolean;
 }
 
 export function useIssueMove({ projectId }: UseIssueMoveParams): UseIssueMoveResult {
     const queryClient = useQueryClient();
     const issueDebounceMap = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+    const issuePendingUpdates = useRef<Map<string, () => void>>(new Map());
+
+    const flushPendingIssueUpdates = useCallback(() => {
+        issuePendingUpdates.current.forEach((runUpdate) => runUpdate());
+    }, []);
+
+    useEffect(() => {
+        return () => {
+            flushPendingIssueUpdates();
+        };
+    }, [flushPendingIssueUpdates]);
 
     const { mutate: updateIssue } = useMutation({
         mutationFn: ({ issueId, columnId }: { issueId: string; columnId: string; originalColumnId: string }) =>
@@ -53,10 +64,6 @@ export function useIssueMove({ projectId }: UseIssueMoveParams): UseIssueMoveRes
         },
     });
 
-    const clearPendingIssueUpdates = useCallback(() => {
-        issueDebounceMap.current.forEach((timer) => clearTimeout(timer));
-        issueDebounceMap.current.clear();
-    }, []);
 
     const handleTaskDrop = useCallback(
         (event: DragEndEvent): boolean => {
@@ -73,6 +80,8 @@ export function useIssueMove({ projectId }: UseIssueMoveParams): UseIssueMoveRes
             const targetColumnId = targetType === 'column' ? target.id : target.data?.columnId;
             if (!targetColumnId) return true;
 
+            flushPendingIssueUpdates();
+
             const currentIssues = queryClient.getQueryData<ApiResponse<Issue[]>>(['issues', projectId]);
             if (!currentIssues) return true;
 
@@ -88,24 +97,36 @@ export function useIssueMove({ projectId }: UseIssueMoveParams): UseIssueMoveRes
             });
 
             const existing = issueDebounceMap.current.get(issueId);
-            if (existing) clearTimeout(existing);
+            if (existing) {
+                clearTimeout(existing);
+                issueDebounceMap.current.delete(issueId);
+                issuePendingUpdates.current.delete(issueId);
+            }
 
+            const runUpdate = () => {
+                issuePendingUpdates.current.delete(issueId);
+                const timer = issueDebounceMap.current.get(issueId);
+                if (timer) {
+                    clearTimeout(timer);
+                    issueDebounceMap.current.delete(issueId);
+                }
+                updateIssue({
+                    issueId,
+                    columnId: targetColumnId as string,
+                    originalColumnId,
+                });
+            };
+
+            issuePendingUpdates.current.set(issueId, runUpdate);
             issueDebounceMap.current.set(
                 issueId,
-                setTimeout(() => {
-                    issueDebounceMap.current.delete(issueId);
-                    updateIssue({
-                        issueId,
-                        columnId: targetColumnId as string,
-                        originalColumnId,
-                    });
-                }, 300),
+                setTimeout(runUpdate, 300),
             );
 
             return true;
         },
-        [projectId, queryClient, updateIssue],
+        [projectId, queryClient, updateIssue, flushPendingIssueUpdates],
     );
 
-    return { clearPendingIssueUpdates, handleTaskDrop };
+    return { flushPendingIssueUpdates, handleTaskDrop };
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import type { ComponentProps } from "react";
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useEffect } from "react";
 import { DragDropProvider } from "@dnd-kit/react";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -24,7 +24,7 @@ interface UseColumnReorderParams {
 }
 
 interface UseColumnReorderResult {
-  clearPendingColumnUpdates: () => void;
+  flushPendingColumnUpdates: () => void;
   handleColumnDrop: (event: DragEndEvent) => boolean;
 }
 
@@ -36,11 +36,19 @@ export function useColumnReorder({
   const updateColumnMutation = useUpdateColumnOrderMutation(projectId);
   const rebalanceColumnsMutation = useRebalanceColumnsMutation(projectId);
 
-  const clearPendingColumnUpdates = useCallback(() => {
-    if (!columnDebounceRef.current) return;
-    clearTimeout(columnDebounceRef.current);
-    columnDebounceRef.current = null;
+  const pendingUpdateRef = useRef<(() => void) | null>(null);
+
+  const flushPendingColumnUpdates = useCallback(() => {
+    if (pendingUpdateRef.current) {
+      pendingUpdateRef.current();
+    }
   }, []);
+
+  useEffect(() => {
+    return () => {
+      flushPendingColumnUpdates();
+    };
+  }, [flushPendingColumnUpdates]);
 
   const handleColumnDrop = useCallback(
     (event: DragEndEvent): boolean => {
@@ -53,6 +61,8 @@ export function useColumnReorder({
       const sourceType = source.data?.type || "task";
       const targetType = target.data?.type || "column";
       if (!(sourceType === "column" && targetType === "column")) return false;
+
+      flushPendingColumnUpdates();
 
       const currentCols = queryClient.getQueryData<ApiResponse<Column[]>>(
         columnKeys.list(projectId),
@@ -98,8 +108,13 @@ export function useColumnReorder({
         },
       );
 
-      if (columnDebounceRef.current) clearTimeout(columnDebounceRef.current);
-      columnDebounceRef.current = setTimeout(() => {
+      const runUpdate = () => {
+        pendingUpdateRef.current = null;
+        if (columnDebounceRef.current) {
+          clearTimeout(columnDebounceRef.current);
+          columnDebounceRef.current = null;
+        }
+
         if (requiresRebalance) {
           const oldOrderMap = new Map(
             currentCols.data.map((col) => [col.id, col.order]),
@@ -125,12 +140,15 @@ export function useColumnReorder({
           order: newOrder,
           originalOrder,
         });
-      }, 300);
+      };
+
+      pendingUpdateRef.current = runUpdate;
+      columnDebounceRef.current = setTimeout(runUpdate, 300);
 
       return true;
     },
-    [projectId, queryClient, rebalanceColumnsMutation, updateColumnMutation],
+    [projectId, queryClient, rebalanceColumnsMutation, updateColumnMutation, flushPendingColumnUpdates],
   );
 
-  return { clearPendingColumnUpdates, handleColumnDrop };
+  return { flushPendingColumnUpdates, handleColumnDrop };
 }

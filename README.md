@@ -5,7 +5,7 @@
 _Sync anything, anywhere, with anyone._
 
 [![Build Status](https://img.shields.io/github/actions/workflow/status/HaiGH-Space/Sync-Flow/react-doctor.yml?branch=master&style=flat-square&label=React%20Doctor)](https://github.com/HaiGH-Space/Sync-Flow/actions)
-[![Next.js](https://img.shields.io/badge/Next.js-16.1.6-black?style=flat-square)](https://nextjs.org)
+[![Next.js](https://img.shields.io/badge/Next.js-16.2.9-black?style=flat-square)](https://nextjs.org)
 [![React](https://img.shields.io/badge/React-19.2.3-blue?style=flat-square)](https://react.dev)
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-v4-38bdf8?style=flat-square)](https://tailwindcss.com)
 
@@ -27,7 +27,7 @@ Sync Flow is a premium, real-time collaboration workspace designed for issue tra
 
 ## Tech Stack
 
-- **Framework**: Next.js `16.1.6` (App Router)
+- **Framework**: Next.js `16.2.9` (App Router)
 - **UI Library**: React `19.2.3`
 - **State Management**: React Query `^5.90.20` (Server state) & Zustand `^5.0.11` (Persisted Client UI state)
 - **Styling**: Tailwind CSS `v4` & Framer Motion `^12.40.0`
@@ -96,8 +96,8 @@ components/               # UI components split by feature area
   ├── shared/             # Reusable UI widgets and layout animations
   └── ui/                 # Atomic design system tokens and Radix/shadcn primitives
 hooks/                    # App-wide hooks and TanStack mutation hooks
-i18n/                     # Bilingual translation bundles (en/vi) and routing configuration
-lib/                      # API transport layer, Zustand state stores, and reordering helpers
+i18n/                     # Modular translation bundles (en/vi) and routing configuration
+lib/                      # API config/transport, Zustand state stores, and reordering helpers
 queries/                  # TanStack Query keys and options factories
 types/                    # Global TypeScript interfaces
 ```
@@ -113,15 +113,16 @@ types/                    # Global TypeScript interfaces
        ▼ (Bootstraps layout contexts & providers)
   [app/[locale]/layout.tsx]
        │
-       ├─► [queries/*] ───────► (React Query data fetching) ─► [/api-proxy Rewrite] ─► [Backend API]
-       ├─► [hooks/mutations] ─► (Optimistic UI patches) ──────► [/api-proxy Rewrite] ─► [Backend API]
-       └─► [lib/api/chat] ────► (Real-time WebSockets) ──────────────────────────────► [Backend WebSockets]
+       ├─► [queries/*] ───────► (React Query data fetching) ─► [lib/api/api-config.ts] ─► [/api-proxy Rewrite] ─► [Backend API]
+       ├─► [hooks/mutations] ─► (Optimistic UI patches) ──────► [lib/api/api-config.ts] ─► [/api-proxy Rewrite] ─► [Backend API]
+       └─► [lib/api/chat] ────► (Real-time WebSockets) ───────► [lib/api/api-config.ts] ──────────────────────► [Backend WebSockets]
 ```
 
 - **Authentication**: Gated at the middleware layer (`proxy.ts`) which validates the `session_token` cookie and enforces locale redirections.
 - **WebSocket Auth**: Sockets connect to `/chat` and `/notifications` using `withCredentials: true` and the client's `session_token` cookie.
-- **State Flow**: The board reordering logic runs optimistically using midpoint insertion calculations (`lib/ordering.ts`) and is persisted asynchronously to prevent interface lag.
+- **State Flow & Drag-and-Drop**: The board reordering logic runs optimistically using midpoint insertion calculations (`lib/ordering.ts`). Fast mutations are managed through a "flush-and-sequence" queue hook pattern (`useColumnReorder` and `useIssueMove`) to avoid race conditions and out-of-order execution.
 - **Presenter/Hook Pattern**: Complex components (such as `NavigationSidebar` and `IssueDetailDialog`) are split into subfolders. Logic and API state are isolated in custom hooks (`useNavigationSidebar`, `useIssueDetail`), keeping view components focused solely on rendering.
+- **Centralized API Gating**: `lib/api/api-config.ts` handles target URL resolution based on execution context: using `/api-proxy` on the client and directly hitting the backend URL on the server.
 
 ## Codebase Documentation
 

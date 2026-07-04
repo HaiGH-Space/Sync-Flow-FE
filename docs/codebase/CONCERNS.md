@@ -20,15 +20,13 @@ No active security concerns.
 
 ### 4) Performance and Scaling Concerns
 
-| Concern                                                         | Evidence                                                                                            | Current symptom                                       | Scaling risk                                                      | Suggested improvement                                                               |
-| --------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| High-churn dashboard and translation files                      | `i18n/en/dashboard.ts`, `i18n/vi/dashboard.ts`, `components/dashboard/layout/NavigationSidebar.tsx` | Frequent edits suggest hidden complexity              | Small changes can have wide UI impact                             | Treat these files as high-risk and change them with narrow diffs                    |
+No active performance and scaling concerns.
 
 ### 5) Fragile/High-Churn Areas
 
 | Area                                                                  | Why fragile                                                            | Churn signal                     | Safe change strategy                                                       |
 | --------------------------------------------------------------------- | ---------------------------------------------------------------------- | -------------------------------- | -------------------------------------------------------------------------- |
-| `i18n/en/dashboard.ts` and `i18n/vi/dashboard.ts`                     | Large translation surface for the dashboard shell                      | 21 recent changes each           | Update copy together and verify both locales                               |
+| `i18n/[locale]/dashboard/*` (modular features)                      | Translation files split by area but aggregated in `index.ts`. Missing keys in one locale can cause translation fallbacks | Churn in individual module files | Update both English and Vietnamese counterpart files when changing translation keys |
 | `components/dashboard/layout/NavigationSidebar.tsx` and subcomponents | Manages layout composition, delegating state to `useNavigationSidebar` | 17 recent changes                | Keep rendering logic simple and delegate state changes via the custom hook |
 | `components/canvas/board/BoardCanvas.tsx` and board helpers           | Handles loading, error, and drag/drop interactions                     | 14 recent changes on board files | Keep reorder behavior centralized in helper hooks                          |
 | `components/dashboard/layout/DashboardContentLayout.tsx`              | Owns tabs, sprint selection, and chat-panel toggling                   | 10 recent changes                | Preserve existing state flow and invalidate only the relevant query keys   |
@@ -46,5 +44,5 @@ No active security concerns.
 - `lib/ordering.ts`
 - `components/dashboard/layout/NavigationSidebar.tsx`
 - `components/dashboard/comp/IssueDetailDialog.tsx`
-- `i18n/en/dashboard.ts`
-- `i18n/vi/dashboard.ts`
+- `i18n/en/dashboard/index.ts`
+- `i18n/vi/dashboard/index.ts`

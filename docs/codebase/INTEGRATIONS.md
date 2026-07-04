@@ -21,7 +21,7 @@
 
 ### 3) Secrets and Credentials Handling
 
-- Credential sources: `NEXT_PUBLIC_API_URL` is read from the environment; `VERCEL_URL` is used when present on the server; `session_token` is read from cookies
+- Credential sources: `NEXT_PUBLIC_API_URL` is read from the environment and resolved centrally by `lib/api/api-config.ts`; `VERCEL_URL` is used when present on the server; `session_token` is read from cookies
 - Hardcoding checks: no secret values were found in the scanned source; `.env.example` is provided in the workspace root
 - Rotation or lifecycle notes: Session cookies are managed and rotated by the backend; the frontend reads the session token for WebSocket authentication and route protection but does not handle rotation directly
 
@@ -40,6 +40,7 @@
 
 ### 6) Evidence
 
+- `lib/api/api-config.ts`
 - `lib/api/api.ts`
 - `lib/api/chat.ts`
 - `lib/api/workspace.ts`

@@ -40,12 +40,12 @@ request -> proxy.ts locale/auth gate -> app/[locale]/layout.tsx providers -> rou
 | Service object wrapper             | `lib/api/*.ts`                                   | Normalizes HTTP access behind small per-resource modules |
 | Zustand persisted store            | `lib/store/use-dashboard.ts`                     | Preserves dashboard UI state across navigations          |
 | Optimistic mutation + invalidation | `hooks/mutations/*`, `components/canvas/board/*` | Keeps drag-and-drop and CRUD flows responsive            |
-| Locale message bundles             | `i18n/en/*`, `i18n/vi/*`                         | Supports bilingual UI copy through `next-intl`           |
+| Locale message bundles             | `i18n/en/*`, `i18n/vi/*` (with modular feature sub-modules) | Supports bilingual UI copy through `next-intl`           |
 
 ### 5) Known Architectural Risks
 
-- Board ordering is implemented with optimistic updates, debounced writes, and sparse ordering helpers; this is the most fragile interaction path and can drift if server writes fail or arrive out of order
-- Backend URL handling is split between `next.config.ts` rewrites and `lib/api/api.ts` server-side base URL resolution, so changes to deployment hosts can break requests if both paths are not kept aligned
+- Board ordering uses optimistic updates with a "flush-and-sequence" mutation queue (implemented via `useColumnReorder` and `useIssueMove` hooks) to mitigate race conditions or out-of-order writes during rapid drag-and-drop actions.
+- Backend and WebSocket base URL resolution is centralized in `lib/api/api-config.ts` (resolving client-side relative `/api-proxy` paths vs server-side direct backend fetching). However, it must still remain aligned with Next.js rewrite rules configured in `next.config.ts`.
 - The repo does not include a documented backend contract or intent docs in the workspace; the backend API contract and codebase structure are documented in the backend repository at https://github.com/HaiGH-Space/Sync-Flow-BE (static PRD and ROADMAP documents do not exist in either repository)
 
 ### 6) Evidence
@@ -58,7 +58,9 @@ request -> proxy.ts locale/auth gate -> app/[locale]/layout.tsx providers -> rou
 - `components/canvas/board/useBoardDragHandlers.ts`
 - `components/canvas/board/useColumnReorder.ts`
 - `components/canvas/board/useIssueMove.ts`
+- `lib/api/api-config.ts`
 - `lib/api/api.ts`
 - `lib/store/use-dashboard.ts`
 - `queries/workspace.ts`
 - `hooks/mutations/column.ts`
+- `i18n/en/dashboard/index.ts`

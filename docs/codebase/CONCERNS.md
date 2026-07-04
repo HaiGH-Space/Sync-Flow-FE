@@ -20,9 +20,7 @@ No active security concerns.
 
 ### 4) Performance and Scaling Concerns
 
-| Concern                                                         | Evidence                                                                                            | Current symptom                                       | Scaling risk                                                      | Suggested improvement                                                               |
-| --------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| High-churn dashboard and translation files                      | `i18n/en/dashboard.ts`, `i18n/vi/dashboard.ts`, `components/dashboard/layout/NavigationSidebar.tsx` | Frequent edits suggest hidden complexity              | Small changes can have wide UI impact                             | Treat these files as high-risk and change them with narrow diffs                    |
+No active performance and scaling concerns.
 
 ### 5) Fragile/High-Churn Areas
 

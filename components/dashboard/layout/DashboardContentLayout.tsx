@@ -119,7 +119,7 @@ function HeaderSprintSelect() {
     (state) => state.setSelectedSprintId,
   );
 
-  const { data: sprintsResponse, isLoading } = useQuery(
+  const { data: sprintsResponse, isLoading, isSuccess } = useQuery(
     createSprintsQueryOptions(
       { projectId: projectId ?? "" },
       {
@@ -135,7 +135,7 @@ function HeaderSprintSelect() {
   const isDisabled = !projectId;
 
   useEffect(() => {
-    if (selectedSprintId === "all") {
+    if (!isSuccess || selectedSprintId === "all") {
       return;
     }
 
@@ -145,7 +145,7 @@ function HeaderSprintSelect() {
     if (!exists) {
       setSelectedSprintId(projectId ?? "", "all");
     }
-  }, [projectId, selectedSprintId, setSelectedSprintId, sprintOptions]);
+  }, [projectId, selectedSprintId, setSelectedSprintId, sprintOptions, isSuccess]);
 
   return (
     <div className="flex items-center gap-2">

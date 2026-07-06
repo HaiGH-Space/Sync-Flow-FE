@@ -1,4 +1,4 @@
-import { api } from "./api"
+import { api, ApiResponse, PaginatedData, PaginationQuery } from "./api"
 import { Column } from "./column";
 import { WORKSPACE_BASE_URL } from "./workspace";
 export const PROJECT_BASE_URL = '/projects';
@@ -38,8 +38,20 @@ interface DeleteProjectRequest {
     projectId: string
 }
 
-async function getProjectsByWorkspaceId({workspaceId}: {workspaceId: string}) {
-    return api.get<Project[]>(`${WORKSPACE_BASE_URL}/${workspaceId}${PROJECT_BASE_URL}`);
+async function getProjectsByWorkspaceId({
+  workspaceId,
+  page,
+  limit,
+}: {
+  workspaceId: string;
+} & PaginationQuery): Promise<ApiResponse<PaginatedData<Project>>> {
+  const searchParams = new URLSearchParams();
+  if (page) searchParams.append("page", String(page));
+  if (limit) searchParams.append("limit", String(limit));
+  const queryString = searchParams.toString();
+  return api.get<PaginatedData<Project>>(
+    `${WORKSPACE_BASE_URL}/${workspaceId}${PROJECT_BASE_URL}${queryString ? `?${queryString}` : ""}`,
+  );
 }
 
 async function createProject({workspaceId, project}: CreateProjectRequest) {

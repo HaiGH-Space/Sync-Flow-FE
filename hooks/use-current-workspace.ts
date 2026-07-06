@@ -6,10 +6,11 @@ export const useCurrentWorkspace = () => {
     const params = useParams<{ workspaceId?: string }>()
     const workspaceId = params.workspaceId
 
-    const { data: workspaceList, isPending, error } = useQuery(createMyWorkspacesQueryOptions())
-    const activeWorkspace = workspaceList?.data?.find(w => w.id === workspaceId)
+    const { data: workspaceResponse, isPending, error } = useQuery(createMyWorkspacesQueryOptions({ limit: 100 }))
+    const workspaceList = workspaceResponse?.data?.items
+    const activeWorkspace = workspaceList?.find(w => w.id === workspaceId)
     return {
-        workspaceList: workspaceList?.data,
+        workspaceList,
         activeWorkspace,
         workspaceId,
         isPending,

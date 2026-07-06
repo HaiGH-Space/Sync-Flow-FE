@@ -52,15 +52,15 @@ export function useTimelineCanvasModel(projectId: string): ViewModel {
     month: "short",
   });
 
-  const sprintsQuery = useQuery(createSprintsQueryOptions({ projectId }));
-  const issuesQuery = useQuery(createIssuesQueryOptions({ projectId }));
+  const sprintsQuery = useQuery(createSprintsQueryOptions({ projectId, limit: 100 }));
+  const issuesQuery = useQuery(createIssuesQueryOptions({ projectId, limit: 100 }));
 
   const sprints = useMemo(
-    () => sprintsQuery.data?.data ?? [],
+    () => sprintsQuery.data?.data?.items ?? [],
     [sprintsQuery.data?.data],
   );
   const issues = useMemo(
-    () => issuesQuery.data?.data ?? [],
+    () => issuesQuery.data?.data?.items ?? [],
     [issuesQuery.data?.data],
   );
 

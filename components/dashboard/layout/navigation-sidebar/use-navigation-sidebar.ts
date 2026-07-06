@@ -83,7 +83,7 @@ export function useNavigationSidebar(workspaceDetail?: Workspace) {
     isFetching,
   } = useQuery(
     createProjectsQueryOptions(
-      { workspaceId: workspaceDetail?.id ?? "" },
+      { workspaceId: workspaceDetail?.id ?? "", limit: 100 },
       {
         enabled: canLoadProjects,
       },
@@ -101,7 +101,7 @@ export function useNavigationSidebar(workspaceDetail?: Workspace) {
     isFetching: isSprintsFetching,
   } = useQuery(
     createSprintsQueryOptions(
-      { projectId: expandedProjectId ?? "" },
+      { projectId: expandedProjectId ?? "", limit: 100 },
       {
         enabled: !!expandedProjectId && isOpenSidebarLeft,
       },
@@ -122,7 +122,7 @@ export function useNavigationSidebar(workspaceDetail?: Workspace) {
   );
 
   const filteredProjects = useMemo(() => {
-    const projectList = projectsResponse?.data ?? [];
+    const projectList = projectsResponse?.data?.items ?? [];
     const normalizedQuery = searchQuery.trim().toLowerCase();
 
     if (!normalizedQuery) {

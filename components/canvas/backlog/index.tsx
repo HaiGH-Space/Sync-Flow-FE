@@ -34,7 +34,7 @@ export default function BacklogCanvas({ projectId }: BacklogCanvasProps) {
     isLoading: isLoadingIssues,
     refetch: refetchIssues,
     isRefetching: isRefetchingIssues,
-  } = useQuery(createIssuesQueryOptions({ projectId }));
+  } = useQuery(createIssuesQueryOptions({ projectId, limit: 100 }));
 
   const {
     data: columnsResponse,
@@ -84,7 +84,7 @@ export default function BacklogCanvas({ projectId }: BacklogCanvasProps) {
   const unassignedLabel = tDashboard("issue.assignee.unassigned");
 
   const backlogRows = useMemo<IssueRow[]>(() => {
-    const issues = issuesResponse?.data ?? [];
+    const issues = issuesResponse?.data?.items ?? [];
     const filteredBySprint =
       selectedSprintId === "all"
         ? issues

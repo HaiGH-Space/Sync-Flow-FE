@@ -5,9 +5,10 @@ import { useCallback, useRef, useEffect } from 'react';
 import { DragDropProvider } from '@dnd-kit/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import type { ApiResponse } from '@/lib/api/api';
+import type { ApiResponse, PaginatedData } from '@/lib/api/api';
 import { issueService } from '@/lib/api/issue';
 import type { Issue } from '@/lib/api/issue';
+import { issueKeys } from '@/queries/issue';
 
 type DragEndHandler = NonNullable<ComponentProps<typeof DragDropProvider>['onDragEnd']>;
 type DragEndEvent = Parameters<DragEndHandler>[0];
@@ -40,25 +41,31 @@ export function useIssueMove({ projectId }: UseIssueMoveParams): UseIssueMoveRes
         mutationFn: ({ issueId, columnId }: { issueId: string; columnId: string; originalColumnId: string }) =>
             issueService.updateIssue({ projectId, issueId, issueData: { columnId } }),
         onMutate: async () => {
-            await queryClient.cancelQueries({ queryKey: ['issues', projectId] });
+            await queryClient.cancelQueries({ queryKey: issueKeys.list(projectId) });
         },
         onSuccess: (updatedIssue) => {
-            queryClient.setQueryData<ApiResponse<Issue[]>>(['issues', projectId], (old) => {
-                if (!old) return old;
+            queryClient.setQueryData<ApiResponse<PaginatedData<Issue>>>(issueKeys.list(projectId, { limit: 100 }), (old) => {
+                if (!old?.data) return old;
                 return {
                     ...old,
-                    data: old.data.map((issue) => (issue.id === updatedIssue.data.id ? updatedIssue.data : issue)),
+                    data: {
+                        ...old.data,
+                        items: old.data.items.map((issue) => (issue.id === updatedIssue.data.id ? updatedIssue.data : issue)),
+                    }
                 };
             });
         },
         onError: (_err, vars) => {
-            queryClient.setQueryData<ApiResponse<Issue[]>>(['issues', projectId], (old) => {
-                if (!old) return old;
+            queryClient.setQueryData<ApiResponse<PaginatedData<Issue>>>(issueKeys.list(projectId, { limit: 100 }), (old) => {
+                if (!old?.data) return old;
                 return {
                     ...old,
-                    data: old.data.map((issue) =>
-                        issue.id === vars.issueId ? { ...issue, columnId: vars.originalColumnId } : issue,
-                    ),
+                    data: {
+                        ...old.data,
+                        items: old.data.items.map((issue) =>
+                            issue.id === vars.issueId ? { ...issue, columnId: vars.originalColumnId } : issue,
+                        ),
+                    }
                 };
             });
         },
@@ -82,18 +89,21 @@ export function useIssueMove({ projectId }: UseIssueMoveParams): UseIssueMoveRes
 
             flushPendingIssueUpdates();
 
-            const currentIssues = queryClient.getQueryData<ApiResponse<Issue[]>>(['issues', projectId]);
-            if (!currentIssues) return true;
+            const currentIssues = queryClient.getQueryData<ApiResponse<PaginatedData<Issue>>>(issueKeys.list(projectId, { limit: 100 }));
+            if (!currentIssues?.data?.items) return true;
 
             const issueId = source.id as string;
-            const originalColumnId = currentIssues.data.find((issue) => issue.id === issueId)?.columnId ?? '';
+            const originalColumnId = currentIssues.data.items.find((issue) => issue.id === issueId)?.columnId ?? '';
 
             // Optimistically move the card before persisting.
-            queryClient.setQueryData<ApiResponse<Issue[]>>(['issues', projectId], {
+            queryClient.setQueryData<ApiResponse<PaginatedData<Issue>>>(issueKeys.list(projectId, { limit: 100 }), {
                 ...currentIssues,
-                data: currentIssues.data.map((issue) =>
-                    issue.id === issueId ? { ...issue, columnId: targetColumnId as string } : issue,
-                ),
+                data: {
+                    ...currentIssues.data,
+                    items: currentIssues.data.items.map((issue) =>
+                        issue.id === issueId ? { ...issue, columnId: targetColumnId as string } : issue,
+                    ),
+                }
             });
 
             const existing = issueDebounceMap.current.get(issueId);

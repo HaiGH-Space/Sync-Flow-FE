@@ -16,6 +16,12 @@ const backlog = {
     status: "Status",
     updatedAt: "Updated",
   },
+  pagination: {
+    previous: "Previous",
+    next: "Next",
+    showing: "Showing {start} to {end} of {total} {countLabel}",
+    rowsPerPage: "Rows per page:",
+  },
 } as const;
 
 export default backlog;

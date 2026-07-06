@@ -382,6 +382,12 @@ NEXT_PUBLIC_API_URL=http://localhost:8000
 None found.
 
 === GIT RECENT COMMITS (last 20) ===
+ff04f79 feat: render pagination footer in backlog table with next-intl integration
+0b8ff8d feat: setup paginated query and render-phase sprint reset in BacklogCanvas
+64c1aac i18n: add translation keys for backlog pagination
+6b46714 feat: implement core canvas architecture including timeline, kanban, and backlog modules with supporting API integration and state management
+1892b9e Merge pull request #10 from HaiGH-Space/perf/high-churn-dashboard-files
+fb127dc docs: add comprehensive codebase architecture documentation and upgrade Next.js to 16.2.9
 cb5f167 perf: modularize dashboard translation files to reduce churn
 716e02d Merge pull request #9 from HaiGH-Space/perf/board-reoder-race-condition
 9f2d5b4 feat: implement optimistic dnd hooks for board column reordering and issue column migration
@@ -396,41 +402,35 @@ e7c0e15 Merge pull request #6 from HaiGH-Space/feat/update-docs
 4ff5ed6 Merge pull request #5 from HaiGH-Space/feat/update-docs
 4ca8be8 docs: add codebase documentation and update README with structure overview and audit commands
 8ff07d7 Merge pull request #4 from HaiGH-Space/opt/refactor-dashboard-ui
-89c60ef Merge branch 'master' into opt/refactor-dashboard-ui
-d99d43c refactor: extract hooks and subcomponents for dashboard sidebar and issue detail dialog
-1ef6df8 Merge pull request #3 from HaiGH-Space/feat/remake-left-panel-ui
-8f7ec71 Add MIT License to the project
-8355a47 feat: add NavigationSidebarItem component for sidebar navigation links
-6b408c7 style: set navigation sidebar item height to h-9 for improved spacing
 
 === HIGH-CHURN FILES (last 90 days, top 20) ===
-  11 components/dashboard/layout/NavigationSidebar.tsx
+  12 components/dashboard/layout/NavigationSidebar.tsx
   11 components/dashboard/chat/Composer.tsx
-  10 i18n/en/dashboard.ts
-  10 i18n/vi/dashboard.ts
-  10 package.json
-   9 docs/codebase/CONCERNS.md
+  10 docs/codebase/CONCERNS.md
+   9 package.json
    9 components/dashboard/layout/navigation-sidebar/NavigationSidebarSprintList.tsx
    9 components/auth/SuccessState.tsx
-   8 pnpm-lock.yaml
-   8 components/dashboard/comp/IssueDetailDialog.tsx
    8 components/dashboard/layout/DashboardContentLayout.tsx
+   8 i18n/en/dashboard.ts
+   8 i18n/vi/dashboard.ts
+   8 components/dashboard/comp/IssueDetailDialog.tsx
    8 components/auth/AuthCard.tsx
    8 .github/workflows/react-doctor.yml
+   7 pnpm-lock.yaml
    7 components/dashboard/layout/navigation-sidebar/NavigationSidebarChannelList.tsx
    7 components/dashboard/layout/navigation-sidebar/NavigationSidebarFooter.tsx
    7 components/dashboard/layout/ChatRightPanel.tsx
+   5 components/canvas/planning/index.tsx
+   5 README.md
    5 components/canvas/planning/PlanningIssueCard.tsx
    5 components/canvas/planning/PlanningIssuesColumn.tsx
-   5 components/canvas/board/KanbanCard.tsx
-   5 components/dashboard/layout/WorkspaceRail.tsx
 
 === MONOREPO SIGNALS ===
 Monorepo tool detected: pnpm-workspace.yaml
 
 === CODE METRICS ===
 Total files scanned: 236
-Total lines of code: 15546
+Total lines of code: 15743
 
 Files by language:
   TypeScript: 102

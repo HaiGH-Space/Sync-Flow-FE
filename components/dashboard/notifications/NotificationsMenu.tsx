@@ -29,6 +29,10 @@ import {
   createNotificationsInfiniteOptions,
 } from "@/queries/notification";
 
+const isWorkspaceInvite = (notification: Notification) =>
+  notification.type === "WORKSPACE_INVITE" &&
+  !!notification.workspaceInvite?.token;
+
 export default function NotificationsMenu() {
   const t = useTranslations("dashboard");
   const locale = useLocale();
@@ -81,10 +85,6 @@ export default function NotificationsMenu() {
       },
     );
   };
-
-  const isWorkspaceInvite = (notification: Notification) =>
-    notification.type === "WORKSPACE_INVITE" &&
-    !!notification.workspaceInvite?.token;
 
   return (
     <DropdownMenu>
@@ -139,8 +139,16 @@ export default function NotificationsMenu() {
               {notifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className="flex gap-3 p-3 transition hover:bg-muted/50"
+                  className="flex gap-3 p-3 transition hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none"
+                  role="button"
+                  tabIndex={0}
                   onClick={() => handleMarkRead(notification)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      handleMarkRead(notification);
+                    }
+                  }}
                 >
                   <span
                     className={`mt-2 h-2 w-2 rounded-full ${

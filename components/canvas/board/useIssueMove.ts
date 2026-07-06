@@ -24,11 +24,23 @@ interface UseIssueMoveResult {
 
 export function useIssueMove({ projectId }: UseIssueMoveParams): UseIssueMoveResult {
     const queryClient = useQueryClient();
-    const issueDebounceMap = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
-    const issuePendingUpdates = useRef<Map<string, () => void>>(new Map());
+    const issueDebounceMap = useRef<Map<string, ReturnType<typeof setTimeout>> | null>(null);
+    const getDebounceMap = () => {
+        if (!issueDebounceMap.current) {
+            issueDebounceMap.current = new Map();
+        }
+        return issueDebounceMap.current;
+    };
+    const issuePendingUpdates = useRef<Map<string, () => void> | null>(null);
+    const getPendingUpdates = () => {
+        if (!issuePendingUpdates.current) {
+            issuePendingUpdates.current = new Map();
+        }
+        return issuePendingUpdates.current;
+    };
 
     const flushPendingIssueUpdates = useCallback(() => {
-        issuePendingUpdates.current.forEach((runUpdate) => runUpdate());
+        getPendingUpdates().forEach((runUpdate) => runUpdate());
     }, []);
 
     useEffect(() => {
@@ -106,19 +118,21 @@ export function useIssueMove({ projectId }: UseIssueMoveParams): UseIssueMoveRes
                 }
             });
 
-            const existing = issueDebounceMap.current.get(issueId);
+            const debounceMap = getDebounceMap();
+            const pendingUpdates = getPendingUpdates();
+            const existing = debounceMap.get(issueId);
             if (existing) {
                 clearTimeout(existing);
-                issueDebounceMap.current.delete(issueId);
-                issuePendingUpdates.current.delete(issueId);
+                debounceMap.delete(issueId);
+                pendingUpdates.delete(issueId);
             }
 
             const runUpdate = () => {
-                issuePendingUpdates.current.delete(issueId);
-                const timer = issueDebounceMap.current.get(issueId);
+                pendingUpdates.delete(issueId);
+                const timer = debounceMap.get(issueId);
                 if (timer) {
                     clearTimeout(timer);
-                    issueDebounceMap.current.delete(issueId);
+                    debounceMap.delete(issueId);
                 }
                 updateIssue({
                     issueId,
@@ -127,8 +141,8 @@ export function useIssueMove({ projectId }: UseIssueMoveParams): UseIssueMoveRes
                 });
             };
 
-            issuePendingUpdates.current.set(issueId, runUpdate);
-            issueDebounceMap.current.set(
+            pendingUpdates.set(issueId, runUpdate);
+            debounceMap.set(
                 issueId,
                 setTimeout(runUpdate, 300),
             );

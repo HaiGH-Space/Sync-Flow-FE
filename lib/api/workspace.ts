@@ -1,4 +1,4 @@
-import { api, ApiResponse } from "./api";
+import { api, ApiResponse, PaginatedData, PaginationQuery } from "./api";
 import { MemberWorkspace, RoleMember } from "./member-workspace";
 
 export const WORKSPACE_BASE_URL = "/workspaces";
@@ -28,8 +28,14 @@ type DeleteWorkspaceRequest = {
   workspaceId: string;
 };
 
-async function getMyWorkspace(): Promise<ApiResponse<Workspace[]>> {
-  return api.get<Workspace[]>(`${WORKSPACE_BASE_URL}/me`);
+async function getMyWorkspace(params?: PaginationQuery): Promise<ApiResponse<PaginatedData<Workspace>>> {
+  const searchParams = new URLSearchParams();
+  if (params?.page) searchParams.append("page", String(params.page));
+  if (params?.limit) searchParams.append("limit", String(params.limit));
+  const queryString = searchParams.toString();
+  return api.get<PaginatedData<Workspace>>(
+    `${WORKSPACE_BASE_URL}/me${queryString ? `?${queryString}` : ""}`,
+  );
 }
 
 async function getWorkspaceById(

@@ -52,16 +52,29 @@ export function useTimelineCanvasModel(projectId: string): ViewModel {
     month: "short",
   });
 
-  const sprintsQuery = useQuery(createSprintsQueryOptions({ projectId }));
-  const issuesQuery = useQuery(createIssuesQueryOptions({ projectId }));
+  const {
+    data: sprintsData,
+    isLoading: isSprintsLoading,
+    error: sprintsError,
+    isRefetching: isSprintsRefetching,
+    refetch: refetchSprints,
+  } = useQuery(createSprintsQueryOptions({ projectId, limit: 100 }));
+
+  const {
+    data: issuesData,
+    isLoading: isIssuesLoading,
+    error: issuesError,
+    isRefetching: isIssuesRefetching,
+    refetch: refetchIssues,
+  } = useQuery(createIssuesQueryOptions({ projectId, limit: 100 }));
 
   const sprints = useMemo(
-    () => sprintsQuery.data?.data ?? [],
-    [sprintsQuery.data?.data],
+    () => sprintsData?.data?.items ?? [],
+    [sprintsData?.data],
   );
   const issues = useMemo(
-    () => issuesQuery.data?.data ?? [],
-    [issuesQuery.data?.data],
+    () => issuesData?.data?.items ?? [],
+    [issuesData?.data],
   );
 
   const translate = useCallback(
@@ -77,12 +90,12 @@ export function useTimelineCanvasModel(projectId: string): ViewModel {
   );
 
   return {
-    isLoading: sprintsQuery.isLoading || issuesQuery.isLoading,
-    error: Boolean(sprintsQuery.error || issuesQuery.error),
-    isRetrying: sprintsQuery.isRefetching || issuesQuery.isRefetching,
+    isLoading: isSprintsLoading || isIssuesLoading,
+    error: Boolean(sprintsError || issuesError),
+    isRetrying: isSprintsRefetching || isIssuesRefetching,
     handleRetry: () => {
-      void sprintsQuery.refetch();
-      void issuesQuery.refetch();
+      void refetchSprints();
+      void refetchIssues();
     },
     errorState: {
       title: tDashboard("timeline.error"),

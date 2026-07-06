@@ -6,7 +6,7 @@ import { PlusIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCreateIssue } from "@/hooks/mutations/issue";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ApiResponse } from "@/lib/api/api";
+import { ApiResponse, PaginatedData } from "@/lib/api/api";
 import { issueKeys } from "@/queries/issue";
 import { toast } from "sonner";
 import IssueFormDialog, { IssueFormValues } from "./IssueFormDialog";
@@ -48,7 +48,7 @@ export default function CreateIssueModal({
   );
 
   const { data: sprintsResponse } = useQuery(
-    createSprintsQueryOptions({ projectId }, { enabled: !!projectId }),
+    createSprintsQueryOptions({ projectId, limit: 100 }, { enabled: !!projectId }),
   );
 
   const assigneeOptions = memberProfilesResponse?.data
@@ -61,8 +61,8 @@ export default function CreateIssueModal({
       }))
     : undefined;
 
-  const sprintOptions = sprintsResponse?.data
-    ? sprintsResponse.data.map((sprint) => ({
+  const sprintOptions = sprintsResponse?.data?.items
+    ? sprintsResponse.data.items.map((sprint) => ({
         value: sprint.id,
         label: sprint.name,
       }))
@@ -72,12 +72,12 @@ export default function CreateIssueModal({
     selectedSprintId !== "all" ? selectedSprintId : "NO_SPRINT";
 
   const handleSubmit = async (value: IssueFormValues) => {
-    const cachedIssues = queryClient.getQueryData<ApiResponse<Issue[]>>(
-      issueKeys.list(projectId),
+    const cachedIssues = queryClient.getQueryData<ApiResponse<PaginatedData<Issue>>>(
+      issueKeys.list(projectId, { limit: 100 }),
     );
     let newOrder = getTailOrder();
-    if (cachedIssues?.data) {
-      const columnIssues = cachedIssues.data
+    if (cachedIssues?.data?.items) {
+      const columnIssues = cachedIssues.data.items
         .filter((issue) => issue.columnId === columnId)
         .sort((a, b) => a.order - b.order);
 

@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import CreateIssueModal from "../../dashboard/comp/CreateIssueModal";
 import { Issue } from "@/lib/api/issue";
 import { useQuery } from "@tanstack/react-query";
-import type { ApiResponse } from "@/lib/api/api";
+import type { ApiResponse, PaginatedData } from "@/lib/api/api";
 import { createIssuesQueryOptions } from "@/queries/issue";
 import DropdownMenuUD from "@/components/shared/DropdownMenuUD";
 import { useDashboard } from "@/lib/store/use-dashboard";
@@ -35,8 +35,8 @@ function KanbanColumn(props: ColumnProps) {
   // lists actually changed will receive a new reference → React.memo blocks
   // re-renders for every other column.
   const selectColumnTasks = useCallback(
-    (data: ApiResponse<Issue[]>): TaskProps[] =>
-      data.data.filter((issue) => {
+    (data: ApiResponse<PaginatedData<Issue>>): TaskProps[] =>
+      (data.data?.items ?? []).filter((issue) => {
         const matchColumn = issue.columnId === props.columnId;
         const matchSprint =
           selectedSprintId === "all" || issue.sprintId === selectedSprintId;
@@ -47,7 +47,7 @@ function KanbanColumn(props: ColumnProps) {
 
   const { data: tasks = [] } = useQuery(
     createIssuesQueryOptions(
-      { projectId: props.projectId },
+      { projectId: props.projectId, limit: 100 },
       {
         select: selectColumnTasks,
       },

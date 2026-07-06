@@ -1,4 +1,4 @@
-import { api } from "./api";
+import { api, ApiResponse, PaginatedData, PaginationQuery } from "./api";
 import { PROJECT_BASE_URL } from "./project";
 
 export const ISSUE_BASE_URL = '/issues';
@@ -41,8 +41,20 @@ type UpdateIssue = Partial<CreateIssue> & {
     sprintId?: string | null
 }
 
-async function getIssuesByProjectId(projectId: string) {
-    return api.get<Issue[]>(`${PROJECT_BASE_URL}/${projectId}${ISSUE_BASE_URL}`);
+async function getIssuesByProjectId({
+  projectId,
+  page,
+  limit,
+}: {
+  projectId: string;
+} & PaginationQuery): Promise<ApiResponse<PaginatedData<Issue>>> {
+  const searchParams = new URLSearchParams();
+  if (page) searchParams.append("page", String(page));
+  if (limit) searchParams.append("limit", String(limit));
+  const queryString = searchParams.toString();
+  return api.get<PaginatedData<Issue>>(
+    `${PROJECT_BASE_URL}/${projectId}${ISSUE_BASE_URL}${queryString ? `?${queryString}` : ""}`,
+  );
 }
 
 async function getIssueById({ projectId, issueId }: { projectId: string; issueId: string }) {

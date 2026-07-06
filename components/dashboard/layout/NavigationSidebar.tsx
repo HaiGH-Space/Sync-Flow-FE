@@ -113,13 +113,13 @@ export const NavigationSidebar = memo(function NavigationSidebar({
                         isChannelsFetching,
                       }}
                       projectsError={error}
-                      projects={projectsResponse?.data ?? []}
+                      projects={projectsResponse?.data?.items ?? []}
                       filteredProjects={filteredProjects}
                       workspaceId={workspaceDetail?.id ?? ""}
                       expandedProjectId={expandedProjectId}
                       onExpandProjectAction={setExpandedProjectId}
                       onOpenProjectSettingsAction={setSettingsProject}
-                      sprints={sprintsResponse?.data}
+                      sprints={sprintsResponse?.data?.items}
                       sprintsError={sprintsError}
                       selectedSprintId={
                         selectedSprintIdByProject[expandedProjectId ?? ""] ??

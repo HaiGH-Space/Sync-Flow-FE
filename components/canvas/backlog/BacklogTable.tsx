@@ -5,7 +5,6 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
@@ -24,13 +23,35 @@ import { Priority } from '@/lib/api/issue'
 import type { IssueRow } from './types'
 import BacklogTableToolbar from './BacklogTableToolbar'
 import { createBacklogTableColumns } from './BacklogTableColumns'
+import { Button } from '@/components/ui/button'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 type BacklogTableProps = {
   rows: IssueRow[]
   onIssueSelect: (issueId: string) => void
+  page: number
+  limit: number
+  total: number
+  onPageChange: (page: number) => void
+  onLimitChange: (limit: number) => void
 }
 
-export default function BacklogTable({ rows, onIssueSelect }: BacklogTableProps) {
+export default function BacklogTable({
+  rows,
+  onIssueSelect,
+  page,
+  limit,
+  total,
+  onPageChange,
+  onLimitChange,
+}: BacklogTableProps) {
   const tDashboard = useTranslations('dashboard')
   const locale = useLocale()
   const [sorting, setSorting] = useState<SortingState>([
@@ -87,7 +108,6 @@ export default function BacklogTable({ rows, onIssueSelect }: BacklogTableProps)
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
   })
 
   const hasActiveFilters = priorityFilter !== 'all' || statusFilter !== 'all'
@@ -155,6 +175,67 @@ export default function BacklogTable({ rows, onIssueSelect }: BacklogTableProps)
             ))}
           </TableBody>
         </Table>
+      </div>
+
+      {/* Pagination Footer */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-1 py-1 mt-4">
+        <div className="text-sm text-muted-foreground">
+          {tDashboard('backlog.pagination.showing', {
+            start: String(total === 0 ? 0 : (page - 1) * limit + 1),
+            end: String(Math.min(page * limit, total)),
+            total: String(total),
+            countLabel: tDashboard('backlog.countLabel'),
+          })}
+        </div>
+
+        <div className="flex flex-wrap items-center gap-4 sm:gap-6">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground whitespace-nowrap">
+              {tDashboard('backlog.pagination.rowsPerPage')}
+            </span>
+            <Select
+              value={String(limit)}
+              onValueChange={(val) => onLimitChange(Number(val))}
+            >
+              <SelectTrigger className="h-8 w-16 text-xs">
+                <SelectValue placeholder={String(limit)} />
+              </SelectTrigger>
+              <SelectContent>
+                {[5, 10, 20, 50, 100].map((size) => (
+                  <SelectItem key={size} value={String(size)} className="text-xs">
+                    {size}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8 rounded-lg cursor-pointer"
+              onClick={() => onPageChange(page - 1)}
+              disabled={page <= 1}
+              aria-label={tDashboard('backlog.pagination.previous')}
+            >
+              <ChevronLeft className="size-4" />
+            </Button>
+            <span className="text-sm font-medium px-2 min-w-8 text-center">
+              {page}
+            </span>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8 rounded-lg cursor-pointer"
+              onClick={() => onPageChange(page + 1)}
+              disabled={page * limit >= total}
+              aria-label={tDashboard('backlog.pagination.next')}
+            >
+              <ChevronRight className="size-4" />
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   )

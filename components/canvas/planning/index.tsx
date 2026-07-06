@@ -6,11 +6,12 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
-import { createIssuesQueryOptions } from "@/queries/issue";
+import { createIssuesQueryOptions, issueKeys } from "@/queries/issue";
 import { createSprintsQueryOptions } from "@/queries/sprint";
 import { useDashboard } from "@/lib/store/use-dashboard";
 import { useUpdateIssue } from "@/hooks/mutations/issue";
 import type { Issue } from "@/lib/api/issue";
+import type { ApiResponse, PaginatedData } from "@/lib/api/api";
 import PlanningIssuesColumn from "./PlanningIssuesColumn";
 
 type PlanningCanvasProps = {
@@ -30,15 +31,15 @@ export default function PlanningCanvas({ projectId }: PlanningCanvasProps) {
     data: issuesResponse,
     isLoading,
     error,
-  } = useQuery(createIssuesQueryOptions({ projectId }));
+  } = useQuery(createIssuesQueryOptions({ projectId, limit: 100 }));
 
   const { data: sprintsResponse } = useQuery(
-    createSprintsQueryOptions({ projectId }, { enabled: !!projectId }),
+    createSprintsQueryOptions({ projectId, limit: 100 }, { enabled: !!projectId }),
   );
 
-  const issues = issuesResponse?.data ?? [];
+  const issues = issuesResponse?.data?.items ?? [];
   const selectedSprint =
-    sprintsResponse?.data?.find((sprint) => sprint.id === selectedSprintId) ??
+    sprintsResponse?.data?.items?.find((sprint) => sprint.id === selectedSprintId) ??
     null;
 
   const isSprintSelected = selectedSprintId !== "all" && !!selectedSprint;
@@ -59,16 +60,18 @@ export default function PlanningCanvas({ projectId }: PlanningCanvasProps) {
 
   const handleMoveIssue = (issueId: string, sprintId: string | null) => {
     setPendingIssueId(issueId);
-    const previousIssues = queryClient.getQueryData<{ data: Issue[] }>([
-      "issues",
-      projectId,
-    ]);
-    if (previousIssues) {
-      queryClient.setQueryData<{ data: Issue[] }>(["issues", projectId], {
+    const previousIssues = queryClient.getQueryData<ApiResponse<PaginatedData<Issue>>>(
+      issueKeys.list(projectId, { limit: 100 }),
+    );
+    if (previousIssues?.data?.items) {
+      queryClient.setQueryData<ApiResponse<PaginatedData<Issue>>>(issueKeys.list(projectId, { limit: 100 }), {
         ...previousIssues,
-        data: previousIssues.data.map((issue) =>
-          issue.id === issueId ? { ...issue, sprintId } : issue,
-        ),
+        data: {
+          ...previousIssues.data,
+          items: previousIssues.data.items.map((issue) =>
+            issue.id === issueId ? { ...issue, sprintId } : issue,
+          ),
+        }
       });
     }
     updateIssue(
@@ -79,7 +82,7 @@ export default function PlanningCanvas({ projectId }: PlanningCanvasProps) {
         },
         onError: () => {
           if (previousIssues) {
-            queryClient.setQueryData(["issues", projectId], previousIssues);
+            queryClient.setQueryData(issueKeys.list(projectId, { limit: 100 }), previousIssues);
           }
           toast.error(tDashboard("issue.toast.updateFailed"));
         },

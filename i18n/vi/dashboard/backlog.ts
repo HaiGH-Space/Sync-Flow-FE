@@ -16,6 +16,12 @@ const backlog = {
     status: "Trạng thái",
     updatedAt: "Cập nhật",
   },
+  pagination: {
+    previous: "Trước",
+    next: "Sau",
+    showing: "Hiển thị {start} - {end} trong số {total} {countLabel}",
+    rowsPerPage: "Số dòng mỗi trang:",
+  },
 } as const;
 
 export default backlog;

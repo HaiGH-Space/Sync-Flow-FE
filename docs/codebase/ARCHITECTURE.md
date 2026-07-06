@@ -6,7 +6,7 @@
 
 - Primary style: feature-oriented Next.js App Router with a thin route shell, query/mutation separation, and client-side dashboard state
 - Why this classification: route files own composition and redirects, `queries/` owns query keys/options, `hooks/mutations/` owns writes and invalidation, `lib/api/` owns service wrappers, and `lib/store/` owns persisted UI state
-- Primary constraints: locale-aware routing, backend access through `/api-proxy`, and optimistic drag-and-drop updates for board interactions
+- Primary constraints: locale-aware routing, backend access through `/api-proxy`, optimistic drag-and-drop updates for board interactions, and standardized offset-based server-side pagination for main resource listings
 
 ### 2) System Flow
 
@@ -41,11 +41,13 @@ request -> proxy.ts locale/auth gate -> app/[locale]/layout.tsx providers -> rou
 | Zustand persisted store            | `lib/store/use-dashboard.ts`                     | Preserves dashboard UI state across navigations          |
 | Optimistic mutation + invalidation | `hooks/mutations/*`, `components/canvas/board/*` | Keeps drag-and-drop and CRUD flows responsive            |
 | Locale message bundles             | `i18n/en/*`, `i18n/vi/*` (with modular feature sub-modules) | Supports bilingual UI copy through `next-intl`           |
+| Standardized API Pagination       | `queries/*`, `lib/api/api.ts`, `components/canvas/backlog/*` | Wraps API lists in a `PaginatedData` envelope (`items`, `total`, `page`, `limit`) to optimize data transfer and support server-side table pagination |
 
 ### 5) Known Architectural Risks
 
 - Board ordering uses optimistic updates with a "flush-and-sequence" mutation queue (implemented via `useColumnReorder` and `useIssueMove` hooks) to mitigate race conditions or out-of-order writes during rapid drag-and-drop actions.
 - Backend and WebSocket base URL resolution is centralized in `lib/api/api-config.ts` (resolving client-side relative `/api-proxy` paths vs server-side direct backend fetching). However, it must still remain aligned with Next.js rewrite rules configured in `next.config.ts`.
+- Bulk-fetching on navigation controls vs server-side pagination. While the backlog table uses active pagination controls with small page sizes (e.g. limit: 10), other components (sidebar lists, modals) perform bulk queries with `limit: 100`. If workspace, project, or sprint volume exceeds 100, navigation sidebars may not list all items without active UI pagination support.
 - The repo does not include a documented backend contract or intent docs in the workspace; the backend API contract and codebase structure are documented in the backend repository at https://github.com/HaiGH-Space/Sync-Flow-BE (static PRD and ROADMAP documents do not exist in either repository)
 
 ### 6) Evidence

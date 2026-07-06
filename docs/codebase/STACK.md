@@ -26,7 +26,7 @@
 | `@tanstack/react-table` | `^8.21.3`  | Tabular UI data rendering           | `package.json`, `components/canvas/backlog/*`                                        |
 | `@tanstack/react-form`  | `^1.28.0`  | Form state and validation           | `package.json`, `components/dashboard/comp/*`                                        |
 | `zod`                   | `^4.3.6`   | Schema validation                   | `package.json`, `components/dashboard/comp/*`                                        |
-| `motion`                | `^12.40.0` | Animations                          | `package.json`, `components/dashboard/layout/NavigationSidebar.tsx`                  |
+| `framer-motion`         | `^12.40.0` | Animations                          | `package.json`, `components/dashboard/layout/NavigationSidebar.tsx`                  |
 | `date-fns`              | `^4.1.0`   | Date formatting and manipulation    | `package.json`, `lib/format-date.ts`                                                 |
 
 ### 3) Development Toolchain
@@ -44,10 +44,12 @@
 ### 4) Key Commands
 
 ```bash
-pnpm dev
-pnpm build
-pnpm start
-pnpm lint
+pnpm dev      # Starts Next.js development server
+pnpm build    # Compiles production Next.js build
+pnpm start    # Starts compiled Next.js production server
+pnpm lint     # Runs ESLint static analysis
+pnpm doctor   # Runs React Doctor codebase diagnostics
+pnpm audit    # Runs production security vulnerability auditing
 ```
 
 ### 5) Environment and Config

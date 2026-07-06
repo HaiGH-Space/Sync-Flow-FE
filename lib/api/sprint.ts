@@ -1,4 +1,4 @@
-import { api } from "./api"
+import { api, ApiResponse, PaginatedData, PaginationQuery } from "./api"
 
 type SprintStatus = 'PLANNED' | 'ACTIVE' | 'COMPLETED'
 
@@ -32,8 +32,20 @@ interface CreateSprintRequest {
     sprint: CreateSprint
 }
 
-async function getSprint({ projectId }: { projectId: string }) {
-    return api.get<Sprint[]>(`projects/${projectId}/sprints`)
+async function getSprint({
+  projectId,
+  page,
+  limit,
+}: {
+  projectId: string;
+} & PaginationQuery): Promise<ApiResponse<PaginatedData<Sprint>>> {
+  const searchParams = new URLSearchParams();
+  if (page) searchParams.append("page", String(page));
+  if (limit) searchParams.append("limit", String(limit));
+  const queryString = searchParams.toString();
+  return api.get<PaginatedData<Sprint>>(
+    `projects/${projectId}/sprints${queryString ? `?${queryString}` : ""}`,
+  );
 }
 async function deleteSprint({ projectId, sprintId }: DeleteSprintRequest) {
     return api.delete(`projects/${projectId}/sprints/${sprintId}`)

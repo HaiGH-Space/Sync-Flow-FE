@@ -121,7 +121,7 @@ function HeaderSprintSelect() {
 
   const { data: sprintsResponse, isLoading } = useQuery(
     createSprintsQueryOptions(
-      { projectId: projectId ?? "" },
+      { projectId: projectId ?? "", limit: 100 },
       {
         enabled: !!projectId,
       },
@@ -129,7 +129,7 @@ function HeaderSprintSelect() {
   );
 
   const sprintOptions = useMemo(
-    () => sprintsResponse?.data ?? [],
+    () => sprintsResponse?.data?.items ?? [],
     [sprintsResponse?.data],
   );
   const isDisabled = !projectId;

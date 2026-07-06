@@ -8,6 +8,18 @@ export interface ApiResponse<T> extends BaseResponse {
   error?: never;
 }
 
+export interface PaginatedData<T> {
+  items: T[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+export interface PaginationQuery {
+  page?: number;
+  limit?: number;
+}
+
 export interface ApiError extends BaseResponse {
   error: string;
   data?: never;

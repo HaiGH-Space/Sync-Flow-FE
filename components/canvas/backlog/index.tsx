@@ -27,6 +27,14 @@ export default function BacklogCanvas({ projectId }: BacklogCanvasProps) {
     (state) => state.selectedSprintIdByProject[projectId] ?? "all",
   );
   const [selectedIssueId, setSelectedIssueId] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [prevSprintId, setPrevSprintId] = useState(selectedSprintId);
+
+  if (selectedSprintId !== prevSprintId) {
+    setPrevSprintId(selectedSprintId);
+    setPage(1);
+  }
 
   const {
     data: issuesResponse,
@@ -34,7 +42,7 @@ export default function BacklogCanvas({ projectId }: BacklogCanvasProps) {
     isLoading: isLoadingIssues,
     refetch: refetchIssues,
     isRefetching: isRefetchingIssues,
-  } = useQuery(createIssuesQueryOptions({ projectId }));
+  } = useQuery(createIssuesQueryOptions({ projectId, page, limit }));
 
   const {
     data: columnsResponse,
@@ -84,7 +92,7 @@ export default function BacklogCanvas({ projectId }: BacklogCanvasProps) {
   const unassignedLabel = tDashboard("issue.assignee.unassigned");
 
   const backlogRows = useMemo<IssueRow[]>(() => {
-    const issues = issuesResponse?.data ?? [];
+    const issues = issuesResponse?.data?.items ?? [];
     const filteredBySprint =
       selectedSprintId === "all"
         ? issues
@@ -133,13 +141,25 @@ export default function BacklogCanvas({ projectId }: BacklogCanvasProps) {
     );
   }
 
-  if (backlogRows.length === 0) {
+  const totalIssuesCount = issuesResponse?.data?.total ?? 0;
+  if (totalIssuesCount === 0) {
     return <BacklogEmpty />;
   }
 
   return (
     <>
-      <BacklogTable rows={backlogRows} onIssueSelect={handleIssueSelect} />
+      <BacklogTable
+        rows={backlogRows}
+        onIssueSelect={handleIssueSelect}
+        page={page}
+        limit={limit}
+        total={issuesResponse?.data?.total ?? 0}
+        onPageChange={setPage}
+        onLimitChange={(newLimit) => {
+          setLimit(newLimit);
+          setPage(1);
+        }}
+      />
 
       {selectedIssueId && (
         <IssueDetailDialog

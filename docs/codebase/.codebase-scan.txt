@@ -10,6 +10,12 @@
 .agents\skills\react-doctor\SKILL.md
 .agents\skills\redesign-existing-projects
 .agents\skills\redesign-existing-projects\SKILL.md
+.agents\skills\vercel-react-best-practices
+.agents\skills\vercel-react-best-practices\AGENTS.md
+.agents\skills\vercel-react-best-practices\metadata.json
+.agents\skills\vercel-react-best-practices\README.md
+.agents\skills\vercel-react-best-practices\rules
+.agents\skills\vercel-react-best-practices\SKILL.md
 .env
 .env.example
 .github
@@ -194,12 +200,6 @@ i18n\en\validation.ts
 i18n\navigation.ts
 i18n\request.ts
 i18n\routing.ts
-i18n\vi
-i18n\vi\auth.ts
-i18n\vi\common.ts
-i18n\vi\dashboard
-i18n\vi\dashboard\backlog.ts
-i18n\vi\dashboard\channel.ts
 
 === STACK DETECTION (manifest files) ===
 
@@ -382,10 +382,15 @@ NEXT_PUBLIC_API_URL=http://localhost:8000
 None found.
 
 === GIT RECENT COMMITS (last 20) ===
+6f1eaef Merge pull request #13 from HaiGH-Space/feat/dashboard-layout-resilience
+9684029 Merge pull request #12 from HaiGH-Space/feat/pagination-compatibility
+1184ce0 feat: add canvas issue movement logic, timeline model hook, and sprint creation modal components
+910cde4 feat: add Vercel React best practices agent skills and codebase documentation
 ff04f79 feat: render pagination footer in backlog table with next-intl integration
 0b8ff8d feat: setup paginated query and render-phase sprint reset in BacklogCanvas
 64c1aac i18n: add translation keys for backlog pagination
 6b46714 feat: implement core canvas architecture including timeline, kanban, and backlog modules with supporting API integration and state management
+e627227 feat: implement DashboardContentLayout component and add codebase concerns documentation
 1892b9e Merge pull request #10 from HaiGH-Space/perf/high-churn-dashboard-files
 fb127dc docs: add comprehensive codebase architecture documentation and upgrade Next.js to 16.2.9
 cb5f167 perf: modularize dashboard translation files to reduce churn
@@ -397,20 +402,15 @@ c95aa77 feat: resolve base URL technical debt by consolidating API and websocket
 2246076 Merge pull request #7 from HaiGH-Space/feat/resolve-security
 b3c39f3 chore: add workspace package root configuration to pnpm-workspace.yaml
 dc6d65c feat: implement security policy, automated CI vulnerability auditing, and codebase concern documentation
-e7c0e15 Merge pull request #6 from HaiGH-Space/feat/update-docs
-4d172d4 docs: add codebase documentation covering architectural overview and identified technical concerns
-4ff5ed6 Merge pull request #5 from HaiGH-Space/feat/update-docs
-4ca8be8 docs: add codebase documentation and update README with structure overview and audit commands
-8ff07d7 Merge pull request #4 from HaiGH-Space/opt/refactor-dashboard-ui
 
 === HIGH-CHURN FILES (last 90 days, top 20) ===
   12 components/dashboard/layout/NavigationSidebar.tsx
+  11 docs/codebase/CONCERNS.md
   11 components/dashboard/chat/Composer.tsx
-  10 docs/codebase/CONCERNS.md
+   9 components/dashboard/layout/DashboardContentLayout.tsx
    9 package.json
    9 components/dashboard/layout/navigation-sidebar/NavigationSidebarSprintList.tsx
    9 components/auth/SuccessState.tsx
-   8 components/dashboard/layout/DashboardContentLayout.tsx
    8 i18n/en/dashboard.ts
    8 i18n/vi/dashboard.ts
    8 components/dashboard/comp/IssueDetailDialog.tsx
@@ -420,26 +420,27 @@ e7c0e15 Merge pull request #6 from HaiGH-Space/feat/update-docs
    7 components/dashboard/layout/navigation-sidebar/NavigationSidebarChannelList.tsx
    7 components/dashboard/layout/navigation-sidebar/NavigationSidebarFooter.tsx
    7 components/dashboard/layout/ChatRightPanel.tsx
+   6 components/dashboard/notifications/NotificationsMenu.tsx
+   5 docs/codebase/STACK.md
    5 components/canvas/planning/index.tsx
    5 README.md
-   5 components/canvas/planning/PlanningIssueCard.tsx
-   5 components/canvas/planning/PlanningIssuesColumn.tsx
 
 === MONOREPO SIGNALS ===
 Monorepo tool detected: pnpm-workspace.yaml
 
 === CODE METRICS ===
-Total files scanned: 236
-Total lines of code: 15743
+Total files scanned: 312
+Total lines of code: 15799
 
 Files by language:
+  Other: 108
   TypeScript: 102
   TypeScript/React: 102
-  Other: 32
 
 Top 10 largest files:
 tsconfig.tsbuildinfo: 340.4KB
 pnpm-lock.yaml: 318.1KB
+.agents\skills\vercel-react-best-practices\AGENTS.md: 109.4KB
 .agents\skills\design-taste-frontend\SKILL.md: 86.4KB
 app\favicon.ico: 25.3KB
 components\dashboard\comp\WorkspaceSettingsDialog.tsx: 20.4KB
@@ -447,7 +448,6 @@ components\dashboard\comp\WorkspaceSettingsDialog.tsx: 20.4KB
 components\auth\SuccessState.tsx: 12.3KB
 components\auth\AuthCard.tsx: 11.1KB
 components\dashboard\comp\issue-detail\use-issue-detail.ts: 10.7KB
-docs\codebase\.codebase-scan.txt: 10.5KB
 
 === CI/CD PIPELINES ===
 CI/CD: GitHub Actions

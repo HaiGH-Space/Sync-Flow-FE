@@ -24,13 +24,7 @@ No active performance and scaling concerns.
 
 ### 5) Fragile/High-Churn Areas
 
-| Area                                                                  | Why fragile                                                            | Churn signal                     | Safe change strategy                                                       |
-| --------------------------------------------------------------------- | ---------------------------------------------------------------------- | -------------------------------- | -------------------------------------------------------------------------- |
-| `i18n/[locale]/dashboard/*` (modular features)                      | Translation files split by area but aggregated in `index.ts`. Missing keys in one locale can cause translation fallbacks | Churn in individual module files | Update both English and Vietnamese counterpart files when changing translation keys |
-| `components/dashboard/layout/NavigationSidebar.tsx` and subcomponents | Manages layout composition, delegating state to `useNavigationSidebar` | 17 recent changes                | Keep rendering logic simple and delegate state changes via the custom hook |
-| `components/canvas/board/BoardCanvas.tsx` and board helpers           | Handles loading, error, and drag/drop interactions                     | 14 recent changes on board files | Keep reorder behavior centralized in helper hooks                          |
-| `components/dashboard/layout/DashboardContentLayout.tsx`              | Owns tabs, sprint selection, and chat-panel toggling                   | 10 recent changes                | Preserve existing state flow and invalidate only the relevant query keys   |
-| `lib/api/issue.ts` and `lib/store/use-dashboard.ts`                   | Shared backend and UI state used across several features               | Recent churn in both files       | Avoid cross-cutting edits unless a bug justifies them                      |
+No active fragile/high-churn concerns.
 
 ### 6) `[ASK USER]` Questions
 

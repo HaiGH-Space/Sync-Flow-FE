@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { QueryFunctionContext } from '@tanstack/react-query'
 import {
   workspaceKeys,
   createMyWorkspacesQueryOptions,
@@ -48,10 +49,11 @@ describe('workspace query options', () => {
       expect(options.staleTime).toBe(Infinity)
 
       // Mock queryFn response
-      const mockResponse = { data: { items: [], total: 0, page: 2, limit: 20 }, message: 'success' }
+      const mockResponse = { statusCode: 200, message: 'success', data: { items: [], total: 0, page: 2, limit: 20 } }
       vi.mocked(workspaceService.getMyWorkspace).mockResolvedValue(mockResponse)
 
-      const result = await options.queryFn()
+      expect(options.queryFn).toBeDefined()
+      const result = await options.queryFn!({ queryKey: options.queryKey, meta: undefined } as unknown as QueryFunctionContext)
       expect(result).toBe(mockResponse)
       expect(workspaceService.getMyWorkspace).toHaveBeenCalledWith(params)
     })
@@ -65,10 +67,11 @@ describe('workspace query options', () => {
       expect(options.staleTime).toBe(1000 * 60 * 5)
 
       // Mock queryFn response
-      const mockResponse = { data: { id: 'ws-456', name: 'Test WS', urlSlug: 'test', ownerId: '1', createdAt: '', updatedAt: '' }, message: 'success' }
+      const mockResponse = { statusCode: 200, message: 'success', data: { id: 'ws-456', name: 'Test WS', urlSlug: 'test', ownerId: '1', createdAt: '', updatedAt: '' } }
       vi.mocked(workspaceService.getWorkspaceById).mockResolvedValue(mockResponse)
 
-      const result = await options.queryFn()
+      expect(options.queryFn).toBeDefined()
+      const result = await options.queryFn!({ queryKey: options.queryKey, meta: undefined } as unknown as QueryFunctionContext)
       expect(result).toBe(mockResponse)
       expect(workspaceService.getWorkspaceById).toHaveBeenCalledWith('ws-456')
     })

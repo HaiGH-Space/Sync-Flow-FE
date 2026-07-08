@@ -214,7 +214,8 @@ i18n\routing.ts
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "audit": "pnpm audit --prod"
+    "audit": "pnpm audit --prod",
+    "test": "vitest run"
   },
   "pnpm": {
     "overrides": {
@@ -261,7 +262,8 @@ i18n\routing.ts
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.9"
   }
 }
 
@@ -347,7 +349,7 @@ importers:
         specifier: ^3.4.0
         version: 3.6.0
 
-[TRUNCATED] Showing first 80 of 8643 lines.
+[TRUNCATED] Showing first 80 of 9169 lines.
 
 === ENTRY POINTS ===
 No common entry points found. Check 'main' or 'scripts.start' in manifest files above.
@@ -382,6 +384,14 @@ NEXT_PUBLIC_API_URL=http://localhost:8000
 None found.
 
 === GIT RECENT COMMITS (last 20) ===
+6657ae9 docs: remove low severity concern regarding external documentation
+1d5fd90 test: fix typescript types and eslint no-explicit-any rules in workspace queries tests
+9fa49ee docs: update testing and concerns to reflect vitest test suite implementation
+0658222 test: add unit tests for workspace queries
+2cd7146 test: add unit tests for board ordering behavior
+3dfdf86 chore: install and configure vitest
+b1201ba Merge pull request #14 from HaiGH-Space/feat/update-docs
+ef30970 chore: generate initial codebase structure documentation scan
 6f1eaef Merge pull request #13 from HaiGH-Space/feat/dashboard-layout-resilience
 9684029 Merge pull request #12 from HaiGH-Space/feat/pagination-compatibility
 1184ce0 feat: add canvas issue movement logic, timeline model hook, and sprint creation modal components
@@ -394,52 +404,44 @@ e627227 feat: implement DashboardContentLayout component and add codebase concer
 1892b9e Merge pull request #10 from HaiGH-Space/perf/high-churn-dashboard-files
 fb127dc docs: add comprehensive codebase architecture documentation and upgrade Next.js to 16.2.9
 cb5f167 perf: modularize dashboard translation files to reduce churn
-716e02d Merge pull request #9 from HaiGH-Space/perf/board-reoder-race-condition
-9f2d5b4 feat: implement optimistic dnd hooks for board column reordering and issue column migration
-73bffbc Merge pull request #8 from HaiGH-Space/feat/base-url-consolidation
-10bbf41 chore: update Next.js dependencies and add security overrides for core packages
-c95aa77 feat: resolve base URL technical debt by consolidating API and websocket URL resolution
-2246076 Merge pull request #7 from HaiGH-Space/feat/resolve-security
-b3c39f3 chore: add workspace package root configuration to pnpm-workspace.yaml
-dc6d65c feat: implement security policy, automated CI vulnerability auditing, and codebase concern documentation
 
 === HIGH-CHURN FILES (last 90 days, top 20) ===
+  13 docs/codebase/CONCERNS.md
   12 components/dashboard/layout/NavigationSidebar.tsx
-  11 docs/codebase/CONCERNS.md
   11 components/dashboard/chat/Composer.tsx
+  10 package.json
    9 components/dashboard/layout/DashboardContentLayout.tsx
-   9 package.json
    9 components/dashboard/layout/navigation-sidebar/NavigationSidebarSprintList.tsx
    9 components/auth/SuccessState.tsx
+   8 pnpm-lock.yaml
    8 i18n/en/dashboard.ts
    8 i18n/vi/dashboard.ts
    8 components/dashboard/comp/IssueDetailDialog.tsx
    8 components/auth/AuthCard.tsx
    8 .github/workflows/react-doctor.yml
-   7 pnpm-lock.yaml
    7 components/dashboard/layout/navigation-sidebar/NavigationSidebarChannelList.tsx
    7 components/dashboard/layout/navigation-sidebar/NavigationSidebarFooter.tsx
    7 components/dashboard/layout/ChatRightPanel.tsx
    6 components/dashboard/notifications/NotificationsMenu.tsx
+   5 docs/codebase/.codebase-scan.txt
    5 docs/codebase/STACK.md
-   5 components/canvas/planning/index.tsx
    5 README.md
 
 === MONOREPO SIGNALS ===
 Monorepo tool detected: pnpm-workspace.yaml
 
 === CODE METRICS ===
-Total files scanned: 312
-Total lines of code: 15799
+Total files scanned: 315
+Total lines of code: 15953
 
 Files by language:
   Other: 108
-  TypeScript: 102
+  TypeScript: 105
   TypeScript/React: 102
 
 Top 10 largest files:
 tsconfig.tsbuildinfo: 340.4KB
-pnpm-lock.yaml: 318.1KB
+pnpm-lock.yaml: 326.3KB
 .agents\skills\vercel-react-best-practices\AGENTS.md: 109.4KB
 .agents\skills\design-taste-frontend\SKILL.md: 86.4KB
 app\favicon.ico: 25.3KB

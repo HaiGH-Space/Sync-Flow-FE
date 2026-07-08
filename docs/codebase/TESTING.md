@@ -30,9 +30,9 @@ pnpm build
 
 ### 4) Mocking and Isolation Strategy
 
-- Main mocking approach: N/A
-- Isolation guarantees: N/A
-- Common failure mode in tests: N/A
+- Main mocking approach: Utilizes Vitest's built-in `vi.mock` to mock external API service modules (e.g., `@/lib/api/workspace`) and control their resolved/rejected promise responses.
+- Isolation guarantees: Mocks are cleared before each test case run using `vi.clearAllMocks()` inside a `beforeEach` hook.
+- Common failure mode in tests: Typing mismatch when mocking service responses (mitigated by using `vi.mocked` utility and casting mock responses to appropriate envelopes).
 
 ### 5) Coverage and Quality Signals
 
@@ -43,5 +43,6 @@ pnpm build
 ### 6) Evidence
 
 - `package.json`
-- `eslint.config.mjs`
-- `pnpm-lock.yaml`
+- `vitest.config.ts`
+- `lib/ordering.test.ts`
+- `queries/workspace.test.ts`

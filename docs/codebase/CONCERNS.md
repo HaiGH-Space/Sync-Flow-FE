@@ -6,7 +6,6 @@
 
 | Severity | Concern                                                                                      | Evidence                                                                                                    | Impact                                                                              | Suggested action                                                                                                                                                 |
 | -------- | -------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| high     | No automated test suite or test config was found                                             | `package.json`, `eslint.config.mjs`, `pnpm-lock.yaml`                                                       | Regressions in routing, drag-and-drop, and API wrappers are likely to slip through  | Add at least one focused test layer for query/mutation and board ordering behavior                                                                               |
 | low      | Backend and intent docs referenced by the scan are absent from the workspace root            | `AGENTS.md`, file search results for `README`/`PRD`/`ROADMAP`/`DESIGN`                                      | Product intent and backend contract are defined externally                          | Reference the backend repository (https://github.com/HaiGH-Space/Sync-Flow-BE) for API contracts and codebase docs (static PRD and ROADMAP, DESIGN do not exist) |
 
 ### 2) Technical Debt
@@ -28,7 +27,7 @@ No active fragile/high-churn concerns.
 
 ### 6) `[ASK USER]` Questions
 
-1. `[ASK USER]` Is the lack of a frontend-specific test runner (e.g., Vitest or Cypress) permanent, or should a test framework be initialized in this repository?
+1. `[ASK USER]` Is the lack of a frontend-specific test runner (e.g., Vitest or Cypress) permanent, or should a test framework be initialized in this repository? (Answered: Vitest has been initialized and configured with focused tests).
 
 ### 7) Evidence
 

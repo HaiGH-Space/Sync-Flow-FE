@@ -4,9 +4,7 @@
 
 ### 1) Top Risks (Prioritized)
 
-| Severity | Concern                                                                                      | Evidence                                                                                                    | Impact                                                                              | Suggested action                                                                                                                                                 |
-| -------- | -------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| low      | Backend and intent docs referenced by the scan are absent from the workspace root            | `AGENTS.md`, file search results for `README`/`PRD`/`ROADMAP`/`DESIGN`                                      | Product intent and backend contract are defined externally                          | Reference the backend repository (https://github.com/HaiGH-Space/Sync-Flow-BE) for API contracts and codebase docs (static PRD and ROADMAP, DESIGN do not exist) |
+No active top risks.
 
 ### 2) Technical Debt
 

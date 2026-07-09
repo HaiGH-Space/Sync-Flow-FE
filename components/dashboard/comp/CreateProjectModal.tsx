@@ -17,6 +17,7 @@ import FieldAnimation from "@/components/auth/FieldAnimation";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useCreateProject } from "@/hooks/mutations/project";
+import { logger } from "@/lib/logger";
 
 type CreateProjectModalProps = {
   workspaceDetail: Workspace;
@@ -58,7 +59,7 @@ export default function CreateProjectModal({
       onChange: schema,
     },
     onSubmit: async ({ value }) => {
-      console.log("Creating project with values:", value);
+      logger.info("Creating project with values:", value);
       createProject(
         {
           workspaceId: workspaceDetail.id,

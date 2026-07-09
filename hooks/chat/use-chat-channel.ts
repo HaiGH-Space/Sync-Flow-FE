@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { getChatSocket } from "@/lib/api/chat";
+import { logger } from "@/lib/logger";
 import {
   messageService,
   type GetMessagesResponse,
@@ -79,21 +80,17 @@ export function useChatChannel(channelId?: string) {
 
     const socket = getChatSocket();
     const joinChannel = () => {
-      if (process.env.NODE_ENV !== "production") {
-        console.debug("[chat] join_channel", {
+      logger.debug("[chat] join_channel", {
+        channelId,
+        socketId: socket.id,
+        connected: socket.connected,
+      });
+      socket.emit("join_channel", { channelId }, (response) => {
+        logger.debug("[chat] join_ack", {
           channelId,
           socketId: socket.id,
-          connected: socket.connected,
+          response,
         });
-      }
-      socket.emit("join_channel", { channelId }, (response) => {
-        if (process.env.NODE_ENV !== "production") {
-          console.debug("[chat] join_ack", {
-            channelId,
-            socketId: socket.id,
-            response,
-          });
-        }
       });
     };
 
@@ -116,13 +113,11 @@ export function useChatChannel(channelId?: string) {
       }
 
       const socket = getChatSocket();
-      if (process.env.NODE_ENV !== "production") {
-        console.debug("[chat] send_message", {
-          channelId,
-          socketId: socket.id,
-          connected: socket.connected,
-        });
-      }
+      logger.debug("[chat] send_message", {
+        channelId,
+        socketId: socket.id,
+        connected: socket.connected,
+      });
       socket.emit("send_message", { channelId, content: trimmed });
     },
     [channelId],

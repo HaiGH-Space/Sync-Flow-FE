@@ -1,5 +1,6 @@
 import { io, type Socket } from "socket.io-client";
 
+import { logger } from "@/lib/logger";
 import { api } from "./api";
 import { getWebSocketUrl } from "./api-config";
 
@@ -111,45 +112,39 @@ const getCookieValue = (name: string) => {
 
 export const getNotificationSocket = () => {
   if (notificationSocket) {
-    if (process.env.NODE_ENV !== "production") {
-      const existingToken = getCookieValue("session_token");
-      console.debug("[notifications] reuse socket", {
-        id: notificationSocket.id,
-        connected: notificationSocket.connected,
-        hasSessionToken: !!existingToken,
-      });
-    }
+    const existingToken = getCookieValue("session_token");
+    logger.debug("[notifications] reuse socket", {
+      id: notificationSocket.id,
+      connected: notificationSocket.connected,
+      hasSessionToken: !!existingToken,
+    });
     return notificationSocket;
   }
 
   const socketUrl = getWebSocketUrl("notifications");
   const sessionToken = getCookieValue("session_token");
-  if (process.env.NODE_ENV !== "production") {
-    console.debug("[notifications] create socket", {
-      socketUrl,
-      hasSessionToken: !!sessionToken,
-    });
-  }
+  logger.debug("[notifications] create socket", {
+    socketUrl,
+    hasSessionToken: !!sessionToken,
+  });
   notificationSocket = io(socketUrl, {
     withCredentials: true,
     autoConnect: true,
     auth: sessionToken ? { session_token: sessionToken } : undefined,
   });
 
-  if (process.env.NODE_ENV !== "production") {
-    notificationSocket.on("connect", () => {
-      const latestToken = getCookieValue("session_token");
-      console.debug("[notifications] connected", {
-        id: notificationSocket?.id,
-        hasSessionToken: !!latestToken,
-      });
+  notificationSocket.on("connect", () => {
+    const latestToken = getCookieValue("session_token");
+    logger.debug("[notifications] connected", {
+      id: notificationSocket?.id,
+      hasSessionToken: !!latestToken,
     });
-    notificationSocket.on("connect_error", (err) => {
-      console.debug("[notifications] connect_error", {
-        message: err?.message,
-      });
+  });
+  notificationSocket.on("connect_error", (err) => {
+    logger.debug("[notifications] connect_error", {
+      message: err?.message,
     });
-  }
+  });
 
   return notificationSocket;
 };

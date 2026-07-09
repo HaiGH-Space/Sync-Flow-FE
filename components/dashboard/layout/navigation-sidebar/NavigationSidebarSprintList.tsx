@@ -7,7 +7,7 @@ import type { Sprint } from "@/lib/api/sprint";
 import { cn } from "@/lib/utils";
 import { Loader2, PlusIcon, Settings2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { NavigationSidebarItem } from "./NavigationSidebarItem";
 
 type NavigationSidebarSprintListProps = {
@@ -39,18 +39,15 @@ export function NavigationSidebarSprintList({
 
   const DEFAULT_LIMIT = 5;
 
-  const hasSelectedOutsideLimit = useMemo(() => {
-    if (!sprints || !selectedSprintId) return false;
-    return sprints.findIndex((s) => s.id === selectedSprintId) >= DEFAULT_LIMIT;
-  }, [sprints, selectedSprintId]);
+  const hasSelectedOutsideLimit = sprints && selectedSprintId
+    ? sprints.findIndex((s) => s.id === selectedSprintId) >= DEFAULT_LIMIT
+    : false;
 
   const isExpanded = showAll || (hasSelectedOutsideLimit && !hasCollapsed);
 
-  const displayedSprints = useMemo(() => {
-    if (!sprints) return [];
-    if (isExpanded) return sprints;
-    return sprints.slice(0, DEFAULT_LIMIT);
-  }, [sprints, isExpanded]);
+  const displayedSprints = sprints
+    ? (isExpanded ? sprints : sprints.slice(0, DEFAULT_LIMIT))
+    : [];
 
   return (
     <div className="mt-2 pl-3">

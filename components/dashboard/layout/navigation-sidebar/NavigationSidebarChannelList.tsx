@@ -7,7 +7,7 @@ import { ChannelType } from "@/lib/api/channel";
 import { cn } from "@/lib/utils";
 import { Hash, Loader2, MessageCircle, PlusIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { NavigationSidebarItem } from "./NavigationSidebarItem";
 
 type NavigationSidebarChannelListProps = {
@@ -36,18 +36,15 @@ export function NavigationSidebarChannelList({
 
   const DEFAULT_LIMIT = 5;
 
-  const hasSelectedOutsideLimit = useMemo(() => {
-    if (!channels || !selectedChannelId) return false;
-    return channels.findIndex((c) => c.id === selectedChannelId) >= DEFAULT_LIMIT;
-  }, [channels, selectedChannelId]);
+  const hasSelectedOutsideLimit = channels && selectedChannelId
+    ? channels.findIndex((c) => c.id === selectedChannelId) >= DEFAULT_LIMIT
+    : false;
 
   const isExpanded = showAll || (hasSelectedOutsideLimit && !hasCollapsed);
 
-  const displayedChannels = useMemo(() => {
-    if (!channels) return [];
-    if (isExpanded) return channels;
-    return channels.slice(0, DEFAULT_LIMIT);
-  }, [channels, isExpanded]);
+  const displayedChannels = channels
+    ? (isExpanded ? channels : channels.slice(0, DEFAULT_LIMIT))
+    : [];
 
   return (
     <div className="mt-2 pl-3">

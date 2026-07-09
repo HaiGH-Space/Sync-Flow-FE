@@ -1,6 +1,7 @@
 import { io, type Socket } from "socket.io-client";
 
 import type { Message } from "@/lib/api/message";
+import { logger } from "@/lib/logger";
 import { getWebSocketUrl } from "./api-config";
 
 type ChatServerEvents = {
@@ -35,45 +36,39 @@ const getCookieValue = (name: string) => {
 
 export const getChatSocket = () => {
   if (chatSocket) {
-    if (process.env.NODE_ENV !== "production") {
-      const existingToken = getCookieValue("session_token");
-      console.debug("[chat] reuse socket", {
-        id: chatSocket.id,
-        connected: chatSocket.connected,
-        hasSessionToken: !!existingToken,
-      });
-    }
+    const existingToken = getCookieValue("session_token");
+    logger.debug("[chat] reuse socket", {
+      id: chatSocket.id,
+      connected: chatSocket.connected,
+      hasSessionToken: !!existingToken,
+    });
     return chatSocket;
   }
 
   const socketUrl = getWebSocketUrl("chat");
   const sessionToken = getCookieValue("session_token");
-  if (process.env.NODE_ENV !== "production") {
-    console.debug("[chat] create socket", {
-      socketUrl,
-      hasSessionToken: !!sessionToken,
-    });
-  }
+  logger.debug("[chat] create socket", {
+    socketUrl,
+    hasSessionToken: !!sessionToken,
+  });
   chatSocket = io(socketUrl, {
     withCredentials: true,
     autoConnect: true,
     auth: sessionToken ? { session_token: sessionToken } : undefined,
   });
 
-  if (process.env.NODE_ENV !== "production") {
-    chatSocket.on("connect", () => {
-      const latestToken = getCookieValue("session_token");
-      console.debug("[chat] connected", {
-        id: chatSocket?.id,
-        hasSessionToken: !!latestToken,
-      });
+  chatSocket.on("connect", () => {
+    const latestToken = getCookieValue("session_token");
+    logger.debug("[chat] connected", {
+      id: chatSocket?.id,
+      hasSessionToken: !!latestToken,
     });
-    chatSocket.on("connect_error", (err) => {
-      console.debug("[chat] connect_error", {
-        message: err?.message,
-      });
+  });
+  chatSocket.on("connect_error", (err) => {
+    logger.debug("[chat] connect_error", {
+      message: err?.message,
     });
-  }
+  });
 
   return chatSocket;
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
@@ -57,21 +57,19 @@ export default function BacklogCanvas({ projectId }: BacklogCanvasProps) {
     ),
   );
 
-  const columnsById = useMemo(() => {
-    const entries = (columnsResponse?.data ?? []).map(
+  const columnsById = new Map(
+    (columnsResponse?.data ?? []).map(
       (column) => [column.id, column.name] as const,
-    );
-    return new Map(entries);
-  }, [columnsResponse?.data]);
+    ),
+  );
 
-  const membersById = useMemo(() => {
-    const entries = (memberProfilesResponse?.data ?? []).map(
+  const membersById = new Map(
+    (memberProfilesResponse?.data ?? []).map(
       (member) => [member.id, member.name] as const,
-    );
-    return new Map(entries);
-  }, [memberProfilesResponse?.data]);
+    ),
+  );
 
-  const doneColumnIds = useMemo(() => {
+  const doneColumnIds = (() => {
     const columns = columnsResponse?.data ?? [];
     if (columns.length === 0) return new Set<string>();
 
@@ -87,11 +85,11 @@ export default function BacklogCanvas({ projectId }: BacklogCanvasProps) {
       }
     }
     return new Set(ids);
-  }, [columnsResponse?.data]);
+  })();
 
   const unassignedLabel = tDashboard("issue.assignee.unassigned");
 
-  const backlogRows = useMemo<IssueRow[]>(() => {
+  const backlogRows: IssueRow[] = (() => {
     const issues = issuesResponse?.data?.items ?? [];
     const filteredBySprint =
       selectedSprintId === "all"
@@ -110,26 +108,19 @@ export default function BacklogCanvas({ projectId }: BacklogCanvasProps) {
         : unassignedLabel,
       statusName: columnsById.get(issue.columnId) ?? "",
     }));
-  }, [
-    columnsById,
-    doneColumnIds,
-    issuesResponse?.data,
-    membersById,
-    selectedSprintId,
-    unassignedLabel,
-  ]);
+  })();
 
-  const handleIssueSelect = useCallback((issueId: string) => {
+  const handleIssueSelect = (issueId: string) => {
     setSelectedIssueId(issueId);
-  }, []);
+  };
 
-  const handleDialogOpenChange = useCallback((open: boolean) => {
+  const handleDialogOpenChange = (open: boolean) => {
     if (!open) setSelectedIssueId(null);
-  }, []);
+  };
 
-  const handleRetry = useCallback(() => {
+  const handleRetry = () => {
     refetchIssues();
-  }, [refetchIssues]);
+  };
 
   if (isLoadingIssues || isLoadingColumns) {
     return <BacklogLoading />;

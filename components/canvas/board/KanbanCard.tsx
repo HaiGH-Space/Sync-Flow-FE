@@ -1,5 +1,5 @@
 "use client";
-import { memo, useState } from "react";
+import { useState } from "react";
 import { Avatar, AvatarImage } from "../../ui/avatar";
 import { Badge } from "../../ui/badge";
 import { cn } from "@/lib/utils";
@@ -84,4 +84,4 @@ function KanbanCard(props: KanbanCardProps) {
   );
 }
 
-export default memo(KanbanCard);
+export default KanbanCard;

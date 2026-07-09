@@ -1,5 +1,5 @@
 'use client'
-import { useCallback, useMemo, useState } from "react"
+import { useState } from "react"
 import { DragDropProvider } from "@dnd-kit/react";
 import { useQuery } from "@tanstack/react-query";
 import { createColumnsQueryOptions } from "@/queries/column";
@@ -39,26 +39,23 @@ export default function BoardCanvas({ projectId }: BoardCanvasProps) {
         isRefetching,
     } = useQuery(createColumnsQueryOptions({ projectId }));
 
-    const columnsData = useMemo(() => columns?.data ?? [], [columns?.data]);
+    const columnsData = columns?.data ?? [];
 
-    const selectedColumn = useMemo(
-        () => columnsData.find((item) => item.id === selectedColumnId) ?? null,
-        [columnsData, selectedColumnId]
-    );
+    const selectedColumn = columnsData.find((item) => item.id === selectedColumnId) ?? null;
 
     const selectedColumnName = selectedColumn?.name ?? '';
 
-    const handleDeleteColumn = useCallback((columnId: string) => {
+    const handleDeleteColumn = (columnId: string) => {
         setSelectedColumnId(columnId);
         setIsDeleteDialogOpen(true);
-    }, []);
+    };
 
-    const handleEditColumn = useCallback((columnId: string) => {
+    const handleEditColumn = (columnId: string) => {
         const column = columnsData.find((item) => item.id === columnId) ?? null;
         setSelectedColumnId(columnId);
         setColumnName(column?.name ?? '');
         setIsEditDialogOpen(true);
-    }, [columnsData]);
+    };
 
     const closeDeleteDialog = (open: boolean) => {
         setIsDeleteDialogOpen(open);

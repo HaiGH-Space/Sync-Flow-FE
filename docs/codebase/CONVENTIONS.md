@@ -32,9 +32,9 @@
 
 ### 5) Testing Conventions
 
-- Test file naming/location rule: The frontend project currently does not configure a local test runner or test directories. (Note: The adjacent `be` backend uses NestJS/Jest spec tests under `src/`).
-- Mocking strategy norm: None implemented on the frontend.
-- Coverage expectation: No coverage thresholds are enforced on the frontend; validation is driven by lint and build pipelines.
+- Test file naming/location rule: Test files are co-located with source files under test (e.g., `lib/ordering.test.ts`, `queries/workspace.test.ts`), following the `*.test.ts` naming convention. Runs via Vitest (`pnpm test`).
+- Mocking strategy norm: Mocking API calls and services using Vitest's `vi.mock` utility (e.g., mocking `@/lib/api/workspace`).
+- Coverage expectation: No coverage thresholds are currently enforced on the frontend; validation is driven by lint, build pipelines, and manual test execution.
 
 ### 6) Evidence
 
@@ -48,3 +48,4 @@
 - `app/[locale]/layout.tsx`
 - `components/canvas/board/BoardCanvas.tsx`
 - `hooks/use-current-workspace.ts`
+- `vitest.config.ts`

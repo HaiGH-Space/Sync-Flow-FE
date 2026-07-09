@@ -1,7 +1,6 @@
 'use client'
 
 import type { ComponentProps } from 'react';
-import { useCallback } from 'react';
 import { DragDropProvider } from '@dnd-kit/react';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -25,22 +24,19 @@ export function useBoardDragHandlers({ projectId }: UseBoardDragHandlersParams):
     const { flushPendingColumnUpdates, handleColumnDrop } = useColumnReorder({ projectId });
     const { flushPendingIssueUpdates, handleTaskDrop } = useIssueMove({ projectId });
 
-    const onDragStart: DragStartHandler = useCallback(() => {
+    const onDragStart: DragStartHandler = () => {
         flushPendingColumnUpdates();
         flushPendingIssueUpdates();
 
         // Cancel in-flight requests so stale responses cannot overwrite optimistic cache updates.
         queryClient.cancelQueries({ queryKey: ['issues', projectId] });
         queryClient.cancelQueries({ queryKey: ['columns', projectId] });
-    }, [flushPendingColumnUpdates, flushPendingIssueUpdates, projectId, queryClient]);
+    };
 
-    const onDragEnd: DragEndHandler = useCallback(
-        (event) => {
-            if (handleColumnDrop(event)) return;
-            handleTaskDrop(event);
-        },
-        [handleColumnDrop, handleTaskDrop],
-    );
+    const onDragEnd: DragEndHandler = (event) => {
+        if (handleColumnDrop(event)) return;
+        handleTaskDrop(event);
+    };
 
     return { onDragStart, onDragEnd };
 }

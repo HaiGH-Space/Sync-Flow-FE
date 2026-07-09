@@ -1,7 +1,7 @@
 'use client'
 
 import type { ComponentProps } from 'react';
-import { useCallback, useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import { DragDropProvider } from '@dnd-kit/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -39,15 +39,20 @@ export function useIssueMove({ projectId }: UseIssueMoveParams): UseIssueMoveRes
         return issuePendingUpdates.current;
     };
 
-    const flushPendingIssueUpdates = useCallback(() => {
+    const flushPendingIssueUpdates = () => {
         getPendingUpdates().forEach((runUpdate) => runUpdate());
-    }, []);
+    };
+
+    const flushRef = useRef(flushPendingIssueUpdates);
+    useEffect(() => {
+        flushRef.current = flushPendingIssueUpdates;
+    });
 
     useEffect(() => {
         return () => {
-            flushPendingIssueUpdates();
+            flushRef.current();
         };
-    }, [flushPendingIssueUpdates]);
+    }, []);
 
     const { mutate: updateIssue } = useMutation({
         mutationFn: ({ issueId, columnId }: { issueId: string; columnId: string; originalColumnId: string }) =>
@@ -84,73 +89,70 @@ export function useIssueMove({ projectId }: UseIssueMoveParams): UseIssueMoveRes
     });
 
 
-    const handleTaskDrop = useCallback(
-        (event: DragEndEvent): boolean => {
-            const { operation, canceled } = event;
-            if (canceled) return false;
+    const handleTaskDrop = (event: DragEndEvent): boolean => {
+        const { operation, canceled } = event;
+        if (canceled) return false;
 
-            const { source, target } = operation;
-            if (!source || !target) return false;
+        const { source, target } = operation;
+        if (!source || !target) return false;
 
-            const sourceType = source.data?.type || 'task';
-            if (sourceType !== 'task') return false;
+        const sourceType = source.data?.type || 'task';
+        if (sourceType !== 'task') return false;
 
-            const targetType = target.data?.type || 'column';
-            const targetColumnId = targetType === 'column' ? target.id : target.data?.columnId;
-            if (!targetColumnId) return true;
+        const targetType = target.data?.type || 'column';
+        const targetColumnId = targetType === 'column' ? target.id : target.data?.columnId;
+        if (!targetColumnId) return true;
 
-            flushPendingIssueUpdates();
+        flushPendingIssueUpdates();
 
-            const currentIssues = queryClient.getQueryData<ApiResponse<PaginatedData<Issue>>>(issueKeys.list(projectId, { limit: 100 }));
-            if (!currentIssues?.data?.items) return true;
+        const currentIssues = queryClient.getQueryData<ApiResponse<PaginatedData<Issue>>>(issueKeys.list(projectId, { limit: 100 }));
+        if (!currentIssues?.data?.items) return true;
 
-            const issueId = source.id as string;
-            const originalColumnId = currentIssues.data.items.find((issue) => issue.id === issueId)?.columnId ?? '';
+        const issueId = source.id as string;
+        const originalColumnId = currentIssues.data.items.find((issue) => issue.id === issueId)?.columnId ?? '';
 
-            // Optimistically move the card before persisting.
-            queryClient.setQueryData<ApiResponse<PaginatedData<Issue>>>(issueKeys.list(projectId, { limit: 100 }), {
-                ...currentIssues,
-                data: {
-                    ...currentIssues.data,
-                    items: currentIssues.data.items.map((issue) =>
-                        issue.id === issueId ? { ...issue, columnId: targetColumnId as string } : issue,
-                    ),
-                }
-            });
-
-            const debounceMap = getDebounceMap();
-            const pendingUpdates = getPendingUpdates();
-            const existing = debounceMap.get(issueId);
-            if (existing) {
-                clearTimeout(existing);
-                debounceMap.delete(issueId);
-                pendingUpdates.delete(issueId);
+        // Optimistically move the card before persisting.
+        queryClient.setQueryData<ApiResponse<PaginatedData<Issue>>>(issueKeys.list(projectId, { limit: 100 }), {
+            ...currentIssues,
+            data: {
+                ...currentIssues.data,
+                items: currentIssues.data.items.map((issue) =>
+                    issue.id === issueId ? { ...issue, columnId: targetColumnId as string } : issue,
+                ),
             }
+        });
 
-            const runUpdate = () => {
-                pendingUpdates.delete(issueId);
-                const timer = debounceMap.get(issueId);
-                if (timer) {
-                    clearTimeout(timer);
-                    debounceMap.delete(issueId);
-                }
-                updateIssue({
-                    issueId,
-                    columnId: targetColumnId as string,
-                    originalColumnId,
-                });
-            };
+        const debounceMap = getDebounceMap();
+        const pendingUpdates = getPendingUpdates();
+        const existing = debounceMap.get(issueId);
+        if (existing) {
+            clearTimeout(existing);
+            debounceMap.delete(issueId);
+            pendingUpdates.delete(issueId);
+        }
 
-            pendingUpdates.set(issueId, runUpdate);
-            debounceMap.set(
+        const runUpdate = () => {
+            pendingUpdates.delete(issueId);
+            const timer = debounceMap.get(issueId);
+            if (timer) {
+                clearTimeout(timer);
+                debounceMap.delete(issueId);
+            }
+            updateIssue({
                 issueId,
-                setTimeout(runUpdate, 300),
-            );
+                columnId: targetColumnId as string,
+                originalColumnId,
+            });
+        };
 
-            return true;
-        },
-        [projectId, queryClient, updateIssue, flushPendingIssueUpdates],
-    );
+        pendingUpdates.set(issueId, runUpdate);
+        debounceMap.set(
+            issueId,
+            setTimeout(runUpdate, 300),
+        );
+
+        return true;
+    };
 
     return { flushPendingIssueUpdates, handleTaskDrop };
 }

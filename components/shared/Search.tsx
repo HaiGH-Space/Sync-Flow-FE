@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react"
 import { Field } from "../ui/field"
 import { Input } from "../ui/input"
 import { useTranslations } from "next-intl"
+import { logger } from "@/lib/logger"
 
 type SearchProps = React.ComponentProps<typeof Field> & {
     placeholder?: string
@@ -23,7 +24,7 @@ export const Search = function Search({ placeholder, onSearch, debounceMs = 300,
 
         const timer = window.setTimeout(() => {
             Promise.resolve(onSearch(query)).catch((error) => {
-                console.error("Search failed:", error)
+                logger.error("Search failed:", error)
             })
         }, debounceMs)
 

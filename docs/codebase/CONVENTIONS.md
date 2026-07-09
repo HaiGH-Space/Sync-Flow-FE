@@ -27,7 +27,7 @@
 ### 4) Error and Logging Conventions
 
 - Error strategy by layer: `lib/api/api.ts` throws `ApiRequestError` on non-OK responses; UI layers show errors with `toast.error`; route gating uses `notFound()` or `redirect()`; mutation hooks invalidate or restore cache on success/error
-- Logging style and required context fields: `lib/api/api.ts` and `lib/api/chat.ts` use `console.log`/`console.debug` in runtime paths, mostly for rewrite and socket diagnostics
+- Logging style and required context fields: Centralized logging via `lib/logger.ts` is used for runtime logs (such as socket and rewrite diagnostics), preventing sensitive data leaks in production.
 - Sensitive-data redaction rules: Sockets and API services avoid logging credentials or payload contents. Socket connection diagnostic logs are restricted to development mode and do not record raw token payloads.
 
 ### 5) Testing Conventions

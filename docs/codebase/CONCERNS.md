@@ -12,7 +12,7 @@
 
 | Debt item | Why it exists | Where | Risk if ignored | Suggested fix |
 |-----------|---------------|-------|-----------------|---------------|
-| Direct use of `console.log` / `console.debug` | Quick implementation of rewrite and socket logs; lack of standard logger wrapper | `lib/api/api.ts`, `lib/api/chat.ts` | Sensitive information might be logged in production; logs cannot be filtered by environment. | Introduce a centralized logger with development-only levels. |
+| None | - | - | - | - |
 
 ### 3) Security Concerns
 

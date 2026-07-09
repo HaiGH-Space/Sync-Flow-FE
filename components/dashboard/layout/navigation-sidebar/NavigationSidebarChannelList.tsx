@@ -7,6 +7,7 @@ import { ChannelType } from "@/lib/api/channel";
 import { cn } from "@/lib/utils";
 import { Hash, Loader2, MessageCircle, PlusIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useState } from "react";
 import { NavigationSidebarItem } from "./NavigationSidebarItem";
 
 type NavigationSidebarChannelListProps = {
@@ -29,6 +30,21 @@ export function NavigationSidebarChannelList({
   projectId,
 }: NavigationSidebarChannelListProps) {
   const t = useTranslations("dashboard");
+
+  const [showAll, setShowAll] = useState(false);
+  const [hasCollapsed, setHasCollapsed] = useState(false);
+
+  const DEFAULT_LIMIT = 5;
+
+  const hasSelectedOutsideLimit = channels && selectedChannelId
+    ? channels.findIndex((c) => c.id === selectedChannelId) >= DEFAULT_LIMIT
+    : false;
+
+  const isExpanded = showAll || (hasSelectedOutsideLimit && !hasCollapsed);
+
+  const displayedChannels = channels
+    ? (isExpanded ? channels : channels.slice(0, DEFAULT_LIMIT))
+    : [];
 
   return (
     <div className="mt-2 pl-3">
@@ -69,7 +85,7 @@ export function NavigationSidebarChannelList({
             {t("sidebar.noChannels")}
           </div>
         )}
-        {channels?.map((channel) => {
+        {displayedChannels.map((channel) => {
           const isChannelSelected = selectedChannelId === channel.id;
           const channelName = channel.name?.trim()
             ? channel.name
@@ -106,6 +122,25 @@ export function NavigationSidebarChannelList({
             </NavigationSidebarItem>
           );
         })}
+        {channels && channels.length > DEFAULT_LIMIT && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="h-8 w-full justify-center text-xs text-muted-foreground hover:text-foreground mt-1"
+            onClick={() => {
+              if (isExpanded) {
+                setShowAll(false);
+                setHasCollapsed(true);
+              } else {
+                setShowAll(true);
+                setHasCollapsed(false);
+              }
+            }}
+          >
+            {isExpanded ? t("sidebar.showLess") : t("sidebar.showMore")}
+          </Button>
+        )}
       </div>
     </div>
   );

@@ -24,7 +24,7 @@
 
 | Concern | Evidence | Current symptom | Scaling risk | Suggested improvement |
 |---------|----------|-----------------|-------------|-----------------------|
-| Rendering overhead in dense workspaces | `components/dashboard/layout/NavigationSidebar.tsx` rendering all sidebar item bindings | Minor lag in transitions when expanding project items | UI sluggishness for users belonging to many projects/channels | Implement virtualized rendering or strict client-side limit bounds for navigation sub-lists. |
+| None | - | - | - | - |
 
 ### 5) Fragile/High-Churn Areas
 

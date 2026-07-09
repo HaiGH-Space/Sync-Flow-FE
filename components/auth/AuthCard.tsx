@@ -22,6 +22,7 @@ import { authService } from "@/lib/api/auth";
 import SuccessState from "./SuccessState";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
+import { cn } from "@/lib/utils";
 
 type AuthMode = "login" | "register";
 type AuthState = "idle" | "loading" | "error" | "success";
@@ -233,18 +234,26 @@ const AuthCard = () => {
                 </p>
               </m.div>
               <form id="auth-form" action={form.handleSubmit} className="space-y-4">
-                <AnimatePresence key={"form"}>
-                  {mode === "register" && (
+                <div
+                  className={cn(
+                    "grid transition-[grid-template-rows,opacity,margin] duration-300 ease-out overflow-hidden",
+                    mode === "register"
+                      ? "grid-rows-[1fr] opacity-100 mt-4"
+                      : "grid-rows-[0fr] opacity-0 mt-0"
+                  )}
+                >
+                  <div className="min-h-0">
                     <AuthField
                       form={form}
                       name="name"
                       key="name"
+                      className="mt-0"
                       variants={itemVariants}
                       placeholder={tAuth("register.name_placeholder")}
                       icon={UserIcon}
                     />
-                  )}
-                </AnimatePresence>
+                  </div>
+                </div>
                 <AuthField
                   form={form}
                   name="email"

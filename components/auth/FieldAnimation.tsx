@@ -35,6 +35,7 @@ interface FieldAnimationProps {
   type?: string;
   placeholder?: string;
   variants?: Variants;
+  className?: string;
 }
 
 export const InputAnimation = ({
@@ -44,16 +45,17 @@ export const InputAnimation = ({
   type = "text",
   placeholder = "",
   variants,
+  className = "mt-4",
 }: FieldAnimationProps) => {
   return (
     <LazyMotion features={domAnimation}>
       <m.div
-        className="mt-4"
+        className={className}
         variants={variants}
         key={name}
-        initial={{ opacity: 0, height: 0 }}
-        animate={{ opacity: 1, height: "auto" }}
-        exit={{ opacity: 0, height: 0 }}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 10 }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
       >
         <form.Field name={name}>
@@ -98,6 +100,7 @@ export const SelectAnimation = ({
   variants,
   data,
   fieldLabel,
+  className = "mt-4",
 }: FieldAnimationProps & {
   fieldLabel?: string;
   data: { value: string; label: string }[];
@@ -105,12 +108,12 @@ export const SelectAnimation = ({
   return (
     <LazyMotion features={domAnimation}>
       <m.div
-        className="mt-4"
+        className={className}
         variants={variants}
         key={name}
-        initial={{ opacity: 0, height: 0 }}
-        animate={{ opacity: 1, height: "auto" }}
-        exit={{ opacity: 0, height: 0 }}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 10 }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
       >
         <form.Field name={name}>

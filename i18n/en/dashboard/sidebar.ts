@@ -13,6 +13,8 @@ const sidebar = {
   channelsTab: "Channels",
   untitledChannel: "Untitled channel",
   searchPlaceholder: "Search...",
+  showMore: "Show more",
+  showLess: "Show less",
   role: {
     owner: "Workspace owner",
     admin: "Administrator",

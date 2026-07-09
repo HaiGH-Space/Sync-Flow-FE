@@ -1,6 +1,6 @@
 "use client";
 
-import { memo } from "react";
+
 import { CircleAlert, Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -48,4 +48,4 @@ function TimelineErrorState({
   );
 }
 
-export default memo(TimelineErrorState);
+export default TimelineErrorState;

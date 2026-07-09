@@ -1,6 +1,6 @@
 "use client";
 
-import { memo } from "react";
+
 
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -13,4 +13,4 @@ function TimelineLoadingState() {
   );
 }
 
-export default memo(TimelineLoadingState);
+export default TimelineLoadingState;

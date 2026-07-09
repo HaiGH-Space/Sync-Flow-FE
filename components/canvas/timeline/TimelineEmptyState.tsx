@@ -1,6 +1,6 @@
 "use client";
 
-import { memo } from "react";
+
 import { CalendarRange } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -39,4 +39,4 @@ function TimelineEmptyState({
   );
 }
 
-export default memo(TimelineEmptyState);
+export default TimelineEmptyState;

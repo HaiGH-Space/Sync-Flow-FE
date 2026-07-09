@@ -1,5 +1,5 @@
 "use client";
-import { memo, useCallback } from "react";
+
 import { ScrollArea } from "../../ui/scroll-area";
 import KanbanCard from "./KanbanCard";
 import { useDraggable, useDroppable } from "@dnd-kit/react";
@@ -34,16 +34,15 @@ function KanbanColumn(props: ColumnProps) {
   // TanStack Query v5 structural sharing means only the two columns whose task
   // lists actually changed will receive a new reference → React.memo blocks
   // re-renders for every other column.
-  const selectColumnTasks = useCallback(
-    (data: ApiResponse<PaginatedData<Issue>>): TaskProps[] =>
-      (data.data?.items ?? []).filter((issue) => {
-        const matchColumn = issue.columnId === props.columnId;
-        const matchSprint =
-          selectedSprintId === "all" || issue.sprintId === selectedSprintId;
-        return matchColumn && matchSprint;
-      }),
-    [props.columnId, selectedSprintId],
-  );
+  const selectColumnTasks = (
+    data: ApiResponse<PaginatedData<Issue>>,
+  ): TaskProps[] =>
+    (data.data?.items ?? []).filter((issue) => {
+      const matchColumn = issue.columnId === props.columnId;
+      const matchSprint =
+        selectedSprintId === "all" || issue.sprintId === selectedSprintId;
+      return matchColumn && matchSprint;
+    });
 
   const { data: tasks = [] } = useQuery(
     createIssuesQueryOptions(
@@ -106,4 +105,4 @@ function KanbanColumn(props: ColumnProps) {
   );
 }
 
-export default memo(KanbanColumn);
+export default KanbanColumn;

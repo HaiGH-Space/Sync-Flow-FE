@@ -6,10 +6,13 @@ describe("logger utility", () => {
   let consoleInfoSpy: MockInstance;
   let consoleWarnSpy: MockInstance;
   let consoleErrorSpy: MockInstance;
-  const originalEnv = process.env;
+
+  let originalLogLevel: string | undefined;
+  let originalNodeEnv: string | undefined;
 
   beforeEach(() => {
-    process.env = { ...originalEnv };
+    originalLogLevel = process.env.NEXT_PUBLIC_LOG_LEVEL;
+    originalNodeEnv = process.env.NODE_ENV;
     consoleDebugSpy = vi.spyOn(console, "debug").mockImplementation(() => {});
     consoleInfoSpy = vi.spyOn(console, "info").mockImplementation(() => {});
     consoleWarnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
@@ -18,7 +21,15 @@ describe("logger utility", () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
-    process.env = originalEnv;
+
+    if (originalLogLevel === undefined) {
+      delete process.env.NEXT_PUBLIC_LOG_LEVEL;
+    } else {
+      process.env.NEXT_PUBLIC_LOG_LEVEL = originalLogLevel;
+    }
+
+    // @ts-expect-error - process.env.NODE_ENV is read-only in types
+    process.env.NODE_ENV = originalNodeEnv;
   });
 
   it("should log info, warn, error, and debug messages by default in test environment", () => {
@@ -48,6 +59,7 @@ describe("logger utility", () => {
   });
 
   it("should suppress debug logs when NODE_ENV is production", () => {
+    // @ts-expect-error - process.env.NODE_ENV is read-only in types
     process.env.NODE_ENV = "production";
 
     logger.debug("debug msg");

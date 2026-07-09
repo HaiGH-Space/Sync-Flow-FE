@@ -7,6 +7,7 @@ import type { Sprint } from "@/lib/api/sprint";
 import { cn } from "@/lib/utils";
 import { Loader2, PlusIcon, Settings2 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useState, useMemo } from "react";
 import { NavigationSidebarItem } from "./NavigationSidebarItem";
 
 type NavigationSidebarSprintListProps = {
@@ -32,6 +33,24 @@ export function NavigationSidebarSprintList({
 }: NavigationSidebarSprintListProps) {
   const t = useTranslations("dashboard");
   const { push } = useRouter();
+
+  const [showAll, setShowAll] = useState(false);
+  const [hasCollapsed, setHasCollapsed] = useState(false);
+
+  const DEFAULT_LIMIT = 5;
+
+  const hasSelectedOutsideLimit = useMemo(() => {
+    if (!sprints || !selectedSprintId) return false;
+    return sprints.findIndex((s) => s.id === selectedSprintId) >= DEFAULT_LIMIT;
+  }, [sprints, selectedSprintId]);
+
+  const isExpanded = showAll || (hasSelectedOutsideLimit && !hasCollapsed);
+
+  const displayedSprints = useMemo(() => {
+    if (!sprints) return [];
+    if (isExpanded) return sprints;
+    return sprints.slice(0, DEFAULT_LIMIT);
+  }, [sprints, isExpanded]);
 
   return (
     <div className="mt-2 pl-3">
@@ -68,7 +87,7 @@ export function NavigationSidebarSprintList({
             {t("sidebar.noSprints")}
           </div>
         )}
-        {sprints?.map((sprint) => {
+        {displayedSprints.map((sprint) => {
           const isSprintSelected = selectedSprintId === sprint.id;
 
           return (
@@ -113,6 +132,25 @@ export function NavigationSidebarSprintList({
             </NavigationSidebarItem>
           );
         })}
+        {sprints && sprints.length > DEFAULT_LIMIT && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="h-8 w-full justify-center text-xs text-muted-foreground hover:text-foreground mt-1"
+            onClick={() => {
+              if (isExpanded) {
+                setShowAll(false);
+                setHasCollapsed(true);
+              } else {
+                setShowAll(true);
+                setHasCollapsed(false);
+              }
+            }}
+          >
+            {isExpanded ? t("sidebar.showLess") : t("sidebar.showMore")}
+          </Button>
+        )}
       </div>
     </div>
   );

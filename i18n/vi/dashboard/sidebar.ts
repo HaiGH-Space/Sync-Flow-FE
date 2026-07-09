@@ -13,6 +13,8 @@ const sidebar = {
   channelsTab: "Kênh",
   untitledChannel: "Kênh chưa đặt tên",
   searchPlaceholder: "Tìm kiếm...",
+  showMore: "Xem thêm",
+  showLess: "Thu gọn",
   role: {
     owner: "Chủ workspace",
     admin: "Quản trị viên",

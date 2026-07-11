@@ -22,7 +22,7 @@ type ColumnProps = {
 
 export type TaskProps = Pick<
   Issue,
-  "id" | "columnId" | "title" | "priority" | "description" | "assigneeId"
+  "id" | "columnId" | "title" | "priority" | "description" | "assigneeId" | "order"
 >;
 
 function KanbanColumn(props: ColumnProps) {
@@ -37,12 +37,14 @@ function KanbanColumn(props: ColumnProps) {
   const selectColumnTasks = (
     data: ApiResponse<PaginatedData<Issue>>,
   ): TaskProps[] =>
-    (data.data?.items ?? []).filter((issue) => {
-      const matchColumn = issue.columnId === props.columnId;
-      const matchSprint =
-        selectedSprintId === "all" || issue.sprintId === selectedSprintId;
-      return matchColumn && matchSprint;
-    });
+    (data.data?.items ?? [])
+      .filter((issue) => {
+        const matchColumn = issue.columnId === props.columnId;
+        const matchSprint =
+          selectedSprintId === "all" || issue.sprintId === selectedSprintId;
+        return matchColumn && matchSprint;
+      })
+      .toSorted((a, b) => a.order - b.order);
 
   const { data: tasks = [] } = useQuery(
     createIssuesQueryOptions(
@@ -59,7 +61,7 @@ function KanbanColumn(props: ColumnProps) {
 
   const { ref: dragRef, isDragging } = useDraggable({
     id: props.id,
-    data: { type: "column" },
+    data: { type: "column", name: props.name },
   });
   return (
     <div
@@ -97,6 +99,8 @@ function KanbanColumn(props: ColumnProps) {
               storyPoint={undefined}
               description={task.description}
               assigneeId={task.assigneeId}
+              columnId={task.columnId}
+              order={task.order}
             />
           ))}
         </div>

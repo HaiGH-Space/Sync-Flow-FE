@@ -9,6 +9,7 @@ import type { ApiResponse, PaginatedData } from '@/lib/api/api';
 import { issueService } from '@/lib/api/issue';
 import type { Issue } from '@/lib/api/issue';
 import { issueKeys } from '@/queries/issue';
+import { getTailOrder, getInsertOrder } from '@/lib/ordering';
 
 type DragEndHandler = NonNullable<ComponentProps<typeof DragDropProvider>['onDragEnd']>;
 type DragEndEvent = Parameters<DragEndHandler>[0];
@@ -55,8 +56,8 @@ export function useIssueMove({ projectId }: UseIssueMoveParams): UseIssueMoveRes
     }, []);
 
     const { mutate: updateIssue } = useMutation({
-        mutationFn: ({ issueId, columnId }: { issueId: string; columnId: string; originalColumnId: string }) =>
-            issueService.updateIssue({ projectId, issueId, issueData: { columnId } }),
+        mutationFn: ({ issueId, columnId, order }: { issueId: string; columnId: string; originalColumnId: string; originalOrder: number; order: number }) =>
+            issueService.updateIssue({ projectId, issueId, issueData: { columnId, order } }),
         onMutate: async () => {
             await queryClient.cancelQueries({ queryKey: issueKeys.list(projectId) });
         },
@@ -80,7 +81,7 @@ export function useIssueMove({ projectId }: UseIssueMoveParams): UseIssueMoveRes
                     data: {
                         ...old.data,
                         items: old.data.items.map((issue) =>
-                            issue.id === vars.issueId ? { ...issue, columnId: vars.originalColumnId } : issue,
+                            issue.id === vars.issueId ? { ...issue, columnId: vars.originalColumnId, order: vars.originalOrder } : issue,
                         ),
                     }
                 };
@@ -109,7 +110,32 @@ export function useIssueMove({ projectId }: UseIssueMoveParams): UseIssueMoveRes
         if (!currentIssues?.data?.items) return true;
 
         const issueId = source.id as string;
-        const originalColumnId = currentIssues.data.items.find((issue) => issue.id === issueId)?.columnId ?? '';
+        const originalColumn = currentIssues.data.items.find((issue) => issue.id === issueId);
+        const originalColumnId = originalColumn?.columnId ?? '';
+        const originalOrder = originalColumn?.order ?? 0;
+
+        // Get issues currently in the target column (excluding the one being moved)
+        const targetIssues = currentIssues.data.items
+            .filter((issue) => issue.columnId === targetColumnId && issue.id !== issueId)
+            .toSorted((a, b) => a.order - b.order);
+
+        let newOrder: number;
+        if (targetType === 'column') {
+            const lastIssue = targetIssues[targetIssues.length - 1];
+            newOrder = getTailOrder(lastIssue?.order);
+        } else {
+            const targetIssueId = target.id as string;
+            const targetIndex = targetIssues.findIndex((issue) => issue.id === targetIssueId);
+            if (targetIndex === -1) {
+                const lastIssue = targetIssues[targetIssues.length - 1];
+                newOrder = getTailOrder(lastIssue?.order);
+            } else {
+                const prevIssue = targetIssues[targetIndex - 1];
+                const nextIssue = targetIssues[targetIndex];
+                const insertResult = getInsertOrder(prevIssue?.order, nextIssue?.order);
+                newOrder = insertResult.order;
+            }
+        }
 
         // Optimistically move the card before persisting.
         queryClient.setQueryData<ApiResponse<PaginatedData<Issue>>>(issueKeys.list(projectId, { limit: 100 }), {
@@ -117,7 +143,7 @@ export function useIssueMove({ projectId }: UseIssueMoveParams): UseIssueMoveRes
             data: {
                 ...currentIssues.data,
                 items: currentIssues.data.items.map((issue) =>
-                    issue.id === issueId ? { ...issue, columnId: targetColumnId as string } : issue,
+                    issue.id === issueId ? { ...issue, columnId: targetColumnId as string, order: newOrder } : issue,
                 ),
             }
         });
@@ -142,6 +168,8 @@ export function useIssueMove({ projectId }: UseIssueMoveParams): UseIssueMoveRes
                 issueId,
                 columnId: targetColumnId as string,
                 originalColumnId,
+                originalOrder,
+                order: newOrder,
             });
         };
 

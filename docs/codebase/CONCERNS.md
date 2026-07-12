@@ -30,9 +30,7 @@
 
 | Area | Why fragile | Churn signal | Safe change strategy |
 |------|-------------|-------------|----------------------|
-| `components/dashboard/layout/NavigationSidebar.tsx` | Manages nested sidebar routes, filters, and modal settings dialog toggles. | 12 modifications in the last 90 days | Refactored presentational component. All setting dialogs and delete project mutation handlers are encapsulated in `useNavigationSidebar`. |
-| `components/dashboard/chat/Composer.tsx` | Intercepts keys, coordinates cursor offsets for emojis, and handles file attachments/previews. | 11 modifications in the last 90 days | Presentation-focused component. All states, selection cursor indices, and preview URL cleanups are encapsulated in `useComposer`. |
-| `components/dashboard/layout/DashboardContentLayout.tsx` | Manages responsive layouts and workspace-wide sidebars. | 9 modifications in the last 90 days | Relies on `hasHydrated` checks after Zustand store rehydration to prevent Next.js hydration mismatches on initial client mount. |
+| None | - | - | - |
 
 ### 6) `[ASK USER]` Questions
 
@@ -45,6 +43,3 @@
 - `package.json`
 - `lib/api/api.ts`
 - `lib/api/chat.ts`
-- `components/dashboard/layout/NavigationSidebar.tsx`
-- `components/dashboard/chat/Composer.tsx`
-- `components/dashboard/layout/DashboardContentLayout.tsx`

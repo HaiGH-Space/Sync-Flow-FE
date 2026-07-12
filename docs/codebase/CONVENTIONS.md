@@ -16,6 +16,7 @@
 - Formatter: no standalone formatter config was found in the workspace; Tailwind and component styling are driven by `app/globals.css` and `components.json`
 - Linter: ESLint flat config in `eslint.config.mjs` using `eslint-config-next/core-web-vitals` and `eslint-config-next/typescript`
 - Most relevant enforced rules: Next.js core-web-vitals defaults, TypeScript rules, `strict: true` in `tsconfig.json`
+- React Compiler: Do not use manual memoization (`useCallback`, `useMemo`, or `memo`) for new hooks or components, as the React Compiler is active and optimizes renders automatically.
 - Run commands: `pnpm lint`, `pnpm build`
 
 ### 3) Import and Module Conventions
@@ -23,6 +24,8 @@
 - Import grouping/order: imports are generally grouped by package, then local aliases, though the workspace shows mixed formatting styles across files
 - Alias vs relative import policy: `@/*` is the main alias for cross-root imports; relative imports are used inside feature folders
 - Public exports/barrel policy: feature modules sometimes export a service or hook object directly (`workspaceService`, `columnKeys`, `useDashboard`); no repo-wide barrel export rule was found
+- Presenter/Hook Pattern: UI components should remain presentational. Modal toggles, input event handlers, and data mutations are moved into custom hooks (e.g. `useNavigationSidebar`, `useComposer`).
+- Zustand Hydration Mitigation: Avoid hydration mismatches when using persisted Zustand stores by tracking rehydration state (via a local `hasHydrated` state flag in the mounting component) and using fallback defaults during SSR and initial client render.
 
 ### 4) Error and Logging Conventions
 

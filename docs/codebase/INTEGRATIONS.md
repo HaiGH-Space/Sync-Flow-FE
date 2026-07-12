@@ -8,13 +8,14 @@
 | ----------------------- | ------------------------ | ------------------------------------------------------------------------ | ---------------------------------------------------------------------- | ----------- | -------------------------------------------------------------- |
 | Backend app API         | API                      | Workspaces, projects, issues, columns, sprints, comments, uploads, users | Cookie-based session via `session_token`; requests include credentials | High        | `lib/api/api.ts`, `next.config.ts`, `proxy.ts`, `lib/api/*.ts` |
 | Socket.IO chat endpoint | API / realtime socket    | Channel joins and message delivery                                       | `session_token` cookie / socket auth payload                           | High        | `lib/api/chat.ts`                                              |
+| Socket.IO notifications | API / realtime socket    | Realtime workspace invites and user notifications                        | `session_token` cookie / socket auth payload                           | High        | `lib/api/notification.ts`                                      |
 | Locale message bundles  | Internal content loading | `en` and `vi` translation bundles loaded by `next-intl`                  | N/A                                                                    | Medium      | `i18n/request.ts`, `i18n/en/*`, `i18n/vi/*`                    |
 
 ### 2) Data Stores
 
 | Store                             | Role                                                | Access layer                                                         | Key risk                                                           | Evidence                                                |
 | --------------------------------- | --------------------------------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------ | ------------------------------------------------------- |
-| Browser cookie `session_token`    | Session identity for protected routes and chat auth | `proxy.ts`, `lib/api/chat.ts`                                        | If cookie handling changes, routing and socket auth can fail       | `proxy.ts`, `lib/api/chat.ts`                           |
+| Browser cookie `session_token`    | Session identity for protected routes, chat & notifications | `proxy.ts`, `lib/api/chat.ts`, `lib/api/notification.ts`        | If cookie handling changes, routing and socket auth can fail       | `proxy.ts`, `lib/api/chat.ts`, `lib/api/notification.ts`|
 | React Query cache                 | Server-state cache for fetched resources            | `components/ui/query-provider.tsx`, `queries/*`, `hooks/mutations/*` | Stale cache after writes if invalidation paths drift. Parameterized paginated query keys (e.g. `['issues', projectId, { page, limit }]`) are correctly invalidated when the prefix `['issues', projectId]` is invalidated by mutations | `components/ui/query-provider.tsx`, `hooks/mutations/*` |
 | Zustand persisted dashboard state | Client UI state across navigations                  | `lib/store/use-dashboard.ts`                                         | Persisted UI state can become stale after route or feature changes | `lib/store/use-dashboard.ts`                            |
 | LocalStorage via Zustand persist  | Storage backend for dashboard state                 | `lib/store/use-dashboard.ts`                                         | Browser storage can be reset or blocked                            | `lib/store/use-dashboard.ts`                            |
@@ -43,6 +44,7 @@
 - `lib/api/api-config.ts`
 - `lib/api/api.ts`
 - `lib/api/chat.ts`
+- `lib/api/notification.ts`
 - `lib/api/workspace.ts`
 - `lib/api/issue.ts`
 - `lib/api/channel.ts`

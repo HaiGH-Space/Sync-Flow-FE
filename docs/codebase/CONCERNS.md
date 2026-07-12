@@ -24,15 +24,13 @@
 
 | Concern | Evidence | Current symptom | Scaling risk | Suggested improvement |
 |---------|----------|-----------------|-------------|-----------------------|
-| None | - | - | - | - |
+| Bulk-fetching sidebar lists and modals | `queries/sprint.ts`, `queries/channel.ts` query options specify static `limit: 100` | Truncated list if volume exceeds 100 items | Sidebars and select inputs will hide items beyond the limit | Add infinite loading or scroll-based pagination in sidebar panels |
 
 ### 5) Fragile/High-Churn Areas
 
 | Area | Why fragile | Churn signal | Safe change strategy |
 |------|-------------|-------------|----------------------|
-| `components/dashboard/layout/NavigationSidebar.tsx` | Manages nested sidebar routes, filters, and modal settings dialog toggles. | 12 modifications in the last 90 days | Keeps core data fetching in custom hook `useNavigationSidebar`. Ensure component is purely presentation-focused. |
-| `components/dashboard/chat/Composer.tsx` | Intercepts keys, coordinates cursor offsets for emojis, and handles file attachments/previews. | 11 modifications in the last 90 days | Encapsulate state changes cleanly. Keep emoji insertion logic isolated from core file selection logic. |
-| `components/dashboard/layout/DashboardContentLayout.tsx` | Manages responsive layouts and workspace-wide sidebars. | 9 modifications in the last 90 days | Rely on client-side state checks to prevent Next.js hydration mismatches. |
+| `components/dashboard/layout/navigation-sidebar/*` | Structural refactor to presenter/hook split and collapsible/expandable sprint/channel sublists | Top churn files (13+ edits to `NavigationSidebar.tsx`, 11+ edits to `NavigationSidebarSprintList.tsx`) | Keep UI presentation clean; keep state modifications inside the `useNavigationSidebar` custom hook |
 
 ### 6) `[ASK USER]` Questions
 
@@ -43,8 +41,8 @@
 - `.github/workflows/react-doctor.yml`
 - `.github/workflows/security.yml`
 - `package.json`
+- `queries/sprint.ts`
+- `queries/channel.ts`
+- `components/dashboard/layout/navigation-sidebar/`
 - `lib/api/api.ts`
 - `lib/api/chat.ts`
-- `components/dashboard/layout/NavigationSidebar.tsx`
-- `components/dashboard/chat/Composer.tsx`
-- `components/dashboard/layout/DashboardContentLayout.tsx`

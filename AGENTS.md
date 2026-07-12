@@ -16,6 +16,9 @@ This project is a Next.js 16 app with App Router, `next-intl`, React Query, Zust
 - Let API failures surface as `ApiRequestError` and handle them in the UI with the existing toast/error patterns.
 - Prefer query-key objects and query-option factories in [queries/](queries); do not use raw string keys or ad hoc fetch logic.
 - In mutations, invalidate the broad cache keys that own the resource, then any narrower keys that need a refresh.
+- Do not use manual memoization (`useCallback`, `useMemo`, or `memo`) for new hooks or components, as the React Compiler is active and optimizes renders automatically.
+- Keep UI components presentational. Move modal toggles, input event handlers, and data mutations into custom hooks (e.g. `useNavigationSidebar`, `useComposer`).
+- Avoid hydration mismatches when using persisted Zustand stores by tracking rehydration state (via `hasHydrated` local state) and using fallback defaults during SSR and initial client render.
 
 ## Implementation Patterns
 

@@ -10,6 +10,7 @@ import { createProjectsQueryOptions } from "@/queries/project";
 import { createSprintsQueryOptions } from "@/queries/sprint";
 import { createChannelsQueryOptions } from "@/queries/channel";
 import { useDeleteProject } from "@/hooks/mutations/project";
+import { toast } from "sonner";
 import type { Project } from "@/lib/api/project";
 import type { Sprint } from "@/lib/api/sprint";
 import type { Workspace } from "@/lib/api/workspace";
@@ -154,6 +155,46 @@ export function useNavigationSidebar(workspaceDetail?: Workspace) {
     [setLastActiveChannel, setOpenSidebarRight, setSelectedChannelId],
   );
 
+  const handleDeleteProject = () => {
+    if (!settingsProject || !workspaceDetail?.id) {
+      return;
+    }
+
+    deleteProject(
+      {
+        workspaceId: workspaceDetail.id,
+        projectId: settingsProject.id,
+      },
+      {
+        onSuccess: (_response, variables) => {
+          toast.success(t("project.toast.deleted"));
+
+          if (projectId === variables.projectId) {
+            setExpandedProjectId(null);
+            router.push(`/dashboard/${workspaceDetail.id}`);
+          }
+
+          setSettingsProject(null);
+        },
+        onError: () => {
+          toast.error(t("project.toast.deleteFailed"));
+        },
+      },
+    );
+  };
+
+  const handleSettingsOpenChange = (open: boolean) => {
+    if (!open && !isDeletingProject) {
+      setSettingsProject(null);
+    }
+  };
+
+  const handleEditSprintOpenChange = (open: boolean) => {
+    if (!open) {
+      setEditingSprint(null);
+    }
+  };
+
   return {
     isOpenSidebarLeft,
     selectedSprintIdByProject,
@@ -186,5 +227,8 @@ export function useNavigationSidebar(workspaceDetail?: Workspace) {
     searchHandle,
     handleSprintSelect,
     handleChannelSelect,
+    handleDeleteProject,
+    handleSettingsOpenChange,
+    handleEditSprintOpenChange,
   };
 }

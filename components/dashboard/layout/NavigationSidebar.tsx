@@ -1,8 +1,6 @@
 "use client";
 
 import { Workspace } from "@/lib/api/workspace";
-import { memo } from "react";
-import { toast } from "sonner";
 import ProjectSettingsDialog from "../comp/ProjectSettingsDialog";
 import EditSprintModal from "@/components/dashboard/comp/EditSprintModal";
 import { Search } from "@/components/shared/Search";
@@ -39,7 +37,7 @@ const sidebarContainerVariants: Variants = {
   },
 };
 
-export const NavigationSidebar = memo(function NavigationSidebar({
+export function NavigationSidebar({
   workspaceDetail,
 }: {
   workspaceDetail?: Workspace;
@@ -48,9 +46,7 @@ export const NavigationSidebar = memo(function NavigationSidebar({
     isOpenSidebarLeft,
     selectedSprintIdByProject,
     selectedChannelIdByProject,
-    projectId,
     t,
-    router,
     expandedProjectId,
     setExpandedProjectId,
     settingsProject,
@@ -63,7 +59,6 @@ export const NavigationSidebar = memo(function NavigationSidebar({
     projectsResponse,
     error,
     isProjectsLoading,
-    deleteProject,
     isDeletingProject,
     sprintsResponse,
     sprintsError,
@@ -75,6 +70,9 @@ export const NavigationSidebar = memo(function NavigationSidebar({
     searchHandle,
     handleSprintSelect,
     handleChannelSelect,
+    handleDeleteProject,
+    handleSettingsOpenChange,
+    handleEditSprintOpenChange,
   } = useNavigationSidebar(workspaceDetail);
 
   return (
@@ -149,38 +147,8 @@ export const NavigationSidebar = memo(function NavigationSidebar({
             project={settingsProject}
             canManage={canManageProject}
             open={!!settingsProject}
-            onOpenChange={(open) => {
-              if (!open && !isDeletingProject) {
-                setSettingsProject(null);
-              }
-            }}
-            onDelete={() => {
-              if (!settingsProject || !workspaceDetail?.id) {
-                return;
-              }
-
-              deleteProject(
-                {
-                  workspaceId: workspaceDetail.id,
-                  projectId: settingsProject.id,
-                },
-                {
-                  onSuccess: (_response, variables) => {
-                    toast.success(t("project.toast.deleted"));
-
-                    if (projectId === variables.projectId) {
-                      setExpandedProjectId(null);
-                      router.push(`/dashboard/${workspaceDetail.id}`);
-                    }
-
-                    setSettingsProject(null);
-                  },
-                  onError: () => {
-                    toast.error(t("project.toast.deleteFailed"));
-                  },
-                },
-              );
-            }}
+            onOpenChange={handleSettingsOpenChange}
+            onDelete={handleDeleteProject}
             isDeleting={isDeletingProject}
           />
         )}
@@ -191,14 +159,10 @@ export const NavigationSidebar = memo(function NavigationSidebar({
             projectId={editingSprint.projectId}
             sprint={editingSprint}
             open={!!editingSprint}
-            onOpenChangeAction={(open) => {
-              if (!open) {
-                setEditingSprint(null);
-              }
-            }}
+            onOpenChangeAction={handleEditSprintOpenChange}
           />
         )}
       </>
     </LazyMotion>
   );
-});
+}

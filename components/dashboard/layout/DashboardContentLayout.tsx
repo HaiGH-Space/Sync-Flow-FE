@@ -16,7 +16,7 @@ import {
   useDashboard,
 } from "@/lib/store/use-dashboard";
 import { MessageCircle, PanelLeftClose, PanelLeftOpen } from "lucide-react";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import { createSprintsQueryOptions } from "@/queries/sprint";
@@ -29,14 +29,27 @@ export default function DashboardContentLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const [hasHydrated, setHasHydrated] = useState(false);
   const isOpenSidebarLeft = useDashboard((state) => state.isOpenSidebarLeft);
   const toggleSidebarLeft = useDashboard((state) => state.toggleSidebarLeft);
   const isOpenSidebarRight = useDashboard((state) => state.isOpenSidebarRight);
   const toggleSidebarRight = useDashboard((state) => state.toggleSidebarRight);
 
   useEffect(() => {
-    void useDashboard.persist.rehydrate();
+    const result = useDashboard.persist.rehydrate();
+    if (result instanceof Promise) {
+      void result.then(() => {
+        setHasHydrated(true);
+      });
+    } else {
+      void Promise.resolve().then(() => {
+        setHasHydrated(true);
+      });
+    }
   }, []);
+
+  const activeSidebarLeft = hasHydrated ? isOpenSidebarLeft : true;
+  const activeSidebarRight = hasHydrated ? isOpenSidebarRight : false;
 
   return (
     <div className="flex flex-col flex-1 h-full overflow-hidden bg-white dark:bg-background">
@@ -48,7 +61,7 @@ export default function DashboardContentLayout({
           className="text-muted-foreground hover:text-foreground"
           aria-label="Toggle navigation sidebar"
         >
-          {isOpenSidebarLeft ? <PanelLeftClose /> : <PanelLeftOpen />}
+          {activeSidebarLeft ? <PanelLeftClose /> : <PanelLeftOpen />}
         </Button>
         <div>
           <HeaderTabList />
@@ -62,7 +75,7 @@ export default function DashboardContentLayout({
             onClick={toggleSidebarRight}
             className="text-muted-foreground hover:text-foreground"
             aria-label="Toggle chat panel"
-            aria-pressed={isOpenSidebarRight}
+            aria-pressed={activeSidebarRight}
           >
             <MessageCircle />
           </Button>

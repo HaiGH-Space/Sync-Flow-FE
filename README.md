@@ -91,8 +91,10 @@ components/               # UI components split by feature area
   ├── auth/               # Animated login layout and visual components
   ├── canvas/             # Board (Kanban), Backlog, Planning, and Timeline rails
   ├── dashboard/          # Chat channels, notification lists, and layouts
+  │   ├── chat/           # Message lists and composer (includes the decoupled useComposer/ logic)
   │   ├── comp/           # Dialogs (includes the modular issue-detail/ folder)
-  │   └── layout/         # Shell and sidebars (includes the navigation-sidebar/ folder)
+  │   ├── layout/         # Shell and sidebars (includes the navigation-sidebar/ folder)
+  │   └── notifications/  # Notification dropdown menus and settings
   ├── shared/             # Reusable UI widgets and layout animations
   └── ui/                 # Atomic design system tokens and Radix/shadcn primitives
 hooks/                    # App-wide hooks and TanStack mutation hooks

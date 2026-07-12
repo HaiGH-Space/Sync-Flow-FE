@@ -22,7 +22,7 @@
 
 - Main runtime entry: `app/[locale]/layout.tsx`
 - Route bootstrap: `proxy.ts` for locale/auth gating, `app/[locale]/(home)/page.tsx` for the `/dashboard` redirect, `app/[locale]/auth/page.tsx` for sign-in, `app/[locale]/(home)/dashboard/page.tsx` for dashboard view switching
-- Secondary entry points: `app/[locale]/(home)/dashboard/[workspaceId]/page.tsx`, `app/[locale]/(home)/dashboard/[workspaceId]/[projectId]/page.tsx`
+- Secondary entry points: `app/[locale]/(home)/dashboard/[workspaceId]/page.tsx`, `app/[locale]/(home)/dashboard/[workspaceId]/[projectId]/page.tsx`, `app/[locale]/(home)/dashboard/[workspaceId]/[projectId]/[channelId]/page.tsx`
 - How entry is selected: Next.js App Router resolves files under `app/[locale]`, and `proxy.ts` applies request-time locale/auth checks before routing continues
 
 ### 3) Module Boundaries
@@ -40,15 +40,18 @@
 ### 4) Naming and Organization Rules
 
 - File naming pattern: feature components use PascalCase (`BoardCanvas.tsx`, `NavigationSidebar.tsx`); utility modules and hooks use kebab or lowercase names (`format-date.ts`, `use-dashboard.ts`, `use-navigation-sidebar.ts`, `use-issue-detail.ts`)
-- Directory organization pattern: feature-oriented folders under `components/`, with dashboard and canvas split by product area. High-traffic dashboard components (e.g. NavigationSidebar, IssueDetailDialog) are refactored into dedicated subdirectories (`components/dashboard/layout/navigation-sidebar/`, `components/dashboard/comp/issue-detail/`) containing an orchestrator component, a custom hook for state management, and smaller, single-responsibility subcomponents. Localization translation files under `i18n/[locale]/dashboard/` are similarly modularized by dashboard feature (e.g., `backlog.ts`, `timeline.ts`, `chat.ts`) and aggregated via an `index.ts` file per locale.
+- Directory organization pattern: feature-oriented folders under `components/`, with dashboard and canvas split by product area. High-traffic dashboard components (e.g. NavigationSidebar, IssueDetailDialog, Composer) are refactored into dedicated subdirectories (`components/dashboard/layout/navigation-sidebar/`, `components/dashboard/comp/issue-detail/`, `components/dashboard/chat/`) containing an orchestrator component, a custom hook for state management, and smaller, single-responsibility subcomponents. Localization translation files under `i18n/[locale]/dashboard/` are similarly modularized by dashboard feature (e.g., `backlog.ts`, `timeline.ts`, `chat.ts`) and aggregated via an `index.ts` file per locale.
 - Import aliasing or path conventions: `@/*` maps to the repository root via `tsconfig.json`
 
 ### 5) Evidence
 
 - `app/[locale]/layout.tsx`
+- `app/[locale]/(home)/dashboard/[workspaceId]/[projectId]/[channelId]/page.tsx`
 - `components/dashboard/layout/NavigationSidebar.tsx`
 - `components/dashboard/layout/navigation-sidebar/use-navigation-sidebar.ts`
 - `components/dashboard/comp/IssueDetailDialog.tsx`
 - `components/dashboard/comp/issue-detail/use-issue-detail.ts`
+- `components/dashboard/chat/Composer.tsx`
+- `components/dashboard/chat/use-composer.ts`
 - `tsconfig.json`
 - `package.json`

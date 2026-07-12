@@ -45,4 +45,5 @@ pnpm build
 - `package.json`
 - `vitest.config.ts`
 - `lib/ordering.test.ts`
+- `lib/logger.test.ts`
 - `queries/workspace.test.ts`

@@ -385,6 +385,10 @@ NEXT_PUBLIC_API_URL=http://localhost:8000
 None found.
 
 === GIT RECENT COMMITS (last 20) ===
+e201fb0 Merge pull request #20 from HaiGH-Space/fix/gitleaks-fail-on-leak
+02413e4 sec: fail gitleaks build on secret detection
+25c652f Merge pull request #19 from HaiGH-Space/feat/fix-conerns
+c4aa814 docs: add codebase documentation and update directory structure README
 ca9c478 docs: update agents.md with rules for react compiler, custom hooks, and hydration checks
 6c8187b docs: clear resolved fragile areas in concerns.md
 43e2499 refactor(fragile): decouple composer state into useComposer hook and add hydration checks to DashboardContentLayout
@@ -401,32 +405,28 @@ f4c0b1d perf: replace AuthField height animation with CSS Grid transition
 5b23bab sec: harden pnpm trust policy to prevent downgrades
 cbbfd2f feat: implement expandable sprint and channel lists for navigation sidebar
 305d5b2 feat: implement collapsible channel and sprint navigation sidebars with i18n support
-06e0675 Merge pull request #16 from HaiGH-Space/feat/centralized-logger
-527b351 test: add unit tests for logger utility functionality
-420909e fix: resolve TypeScript explicit any warning in logger tests
-70271d6 docs: document centralized logging conventions and remove resolved technical debt
 
 === HIGH-CHURN FILES (last 90 days, top 20) ===
-  18 docs/codebase/CONCERNS.md
-  13 components/dashboard/layout/NavigationSidebar.tsx
+  19 docs/codebase/CONCERNS.md
   12 components/dashboard/chat/Composer.tsx
+  11 components/dashboard/layout/NavigationSidebar.tsx
   11 package.json
-  11 components/dashboard/layout/navigation-sidebar/NavigationSidebarSprintList.tsx
   10 components/dashboard/layout/DashboardContentLayout.tsx
+  10 components/dashboard/layout/navigation-sidebar/NavigationSidebarSprintList.tsx
    9 pnpm-lock.yaml
    9 components/auth/AuthCard.tsx
    9 components/dashboard/layout/navigation-sidebar/NavigationSidebarChannelList.tsx
    9 components/auth/SuccessState.tsx
    8 components/dashboard/comp/IssueDetailDialog.tsx
    8 .github/workflows/react-doctor.yml
+   7 docs/codebase/.codebase-scan.txt
    7 components/canvas/board/KanbanCard.tsx
-   7 i18n/en/dashboard.ts
-   7 i18n/vi/dashboard.ts
-   7 components/dashboard/layout/navigation-sidebar/NavigationSidebarFooter.tsx
    7 components/dashboard/layout/ChatRightPanel.tsx
+   6 README.md
+   6 docs/codebase/STACK.md
+   6 docs/codebase/TESTING.md
    6 components/canvas/board/useIssueMove.ts
-   6 components/dashboard/layout/navigation-sidebar/NavigationSidebarProjectItem.tsx
-   6 docs/codebase/.codebase-scan.txt
+   6 components/dashboard/notifications/NotificationsMenu.tsx
 
 === MONOREPO SIGNALS ===
 Monorepo tool detected: pnpm-workspace.yaml
@@ -442,7 +442,7 @@ Files by language:
 
 Top 10 largest files:
 tsconfig.tsbuildinfo: 375.7KB
-pnpm-lock.yaml: 326.4KB
+pnpm-lock.yaml: 335.4KB
 .agents\skills\vercel-react-best-practices\AGENTS.md: 109.4KB
 .agents\skills\design-taste-frontend\SKILL.md: 86.4KB
 app\favicon.ico: 25.3KB

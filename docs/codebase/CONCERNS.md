@@ -18,7 +18,7 @@
 
 | Risk | OWASP category (if applicable) | Evidence | Current mitigation | Gap |
 |------|--------------------------------|----------|--------------------|-----|
-| CI Secret Scanner (Gitleaks) set to warn-only | A09:2021-Security Logging and Monitoring Failures | `.github/workflows/security.yml` uses `continue-on-error: true` | The scanner runs on pull request/push events. | Credentials leaks will not break the build, potentially going unnoticed. |
+| None | - | - | - | - |
 
 ### 4) Performance and Scaling Concerns
 

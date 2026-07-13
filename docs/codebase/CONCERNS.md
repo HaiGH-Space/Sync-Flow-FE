@@ -18,13 +18,13 @@
 
 | Risk | OWASP category (if applicable) | Evidence | Current mitigation | Gap |
 |------|--------------------------------|----------|--------------------|-----|
-| CI Secret Scanner (Gitleaks) set to warn-only | A09:2021-Security Logging and Monitoring Failures | `.github/workflows/security.yml` uses `continue-on-error: true` | The scanner runs on pull request/push events. | Credentials leaks will not break the build, potentially going unnoticed. |
+| Socket connection session token reuse / leakage | OWASP A01:2021-Broken Access Control | `lib/api/chat.ts` & `lib/api/notification.ts` | Centralized cookie resolution (`getCookieValue`) | Sockets do not disconnect/reconnect on session changes or logout/login, risking unauthorized access to chat/notifications across different users on the same machine |
 
 ### 4) Performance and Scaling Concerns
 
 | Concern | Evidence | Current symptom | Scaling risk | Suggested improvement |
 |---------|----------|-----------------|-------------|-----------------------|
-| Bulk-fetching sidebar lists and modals | `queries/sprint.ts`, `queries/channel.ts` query options specify static `limit: 100` | Truncated list if volume exceeds 100 items | Sidebars and select inputs will hide items beyond the limit | Add infinite loading or scroll-based pagination in sidebar panels |
+| Bulk-fetching list views and sidebar controls | `queries/sprint.ts`, `queries/project.ts`, `queries/workspace.ts`, `queries/issue.ts` | Hardcoded `limit: 100` parameter in hook queries | Items beyond the 100-limit will be hidden in sidebars, backlog/planning columns, and workspace lists | Transition to infinite loading, virtualization, or scroll-based pagination |
 
 ### 5) Fragile/High-Churn Areas
 
@@ -35,6 +35,7 @@
 ### 6) `[ASK USER]` Questions
 
 1. `[ASK USER]` Should we configure a GitHub Action to automatically run `pnpm test` on every pull request, or keep test verification local/manual?
+2. `[ASK USER]` Should we refactor the socket getters (`getChatSocket` and `getNotificationSocket`) to automatically disconnect and recreate socket connections when the `session_token` cookie value changes?
 
 ### 7) Evidence
 
@@ -42,7 +43,11 @@
 - `.github/workflows/security.yml`
 - `package.json`
 - `queries/sprint.ts`
-- `queries/channel.ts`
+- `queries/project.ts`
+- `queries/workspace.ts`
+- `queries/issue.ts`
 - `components/dashboard/layout/navigation-sidebar/`
 - `lib/api/api.ts`
 - `lib/api/chat.ts`
+- `lib/api/notification.ts`
+

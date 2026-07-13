@@ -9,9 +9,7 @@ _Sync anything, anywhere, with anyone._
 [![React](https://img.shields.io/badge/React-19.2.3-blue?style=flat-square)](https://react.dev)
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-v4-38bdf8?style=flat-square)](https://tailwindcss.com)
 
-Sync Flow is a premium, real-time collaboration workspace designed for issue tracking, agile sprint planning, and team communication. Built with Next.js 16 (App Router), React 19, and Tailwind CSS v4.
-
-[Features](#features) • [Tech Stack](#tech-stack) • [Installation](#installation) • [Architecture](#how-it-works) • [Documentation](#codebase-documentation)
+Sync Flow is a premium, real-time collaboration workspace designed for issue tracking, agile sprint planning, and team communication. Built using Next.js 16 (App Router), React 19, and Tailwind CSS v4.
 
 </div>
 
@@ -19,26 +17,29 @@ Sync Flow is a premium, real-time collaboration workspace designed for issue tra
 
 ## Features
 
-- **Agile Boards & Planning Views** - Drag-and-drop kanban boards, issue backlogs, sprint management, and interactive timeline rails.
-- **Bi-directional Real-time Collaboration** - Instant chat messages and live workspace notifications powered by Socket.IO.
-- **Multi-locale Routing** - Built-in native support for English (`en`) and Vietnamese (`vi`) using `next-intl`.
-- **Hybrid Security Model** - Seamless integration with a hybrid JWT/Redis cookie authentication framework.
-- **Responsive Workspace Navigation** - Sidebar navigation, active workspace selectors, collapsible panels, and a sleek zinc-scale dark/light layout.
+- **Agile Kanban Board & Planning Views**: Drag-and-drop board layouts, interactive sprint backlogs, issue status columns, and timeline rails for progress visualization.
+- **Bi-directional Real-time Collaboration**: Instant chat messaging channels and live workspace notification alerts powered by Socket.IO.
+- **Multi-locale Gated Routing**: Inherent native localization support for English (`en`) and Vietnamese (`vi`) using `next-intl`.
+- **Hybrid Security Model**: Protected routes gated via a hybrid JWT/Redis cookie authentication framework.
+- **Sleek Workspace Navigation**: Expandable sidebars, active workspace rails, collapsible sublists, and zinc-scale responsive panels.
 
-## Tech Stack
+## Technology Stack
 
 - **Framework**: Next.js `16.2.9` (App Router)
 - **UI Library**: React `19.2.3`
-- **State Management**: React Query `^5.90.20` (Server state) & Zustand `^5.0.11` (Persisted Client UI state)
+- **State Management**: React Query `^5.90.20` (Server state) & Zustand `^5.0.11` (Persisted UI state)
 - **Styling**: Tailwind CSS `v4` & Framer Motion `^12.40.0`
 - **Form Handling**: `@tanstack/react-form` + `zod`
 - **Real-time Networking**: `socket.io-client` `^4.8.1`
 - **Internationalization**: `next-intl` `^4.8.2`
+- **Test Runner**: Vitest `^4.1.9`
 
 > [!NOTE]
 > This repository contains the **Frontend** codebase. The corresponding **Backend** service code is situated in the adjacent `be/` workspace.
 
-## Installation
+---
+
+## Getting Started
 
 ### Prerequisites
 
@@ -46,7 +47,7 @@ Sync Flow is a premium, real-time collaboration workspace designed for issue tra
 - **pnpm** package manager
 - A running Sync Flow backend instance (defaults to `http://localhost:8000`)
 
-### Setup & Run
+### Installation & Run
 
 1. Clone the repository and navigate to the frontend directory:
 
@@ -54,36 +55,37 @@ Sync Flow is a premium, real-time collaboration workspace designed for issue tra
    cd sync-flow/fe
    ```
 
-2. Install dependencies:
+2. Install the project dependencies:
 
    ```bash
    pnpm install
    ```
 
-3. Create your local environment file:
+3. Configure your local environment variables:
 
    ```bash
    cp .env.example .env
    ```
 
-4. Run the development server:
+4. Run the development server locally:
    ```bash
    pnpm dev
    ```
 
 ### Quality Assurance
 
-Validate type safety, linting compliance, and code quality diagnostics before committing:
+Ensure type-safety, linting compliance, and component performance before submitting changes:
 
 ```bash
+pnpm test     # Run Vitest test suite
 pnpm lint     # Run ESLint validation
 pnpm doctor   # Run React Doctor codebase audit
-pnpm build    # Perform a full Next.js production build
+pnpm build    # Perform a full production Next.js build
 ```
 
-## Directory Structure
+---
 
-An overview of the frontend project organization:
+## Directory Structure
 
 ```text
 app/                      # Next.js App Router route tree & layout providers
@@ -91,9 +93,9 @@ components/               # UI components split by feature area
   ├── auth/               # Animated login layout and visual components
   ├── canvas/             # Board (Kanban), Backlog, Planning, and Timeline rails
   ├── dashboard/          # Chat channels, notification lists, and layouts
-  │   ├── chat/           # Message lists and composer (includes the decoupled useComposer/ logic)
-  │   ├── comp/           # Dialogs (includes the modular issue-detail/ folder)
-  │   ├── layout/         # Shell and sidebars (includes the navigation-sidebar/ folder)
+  │   ├── chat/           # Message lists and composer (includes useComposer hook)
+  │   ├── comp/           # Dialogs (includes the modular issue-detail folder)
+  │   ├── layout/         # Shell and sidebars (includes navigation-sidebar folder)
   │   └── notifications/  # Notification dropdown menus and settings
   ├── shared/             # Reusable UI widgets and layout animations
   └── ui/                 # Atomic design system tokens and Radix/shadcn primitives
@@ -104,7 +106,9 @@ queries/                  # TanStack Query keys and options factories
 types/                    # Global TypeScript interfaces
 ```
 
-## How It Works
+---
+
+## Architecture Flow
 
 ```
 [Browser Client]
@@ -120,15 +124,17 @@ types/                    # Global TypeScript interfaces
        └─► [lib/api/chat] ────► (Real-time WebSockets) ───────► [lib/api/api-config.ts] ──────────────────────► [Backend WebSockets]
 ```
 
-- **Authentication**: Gated at the middleware layer (`proxy.ts`) which validates the `session_token` cookie and enforces locale redirections.
-- **WebSocket Auth**: Sockets connect to `/chat` and `/notifications` using `withCredentials: true` and the client's `session_token` cookie.
-- **State Flow & Drag-and-Drop**: The board reordering logic runs optimistically using midpoint insertion calculations (`lib/ordering.ts`). Fast mutations are managed through a "flush-and-sequence" queue hook pattern (`useColumnReorder` and `useIssueMove`) to avoid race conditions and out-of-order execution.
-- **Presenter/Hook Pattern**: Complex components (such as `NavigationSidebar` and `IssueDetailDialog`) are split into subfolders. Logic and API state are isolated in custom hooks (`useNavigationSidebar`, `useIssueDetail`), keeping view components focused solely on rendering.
-- **Centralized API Gating**: `lib/api/api-config.ts` handles target URL resolution based on execution context: using `/api-proxy` on the client and directly hitting the backend URL on the server.
+- **Authentication**: Handled at the middleware layer (`proxy.ts`), which validates the `session_token` cookie and handles locale redirects.
+- **WebSocket Auth**: Connections to `/chat` and `/notifications` are established with credentials using the client's `session_token` cookie.
+- **State Flow & Board Ordering**: Midpoint insertion calculations are performed optimistically on the client using helpers in `lib/ordering.ts`. Fast mutations are managed through a "flush-and-sequence" queue hook pattern (`useColumnReorder` and `useIssueMove`) to prevent race conditions.
+- **Presenter/Hook Pattern**: Complex features (such as `NavigationSidebar` and `IssueDetailDialog`) isolate UI rendering from state management using custom hooks (`useNavigationSidebar`, `useIssueDetail`).
+- **Centralized API Gating**: Target URL resolution is managed dynamically by `lib/api/api-config.ts` (using client-side relative `/api-proxy` paths and direct backend endpoints on the server).
+
+---
 
 ## Codebase Documentation
 
-Detailed architecture blueprints and conventions are colocated within the project under `docs/codebase/`:
+Detailed architecture blueprints, conventions, and integration maps are located under `docs/codebase/`:
 
 - [**STACK.md**](docs/codebase/STACK.md) — Comprehensive dependency lists, tools, and commands.
 - [**STRUCTURE.md**](docs/codebase/STRUCTURE.md) — Directory topology, entry points, and boundaries.

@@ -149,6 +149,15 @@ export const getNotificationSocket = () => {
   return notificationSocket;
 };
 
+export const disconnectNotificationSocket = () => {
+  if (notificationSocket) {
+    logger.debug("[notifications] disconnecting socket", { id: notificationSocket.id });
+    notificationSocket.disconnect();
+    notificationSocket = null;
+  }
+};
+
+
 export const notificationService = {
   getNotifications,
   getUnreadCount,

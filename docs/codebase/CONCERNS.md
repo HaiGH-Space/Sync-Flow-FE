@@ -6,7 +6,7 @@
 
 | Severity | Concern | Evidence | Impact | Suggested action |
 |----------|---------|----------|--------|------------------|
-| Medium | CI pipeline lacks automated test runner execution | `.github/workflows/react-doctor.yml` and `security.yml` do not run `pnpm test` | Core business logic regressions (e.g. workspace state, board ordering) could be merged without warning. | Add a workflow step to run `pnpm test` on PR/Push events. |
+| None | - | - | - | - |
 
 ### 2) Technical Debt
 
@@ -34,8 +34,7 @@
 
 ### 6) `[ASK USER]` Questions
 
-1. `[ASK USER]` Should we configure a GitHub Action to automatically run `pnpm test` on every pull request, or keep test verification local/manual?
-2. `[ASK USER]` Should we refactor the socket getters (`getChatSocket` and `getNotificationSocket`) to automatically disconnect and recreate socket connections when the `session_token` cookie value changes?
+1. `[ASK USER]` Should we refactor the socket getters (`getChatSocket` and `getNotificationSocket`) to automatically disconnect and recreate socket connections when the `session_token` cookie value changes?
 
 ### 7) Evidence
 

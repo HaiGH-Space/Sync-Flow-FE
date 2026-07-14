@@ -18,7 +18,7 @@
 
 | Risk | OWASP category (if applicable) | Evidence | Current mitigation | Gap |
 |------|--------------------------------|----------|--------------------|-----|
-| Socket connection session token reuse / leakage | OWASP A01:2021-Broken Access Control | `lib/api/chat.ts` & `lib/api/notification.ts` | Centralized cookie resolution (`getCookieValue`) | Sockets do not disconnect/reconnect on session changes or logout/login, risking unauthorized access to chat/notifications across different users on the same machine |
+| Socket connection session token reuse / leakage | OWASP A01:2021-Broken Access Control | `lib/api/chat.ts` & `lib/api/notification.ts` | Sockets disconnect/reconnect on session changes via `useSocketSync` | None (Mitigated) |
 
 ### 4) Performance and Scaling Concerns
 
@@ -34,7 +34,8 @@
 
 ### 6) `[ASK USER]` Questions
 
-1. `[ASK USER]` Should we refactor the socket getters (`getChatSocket` and `getNotificationSocket`) to automatically disconnect and recreate socket connections when the `session_token` cookie value changes?
+None.
+
 
 ### 7) Evidence
 

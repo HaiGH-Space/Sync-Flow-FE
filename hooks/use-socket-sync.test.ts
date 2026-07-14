@@ -4,15 +4,16 @@ import { useUserStore } from "@/lib/store/use-user-profile";
 import { disconnectChatSocket } from "@/lib/api/chat";
 import { disconnectNotificationSocket } from "@/lib/api/notification";
 
-let effectCallback: (() => void) | undefined;
+let effectCallback: (() => void | (() => void)) | undefined;
 
 vi.mock("react", () => {
   return {
-    useEffect: vi.fn((cb) => {
+    useEffect: vi.fn((cb: () => void | (() => void)) => {
       effectCallback = cb;
     }),
   };
 });
+
 
 vi.mock("@/lib/api/chat", () => ({
   disconnectChatSocket: vi.fn(),
@@ -33,7 +34,7 @@ describe("useSocketSync hook", () => {
     useSocketSync();
 
     expect(effectCallback).toBeDefined();
-    const cleanup = (effectCallback as any)();
+    const cleanup = effectCallback ? effectCallback() : undefined;
 
     // Trigger user profile transition to initialized
     useUserStore.setState({
@@ -72,6 +73,7 @@ describe("useSocketSync hook", () => {
     expect(disconnectChatSocket).toHaveBeenCalledTimes(1);
     expect(disconnectNotificationSocket).toHaveBeenCalledTimes(1);
 
-    cleanup();
+    if (cleanup) cleanup();
+
   });
 });

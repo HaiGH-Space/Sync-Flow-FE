@@ -72,3 +72,12 @@ export const getChatSocket = () => {
 
   return chatSocket;
 };
+
+export const disconnectChatSocket = () => {
+  if (chatSocket) {
+    logger.debug("[chat] disconnecting socket", { id: chatSocket.id });
+    chatSocket.disconnect();
+    chatSocket = null;
+  }
+};
+

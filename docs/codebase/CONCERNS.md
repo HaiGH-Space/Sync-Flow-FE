@@ -12,13 +12,14 @@
 
 | Debt item | Why it exists | Where | Risk if ignored | Suggested fix |
 |-----------|---------------|-------|-----------------|---------------|
-| None | - | - | - | - |
+| Duplicated cookie parser helper | Used in both socket connection modules to read `session_token` from cookies | `lib/api/chat.ts` and `lib/api/notification.ts` | Logic duplication; code becomes harder to maintain or harden if cookie name/parsing strategy changes | Extract `getCookieValue` into a shared utility file (e.g., `lib/cookies.ts` or `lib/utils.ts`) |
 
 ### 3) Security Concerns
 
 | Risk | OWASP category (if applicable) | Evidence | Current mitigation | Gap |
 |------|--------------------------------|----------|--------------------|-----|
 | Socket connection session token reuse / leakage | OWASP A01:2021-Broken Access Control | `lib/api/chat.ts` & `lib/api/notification.ts` | Sockets disconnect/reconnect on session changes via `useSocketSync` | None (Mitigated) |
+| Shared global `QueryClient` singleton | OWASP A01:2021-Broken Access Control / Data Leakage | `components/ui/query-provider.tsx` | None (Instantiated as a global module-level singleton) | Next.js pre-renders client components on the server (SSR). The shared global `QueryClient` instance may leak query cache data across different requests/users |
 
 ### 4) Performance and Scaling Concerns
 
@@ -34,13 +35,15 @@
 
 ### 6) `[ASK USER]` Questions
 
-None.
+1. `[ASK USER]` Should we refactor the global `QueryClient` in `QueryProvider` to be instantiated inside the component scope (e.g., using `useState` or a ref) to prevent potential cross-request cache leaks during server pre-rendering (SSR)?
+2. `[ASK USER]` Should we extract the duplicated `getCookieValue` helper from `lib/api/chat.ts` and `lib/api/notification.ts` into a shared utility file?
 
 
 ### 7) Evidence
 
 - `.github/workflows/react-doctor.yml`
 - `.github/workflows/security.yml`
+- `.github/workflows/test.yml`
 - `package.json`
 - `queries/sprint.ts`
 - `queries/project.ts`
@@ -50,4 +53,5 @@ None.
 - `lib/api/api.ts`
 - `lib/api/chat.ts`
 - `lib/api/notification.ts`
+- `components/ui/query-provider.tsx`
 

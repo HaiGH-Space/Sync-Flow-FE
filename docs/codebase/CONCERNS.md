@@ -18,7 +18,7 @@
 
 | Risk | OWASP category (if applicable) | Evidence | Current mitigation | Gap |
 |------|--------------------------------|----------|--------------------|-----|
-| Socket connection session token reuse / leakage | OWASP A01:2021-Broken Access Control | `lib/api/chat.ts` & `lib/api/notification.ts` | Sockets disconnect/reconnect on session changes via `useSocketSync` | None (Mitigated) |
+| None | - | - | - | - |
 
 ### 4) Performance and Scaling Concerns
 

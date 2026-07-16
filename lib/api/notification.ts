@@ -1,5 +1,6 @@
 import { io, type Socket } from "socket.io-client";
 
+import { getCookieValue } from "@/lib/cookies";
 import { logger } from "@/lib/logger";
 import { api } from "./api";
 import { getWebSocketUrl } from "./api-config";
@@ -94,21 +95,6 @@ let notificationSocket: Socket<
   NotificationServerEvents,
   NotificationClientEvents
 > | null = null;
-
-const getCookieValue = (name: string) => {
-  if (typeof document === "undefined") {
-    return undefined;
-  }
-
-  const cookies = document.cookie.split(";").map((item) => item.trim());
-  for (const entry of cookies) {
-    const [key, ...rest] = entry.split("=");
-    if (key === name) {
-      return decodeURIComponent(rest.join("="));
-    }
-  }
-  return undefined;
-};
 
 export const getNotificationSocket = () => {
   if (notificationSocket) {

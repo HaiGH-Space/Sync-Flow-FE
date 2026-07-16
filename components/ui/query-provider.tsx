@@ -2,16 +2,20 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useSocketSync } from "@/hooks/use-socket-sync";
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 2,
-    }
-  }, 
-});
+import { useState } from "react";
 
 export default function QueryProvider({children}: {children: React.ReactNode}) {
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            retry: 2,
+          },
+        },
+      })
+  );
+
   useSocketSync();
 
   return (

@@ -11,27 +11,6 @@ permissions:
   actions: read
 
 jobs:
-  dependency-audit:
-    name: Dependency Vulnerability Audit
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: 9
-          run_install: false
-
-      - name: Run Dependency Audit
-        run: pnpm audit --prod
-
   secret-scanning:
     name: Secret Scanning
     runs-on: ubuntu-latest

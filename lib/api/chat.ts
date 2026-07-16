@@ -1,6 +1,7 @@
 import { io, type Socket } from "socket.io-client";
 
 import type { Message } from "@/lib/api/message";
+import { getCookieValue } from "@/lib/cookies";
 import { logger } from "@/lib/logger";
 import { getWebSocketUrl } from "./api-config";
 
@@ -18,21 +19,6 @@ type ChatClientEvents = {
 };
 
 let chatSocket: Socket<ChatServerEvents, ChatClientEvents> | null = null;
-
-const getCookieValue = (name: string) => {
-  if (typeof document === "undefined") {
-    return undefined;
-  }
-
-  const cookies = document.cookie.split(";").map((item) => item.trim());
-  for (const entry of cookies) {
-    const [key, ...rest] = entry.split("=");
-    if (key === name) {
-      return decodeURIComponent(rest.join("="));
-    }
-  }
-  return undefined;
-};
 
 export const getChatSocket = () => {
   if (chatSocket) {

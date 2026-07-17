@@ -48,7 +48,7 @@ export default function CreateIssueModal({
   );
 
   const { data: sprintsResponse } = useQuery(
-    createSprintsQueryOptions({ projectId, limit: 1000 }, { enabled: !!projectId }),
+    createSprintsQueryOptions({ projectId, limit: 100 }, { enabled: !!projectId }),
   );
 
   const assigneeOptions = memberProfilesResponse?.data
@@ -73,7 +73,7 @@ export default function CreateIssueModal({
 
   const handleSubmit = async (value: IssueFormValues) => {
     const cachedIssues = queryClient.getQueryData<ApiResponse<PaginatedData<Issue>>>(
-      issueKeys.list(projectId, { limit: 1000 }),
+      issueKeys.list(projectId, { limit: 100 }),
     );
     let newOrder = getTailOrder();
     if (cachedIssues?.data?.items) {

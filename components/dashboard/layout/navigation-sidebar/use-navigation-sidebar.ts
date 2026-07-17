@@ -117,7 +117,7 @@ export function useNavigationSidebar(workspaceDetail?: Workspace) {
     isFetching: isSprintsFetching,
   } = useQuery(
     createSprintsQueryOptions(
-      { projectId: expandedProjectId ?? "", limit: 1000 },
+      { projectId: expandedProjectId ?? "", limit: 100 },
       {
         enabled: !!expandedProjectId && isOpenSidebarLeft,
       },

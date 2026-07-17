@@ -62,7 +62,7 @@ export function useIssueMove({ projectId }: UseIssueMoveParams): UseIssueMoveRes
             await queryClient.cancelQueries({ queryKey: issueKeys.list(projectId) });
         },
         onSuccess: (updatedIssue) => {
-            queryClient.setQueryData<ApiResponse<PaginatedData<Issue>>>(issueKeys.list(projectId, { limit: 1000 }), (old) => {
+            queryClient.setQueryData<ApiResponse<PaginatedData<Issue>>>(issueKeys.list(projectId, { limit: 100 }), (old) => {
                 if (!old?.data) return old;
                 return {
                     ...old,
@@ -74,7 +74,7 @@ export function useIssueMove({ projectId }: UseIssueMoveParams): UseIssueMoveRes
             });
         },
         onError: (_err, vars) => {
-            queryClient.setQueryData<ApiResponse<PaginatedData<Issue>>>(issueKeys.list(projectId, { limit: 1000 }), (old) => {
+            queryClient.setQueryData<ApiResponse<PaginatedData<Issue>>>(issueKeys.list(projectId, { limit: 100 }), (old) => {
                 if (!old?.data) return old;
                 return {
                     ...old,
@@ -106,7 +106,7 @@ export function useIssueMove({ projectId }: UseIssueMoveParams): UseIssueMoveRes
 
         flushPendingIssueUpdates();
 
-        const currentIssues = queryClient.getQueryData<ApiResponse<PaginatedData<Issue>>>(issueKeys.list(projectId, { limit: 1000 }));
+        const currentIssues = queryClient.getQueryData<ApiResponse<PaginatedData<Issue>>>(issueKeys.list(projectId, { limit: 100 }));
         if (!currentIssues?.data?.items) return true;
 
         const issueId = source.id as string;
@@ -138,7 +138,7 @@ export function useIssueMove({ projectId }: UseIssueMoveParams): UseIssueMoveRes
         }
 
         // Optimistically move the card before persisting.
-        queryClient.setQueryData<ApiResponse<PaginatedData<Issue>>>(issueKeys.list(projectId, { limit: 1000 }), {
+        queryClient.setQueryData<ApiResponse<PaginatedData<Issue>>>(issueKeys.list(projectId, { limit: 100 }), {
             ...currentIssues,
             data: {
                 ...currentIssues.data,

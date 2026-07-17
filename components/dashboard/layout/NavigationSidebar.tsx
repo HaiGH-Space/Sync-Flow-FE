@@ -73,6 +73,18 @@ export function NavigationSidebar({
     handleDeleteProject,
     handleSettingsOpenChange,
     handleEditSprintOpenChange,
+    // Infinite paging
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    // Sublist states
+    showAllSprints,
+    setShowAllSprints,
+    showAllChannels,
+    setShowAllChannels,
+    activeTab,
+    setActiveTab,
+    searchQuery,
   } = useNavigationSidebar(workspaceDetail);
 
   return (
@@ -132,6 +144,16 @@ export function NavigationSidebar({
                         ""
                       }
                       onSelectChannelAction={handleChannelSelect}
+                      activeTab={activeTab}
+                      onActiveTabChange={setActiveTab}
+                      showAllSprints={showAllSprints}
+                      onToggleShowAllSprints={() => setShowAllSprints((prev) => !prev)}
+                      showAllChannels={showAllChannels}
+                      onToggleShowAllChannels={() => setShowAllChannels((prev) => !prev)}
+                      hasNextPage={hasNextPage}
+                      isFetchingNextPage={isFetchingNextPage}
+                      onLoadMoreAction={fetchNextPage}
+                      searchQuery={searchQuery}
                     />
                   </div>
                 </div>

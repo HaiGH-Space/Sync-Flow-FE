@@ -1,5 +1,6 @@
 "use client";
 
+import type React from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link } from "@/i18n/navigation";
@@ -9,7 +10,6 @@ import type { Sprint } from "@/lib/api/sprint";
 import { cn } from "@/lib/utils";
 import { ChevronRight, Settings2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
 import { NavigationSidebarChannelList } from "./NavigationSidebarChannelList";
 import { NavigationSidebarSprintList } from "./NavigationSidebarSprintList";
 
@@ -30,6 +30,14 @@ type NavigationSidebarProjectItemProps = {
   channelsError?: Error | null;
   selectedChannelId: string;
   onSelectChannelAction: (projectId: string, channelId: string) => void;
+
+  // Lifted states
+  activeTab: string;
+  onActiveTabChange: (tab: string) => void;
+  showAllSprints: boolean;
+  onToggleShowAllSprints: () => void;
+  showAllChannels: boolean;
+  onToggleShowAllChannels: () => void;
 };
 
 export function NavigationSidebarProjectItem({
@@ -49,9 +57,14 @@ export function NavigationSidebarProjectItem({
   channelsError,
   selectedChannelId,
   onSelectChannelAction,
+  activeTab,
+  onActiveTabChange,
+  showAllSprints,
+  onToggleShowAllSprints,
+  showAllChannels,
+  onToggleShowAllChannels,
 }: NavigationSidebarProjectItemProps) {
   const t = useTranslations("dashboard");
-  const [activeTab, setActiveTab] = useState("sprints");
 
   return (
     <div className="rounded-md my-2">
@@ -60,7 +73,7 @@ export function NavigationSidebarProjectItem({
           href={`/dashboard/${workspaceId}/${project.id}`}
           aria-label={`Switch to ${project.name}`}
           aria-current={isExpanded ? "page" : undefined}
-          onClick={(event) => {
+          onClick={(event: React.MouseEvent<HTMLAnchorElement>) => {
             if (isExpanded) {
               event.preventDefault();
             }
@@ -104,7 +117,7 @@ export function NavigationSidebarProjectItem({
         )}
       >
         <div className="min-h-0">
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <Tabs value={activeTab} onValueChange={onActiveTabChange}>
             <TabsList variant="line" className="mx-3 mt-2">
               <TabsTrigger value="sprints">
                 {t("sidebar.sprintsTab")}
@@ -123,6 +136,8 @@ export function NavigationSidebarProjectItem({
                 selectedSprintId={selectedSprintId}
                 onSelectSprintAction={onSelectSprintAction}
                 onEditSprintAction={onEditSprintAction}
+                showAllSprints={showAllSprints}
+                onToggleShowAllSprints={onToggleShowAllSprints}
               />
             </TabsContent>
             <TabsContent value="channels">
@@ -134,6 +149,8 @@ export function NavigationSidebarProjectItem({
                 onSelectChannelAction={onSelectChannelAction}
                 workspaceId={workspaceId}
                 projectId={project.id}
+                showAllChannels={showAllChannels}
+                onToggleShowAllChannels={onToggleShowAllChannels}
               />
             </TabsContent>
           </Tabs>
@@ -142,3 +159,4 @@ export function NavigationSidebarProjectItem({
     </div>
   );
 }
+

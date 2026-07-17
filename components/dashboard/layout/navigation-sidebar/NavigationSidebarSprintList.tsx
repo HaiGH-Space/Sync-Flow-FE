@@ -7,7 +7,6 @@ import type { Sprint } from "@/lib/api/sprint";
 import { cn } from "@/lib/utils";
 import { Loader2, PlusIcon, Settings2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
 import { NavigationSidebarItem } from "./NavigationSidebarItem";
 
 type NavigationSidebarSprintListProps = {
@@ -19,6 +18,10 @@ type NavigationSidebarSprintListProps = {
   selectedSprintId: string;
   onSelectSprintAction: (projectId: string, sprintId: string) => void;
   onEditSprintAction: (sprint: Sprint) => void;
+  
+  // Lifted states
+  showAllSprints: boolean;
+  onToggleShowAllSprints: () => void;
 };
 
 export function NavigationSidebarSprintList({
@@ -30,12 +33,11 @@ export function NavigationSidebarSprintList({
   selectedSprintId,
   onSelectSprintAction,
   onEditSprintAction,
+  showAllSprints,
+  onToggleShowAllSprints,
 }: NavigationSidebarSprintListProps) {
   const t = useTranslations("dashboard");
   const { push } = useRouter();
-
-  const [showAll, setShowAll] = useState(false);
-  const [hasCollapsed, setHasCollapsed] = useState(false);
 
   const DEFAULT_LIMIT = 5;
 
@@ -43,7 +45,7 @@ export function NavigationSidebarSprintList({
     ? sprints.findIndex((s) => s.id === selectedSprintId) >= DEFAULT_LIMIT
     : false;
 
-  const isExpanded = showAll || (hasSelectedOutsideLimit && !hasCollapsed);
+  const isExpanded = showAllSprints || hasSelectedOutsideLimit;
 
   const displayedSprints = sprints
     ? (isExpanded ? sprints : sprints.slice(0, DEFAULT_LIMIT))
@@ -54,18 +56,18 @@ export function NavigationSidebarSprintList({
       <div className="border-l border-border pl-3 space-y-1">
         <div className="sticky top-0 z-10 -ml-3 border-b border-sidebar-border/60 bg-sidebar/95 px-3 pb-2 pt-2 backdrop-blur">
           <CreateSprintModal
-            projectId={projectId}
-            trigger={
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="h-8 w-full justify-start gap-2 px-2 py-1.5 text-muted-foreground hover:text-foreground"
-              >
-                <PlusIcon className="size-3.5" />
-                {t("sprint.create.action")}
-              </Button>
-            }
+             projectId={projectId}
+             trigger={
+               <Button
+                 type="button"
+                 variant="ghost"
+                 size="sm"
+                 className="h-8 w-full justify-start gap-2 px-2 py-1.5 text-muted-foreground hover:text-foreground"
+               >
+                 <PlusIcon className="size-3.5" />
+                 {t("sprint.create.action")}
+               </Button>
+             }
           />
         </div>
         {isFetching && (
@@ -135,15 +137,7 @@ export function NavigationSidebarSprintList({
             variant="ghost"
             size="sm"
             className="h-8 w-full justify-center text-xs text-muted-foreground hover:text-foreground mt-1"
-            onClick={() => {
-              if (isExpanded) {
-                setShowAll(false);
-                setHasCollapsed(true);
-              } else {
-                setShowAll(true);
-                setHasCollapsed(false);
-              }
-            }}
+            onClick={onToggleShowAllSprints}
           >
             {isExpanded ? t("sidebar.showLess") : t("sidebar.showMore")}
           </Button>
@@ -152,3 +146,4 @@ export function NavigationSidebarSprintList({
     </div>
   );
 }
+

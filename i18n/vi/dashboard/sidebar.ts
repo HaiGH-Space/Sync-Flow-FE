@@ -15,6 +15,7 @@ const sidebar = {
   searchPlaceholder: "Tìm kiếm...",
   showMore: "Xem thêm",
   showLess: "Thu gọn",
+  searchMoreHint: "Cuộn xuống để tải thêm kết quả tìm kiếm",
   role: {
     owner: "Chủ workspace",
     admin: "Quản trị viên",

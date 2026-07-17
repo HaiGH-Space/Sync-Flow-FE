@@ -177,10 +177,12 @@ export default function BoardCanvas({ projectId }: BoardCanvasProps) {
     );
   }
 
+  const DndProvider = DragDropProvider as any;
+
   return (
     <>
       <div className="w-full h-full">
-        <DragDropProvider
+        <DndProvider
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
           sensors={[
@@ -264,7 +266,7 @@ export default function BoardCanvas({ projectId }: BoardCanvasProps) {
                 </div>
               )}
           </DragOverlay>
-        </DragDropProvider>
+        </DndProvider>
       </div>
 
       <DeleteConfirmModal

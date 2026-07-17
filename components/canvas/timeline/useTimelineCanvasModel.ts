@@ -58,7 +58,7 @@ export function useTimelineCanvasModel(projectId: string): ViewModel {
     error: sprintsError,
     isRefetching: isSprintsRefetching,
     refetch: refetchSprints,
-  } = useQuery(createSprintsQueryOptions({ projectId, limit: 100 }));
+  } = useQuery(createSprintsQueryOptions({ projectId, limit: 1000 }));
 
   const {
     data: issuesData,
@@ -66,7 +66,7 @@ export function useTimelineCanvasModel(projectId: string): ViewModel {
     error: issuesError,
     isRefetching: isIssuesRefetching,
     refetch: refetchIssues,
-  } = useQuery(createIssuesQueryOptions({ projectId, limit: 100 }));
+  } = useQuery(createIssuesQueryOptions({ projectId, limit: 1000 }));
 
   const sprints = useMemo(
     () => sprintsData?.data?.items ?? [],

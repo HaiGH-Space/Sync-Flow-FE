@@ -31,10 +31,10 @@ export default function PlanningCanvas({ projectId }: PlanningCanvasProps) {
     data: issuesResponse,
     isLoading,
     error,
-  } = useQuery(createIssuesQueryOptions({ projectId, limit: 100 }));
+  } = useQuery(createIssuesQueryOptions({ projectId, limit: 1000 }));
 
   const { data: sprintsResponse } = useQuery(
-    createSprintsQueryOptions({ projectId, limit: 100 }, { enabled: !!projectId }),
+    createSprintsQueryOptions({ projectId, limit: 1000 }, { enabled: !!projectId }),
   );
 
   const issues = issuesResponse?.data?.items ?? [];
@@ -61,10 +61,10 @@ export default function PlanningCanvas({ projectId }: PlanningCanvasProps) {
   const handleMoveIssue = (issueId: string, sprintId: string | null) => {
     setPendingIssueId(issueId);
     const previousIssues = queryClient.getQueryData<ApiResponse<PaginatedData<Issue>>>(
-      issueKeys.list(projectId, { limit: 100 }),
+      issueKeys.list(projectId, { limit: 1000 }),
     );
     if (previousIssues?.data?.items) {
-      queryClient.setQueryData<ApiResponse<PaginatedData<Issue>>>(issueKeys.list(projectId, { limit: 100 }), {
+      queryClient.setQueryData<ApiResponse<PaginatedData<Issue>>>(issueKeys.list(projectId, { limit: 1000 }), {
         ...previousIssues,
         data: {
           ...previousIssues.data,
@@ -82,7 +82,7 @@ export default function PlanningCanvas({ projectId }: PlanningCanvasProps) {
         },
         onError: () => {
           if (previousIssues) {
-            queryClient.setQueryData(issueKeys.list(projectId, { limit: 100 }), previousIssues);
+            queryClient.setQueryData(issueKeys.list(projectId, { limit: 1000 }), previousIssues);
           }
           toast.error(tDashboard("issue.toast.updateFailed"));
         },
@@ -140,8 +140,10 @@ export default function PlanningCanvas({ projectId }: PlanningCanvasProps) {
     );
   }
 
+  const DndProvider = DragDropProvider as any;
+
   return (
-    <DragDropProvider onDragEnd={handleDragEnd}>
+    <DndProvider onDragEnd={handleDragEnd}>
       <div className="grid h-full grid-cols-1 gap-6 lg:grid-cols-2">
         <PlanningIssuesColumn
           projectId={projectId}
@@ -191,6 +193,6 @@ export default function PlanningCanvas({ projectId }: PlanningCanvasProps) {
           pendingIssueId={isPending ? pendingIssueId : null}
         />
       </div>
-    </DragDropProvider>
+    </DndProvider>
   );
 }

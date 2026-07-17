@@ -48,7 +48,7 @@ function KanbanColumn(props: ColumnProps) {
 
   const { data: tasks = [] } = useQuery(
     createIssuesQueryOptions(
-      { projectId: props.projectId, limit: 100 },
+      { projectId: props.projectId, limit: 1000 },
       {
         select: selectColumnTasks,
       },

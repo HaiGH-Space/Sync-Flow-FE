@@ -7,7 +7,6 @@ import { ChannelType } from "@/lib/api/channel";
 import { cn } from "@/lib/utils";
 import { Hash, Loader2, MessageCircle, PlusIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
 import { NavigationSidebarItem } from "./NavigationSidebarItem";
 
 type NavigationSidebarChannelListProps = {
@@ -18,6 +17,10 @@ type NavigationSidebarChannelListProps = {
   onSelectChannelAction: (projectId: string, channelId: string) => void;
   workspaceId: string;
   projectId: string;
+  
+  // Lifted states
+  showAllChannels: boolean;
+  onToggleShowAllChannels: () => void;
 };
 
 export function NavigationSidebarChannelList({
@@ -28,11 +31,10 @@ export function NavigationSidebarChannelList({
   onSelectChannelAction,
   workspaceId,
   projectId,
+  showAllChannels,
+  onToggleShowAllChannels,
 }: NavigationSidebarChannelListProps) {
   const t = useTranslations("dashboard");
-
-  const [showAll, setShowAll] = useState(false);
-  const [hasCollapsed, setHasCollapsed] = useState(false);
 
   const DEFAULT_LIMIT = 5;
 
@@ -40,7 +42,7 @@ export function NavigationSidebarChannelList({
     ? channels.findIndex((c) => c.id === selectedChannelId) >= DEFAULT_LIMIT
     : false;
 
-  const isExpanded = showAll || (hasSelectedOutsideLimit && !hasCollapsed);
+  const isExpanded = showAllChannels || hasSelectedOutsideLimit;
 
   const displayedChannels = channels
     ? (isExpanded ? channels : channels.slice(0, DEFAULT_LIMIT))
@@ -128,15 +130,7 @@ export function NavigationSidebarChannelList({
             variant="ghost"
             size="sm"
             className="h-8 w-full justify-center text-xs text-muted-foreground hover:text-foreground mt-1"
-            onClick={() => {
-              if (isExpanded) {
-                setShowAll(false);
-                setHasCollapsed(true);
-              } else {
-                setShowAll(true);
-                setHasCollapsed(false);
-              }
-            }}
+            onClick={onToggleShowAllChannels}
           >
             {isExpanded ? t("sidebar.showLess") : t("sidebar.showMore")}
           </Button>
@@ -145,3 +139,4 @@ export function NavigationSidebarChannelList({
     </div>
   );
 }
+

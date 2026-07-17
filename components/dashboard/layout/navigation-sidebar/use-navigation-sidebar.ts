@@ -1,12 +1,12 @@
 import { useDashboard } from "@/lib/store/use-dashboard";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useCallback, useMemo, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useProfile } from "@/hooks/use-profile";
 import { createWorkspaceDetailQueryOptions } from "@/queries/workspace";
-import { createProjectsQueryOptions } from "@/queries/project";
+import { createProjectsInfiniteQueryOptions } from "@/queries/project";
 import { createSprintsQueryOptions } from "@/queries/sprint";
 import { createChannelsQueryOptions } from "@/queries/channel";
 import { useDeleteProject } from "@/hooks/mutations/project";
@@ -47,6 +47,12 @@ export function useNavigationSidebar(workspaceDetail?: Workspace) {
   const [searchQuery, setSearchQuery] = useState("");
   const [settingsProject, setSettingsProject] = useState<Project | null>(null);
   const [editingSprint, setEditingSprint] = useState<Sprint | null>(null);
+
+  // Centralized tab & sublist expanded states
+  const [showAllSprints, setShowAllSprints] = useState(false);
+  const [showAllChannels, setShowAllChannels] = useState(false);
+  const [activeTab, setActiveTab] = useState("sprints");
+
   const canLoadProjects = !!workspaceDetail?.id && isOpenSidebarLeft;
 
   const { data: workspaceDetailResponse } = useQuery(
@@ -78,20 +84,29 @@ export function useNavigationSidebar(workspaceDetail?: Workspace) {
   const canManageProject =
     currentWorkspaceRole === "OWNER" || currentWorkspaceRole === "ADMIN";
 
+  // Set up Project Infinite Query
   const {
-    data: projectsResponse,
+    data: projectsInfiniteData,
     error,
     isFetching,
-  } = useQuery(
-    createProjectsQueryOptions(
-      { workspaceId: workspaceDetail?.id ?? "", limit: 100 },
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery(
+    createProjectsInfiniteQueryOptions(
+      { workspaceId: workspaceDetail?.id ?? "", limit: 20 },
       {
         enabled: canLoadProjects,
       },
     ),
   );
+
+  const projects = useMemo(() => {
+    return projectsInfiniteData?.pages.flatMap((page) => page.data.items) ?? [];
+  }, [projectsInfiniteData]);
+
   const isProjectsLoading =
-    canLoadProjects && (isFetching || !projectsResponse);
+    canLoadProjects && (isFetching && projects.length === 0);
 
   const { mutate: deleteProject, isPending: isDeletingProject } =
     useDeleteProject(workspaceDetail?.id ?? "");
@@ -123,17 +138,16 @@ export function useNavigationSidebar(workspaceDetail?: Workspace) {
   );
 
   const filteredProjects = useMemo(() => {
-    const projectList = projectsResponse?.data?.items ?? [];
     const normalizedQuery = searchQuery.trim().toLowerCase();
 
     if (!normalizedQuery) {
-      return projectList;
+      return projects;
     }
 
-    return projectList.filter((project) =>
+    return projects.filter((project) =>
       project.name.toLowerCase().includes(normalizedQuery),
     );
-  }, [projectsResponse?.data, searchQuery]);
+  }, [projects, searchQuery]);
 
   const searchHandle = useCallback(async (query: string) => {
     setSearchQuery(query);
@@ -195,6 +209,19 @@ export function useNavigationSidebar(workspaceDetail?: Workspace) {
     }
   };
 
+  const handleExpandProjectAction = useCallback((id: string) => {
+    setExpandedProjectId((prev) => {
+      if (prev === id) {
+        return null;
+      }
+      // Reset sublist states when expanding a different project
+      setActiveTab("sprints");
+      setShowAllSprints(false);
+      setShowAllChannels(false);
+      return id;
+    });
+  }, []);
+
   return {
     isOpenSidebarLeft,
     selectedSprintIdByProject,
@@ -203,7 +230,7 @@ export function useNavigationSidebar(workspaceDetail?: Workspace) {
     t,
     router,
     expandedProjectId,
-    setExpandedProjectId,
+    setExpandedProjectId: handleExpandProjectAction,
     searchQuery,
     settingsProject,
     setSettingsProject,
@@ -212,7 +239,7 @@ export function useNavigationSidebar(workspaceDetail?: Workspace) {
     canLoadProjects,
     currentWorkspaceRole,
     canManageProject,
-    projectsResponse,
+    projectsResponse: { data: { items: projects } }, // Maintain backwards compatibility shape
     error,
     isProjectsLoading,
     deleteProject,
@@ -230,5 +257,19 @@ export function useNavigationSidebar(workspaceDetail?: Workspace) {
     handleDeleteProject,
     handleSettingsOpenChange,
     handleEditSprintOpenChange,
+    
+    // Infinite paging props
+    fetchNextPage,
+    hasNextPage: !!hasNextPage,
+    isFetchingNextPage,
+
+    // Centralized states
+    showAllSprints,
+    setShowAllSprints,
+    showAllChannels,
+    setShowAllChannels,
+    activeTab,
+    setActiveTab,
   };
 }
+

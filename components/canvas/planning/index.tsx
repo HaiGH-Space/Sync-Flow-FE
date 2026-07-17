@@ -140,8 +140,10 @@ export default function PlanningCanvas({ projectId }: PlanningCanvasProps) {
     );
   }
 
+  const DndProvider = DragDropProvider as any;
+
   return (
-    <DragDropProvider onDragEnd={handleDragEnd}>
+    <DndProvider onDragEnd={handleDragEnd}>
       <div className="grid h-full grid-cols-1 gap-6 lg:grid-cols-2">
         <PlanningIssuesColumn
           projectId={projectId}
@@ -191,6 +193,6 @@ export default function PlanningCanvas({ projectId }: PlanningCanvasProps) {
           pendingIssueId={isPending ? pendingIssueId : null}
         />
       </div>
-    </DragDropProvider>
+    </DndProvider>
   );
 }

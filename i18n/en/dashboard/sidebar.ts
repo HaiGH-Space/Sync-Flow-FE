@@ -15,6 +15,7 @@ const sidebar = {
   searchPlaceholder: "Search...",
   showMore: "Show more",
   showLess: "Show less",
+  searchMoreHint: "Scroll down to load more search results",
   role: {
     owner: "Workspace owner",
     admin: "Administrator",

@@ -6,6 +6,7 @@ import type { Sprint } from "@/lib/api/sprint";
 import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { NavigationSidebarProjectItem } from "./NavigationSidebarProjectItem";
+import { InfiniteScrollSentinel } from "./InfiniteScrollSentinel";
 
 type NavigationSidebarProjectListProps = {
   status: {
@@ -30,6 +31,20 @@ type NavigationSidebarProjectListProps = {
   channelsError?: Error | null;
   selectedChannelId: string;
   onSelectChannelAction: (projectId: string, channelId: string) => void;
+
+  // Lifted states
+  activeTab: string;
+  onActiveTabChange: (tab: string) => void;
+  showAllSprints: boolean;
+  onToggleShowAllSprints: () => void;
+  showAllChannels: boolean;
+  onToggleShowAllChannels: () => void;
+
+  // Infinite scroll
+  hasNextPage: boolean;
+  isFetchingNextPage: boolean;
+  onLoadMoreAction: () => void;
+  searchQuery: string;
 };
 
 export function NavigationSidebarProjectList({
@@ -50,6 +65,16 @@ export function NavigationSidebarProjectList({
   channelsError,
   selectedChannelId,
   onSelectChannelAction,
+  activeTab,
+  onActiveTabChange,
+  showAllSprints,
+  onToggleShowAllSprints,
+  showAllChannels,
+  onToggleShowAllChannels,
+  hasNextPage,
+  isFetchingNextPage,
+  onLoadMoreAction,
+  searchQuery,
 }: NavigationSidebarProjectListProps) {
   const t = useTranslations("dashboard");
   const {
@@ -61,6 +86,12 @@ export function NavigationSidebarProjectList({
 
   return (
     <nav className="space-y-1">
+      {searchQuery && hasNextPage && (
+        <div className="px-3 py-1.5 text-[11px] font-medium text-amber-600 dark:text-amber-500 bg-amber-50 dark:bg-amber-950/20 border border-amber-200/50 dark:border-amber-900/30 rounded mb-2 whitespace-normal wrap-break-word">
+          {t("sidebar.searchMoreHint")}
+        </div>
+      )}
+
       {projectsError && (
         <div className="px-3 py-2 text-sm text-destructive">
           {projectsError.message}
@@ -108,8 +139,23 @@ export function NavigationSidebarProjectList({
           channelsError={channelsError}
           selectedChannelId={selectedChannelId}
           onSelectChannelAction={onSelectChannelAction}
+          activeTab={activeTab}
+          onActiveTabChange={onActiveTabChange}
+          showAllSprints={showAllSprints}
+          onToggleShowAllSprints={onToggleShowAllSprints}
+          showAllChannels={showAllChannels}
+          onToggleShowAllChannels={onToggleShowAllChannels}
         />
       ))}
+
+      {hasNextPage && (
+        <InfiniteScrollSentinel
+          onIntersect={onLoadMoreAction}
+          isLoading={isFetchingNextPage}
+          enabled={hasNextPage}
+        />
+      )}
     </nav>
   );
 }
+

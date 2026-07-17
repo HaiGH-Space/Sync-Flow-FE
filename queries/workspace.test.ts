@@ -3,6 +3,7 @@ import { QueryFunctionContext } from '@tanstack/react-query'
 import {
   workspaceKeys,
   createMyWorkspacesQueryOptions,
+  createMyWorkspacesInfiniteQueryOptions,
   createWorkspaceDetailQueryOptions,
 } from './workspace'
 import { workspaceService } from '@/lib/api/workspace'
@@ -76,4 +77,20 @@ describe('workspace query options', () => {
       expect(workspaceService.getWorkspaceById).toHaveBeenCalledWith('ws-456')
     })
   })
+
+  describe('createMyWorkspacesInfiniteQueryOptions', () => {
+    it('returns options with correct queryKey and getNextPageParam', () => {
+      const options = createMyWorkspacesInfiniteQueryOptions({ limit: 10 })
+      expect(options.queryKey).toEqual(['workspaces', 'me', 'infinite', { limit: 10 }])
+      
+      const mockPageResponse = {
+        statusCode: 200,
+        message: 'success',
+        data: { items: [], total: 15, page: 1, limit: 10 }
+      }
+      const next = options.getNextPageParam(mockPageResponse, [mockPageResponse], 1, [1])
+      expect(next).toBe(2)
+    })
+  })
 })
+

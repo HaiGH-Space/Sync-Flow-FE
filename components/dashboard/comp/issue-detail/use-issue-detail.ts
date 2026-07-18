@@ -1,4 +1,4 @@
-import { useMemo, useReducer, useState } from "react";
+import { useReducer, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
@@ -160,49 +160,40 @@ export function useIssueDetail({ projectId, issueId, isOpen, openChange }: UseIs
     }
   );
 
-  const assigneeOptions = useMemo(() => {
-    const members = memberProfilesResponse?.data ?? [];
-    return [
-      { value: "UNASSIGNED", label: tDashboard("issue.assignee.unassigned") },
-      ...members.map((member) => ({
-        value: member.id,
-        label:
-          profile?.id === member.id
-            ? tDashboard("issue.assignee.me", { name: member.name })
-            : member.name,
-      })),
-    ];
-  }, [memberProfilesResponse?.data, profile?.id, tDashboard]);
+  const members = memberProfilesResponse?.data ?? [];
+  const assigneeOptions = [
+    { value: "UNASSIGNED", label: tDashboard("issue.assignee.unassigned") },
+    ...members.map((member) => ({
+      value: member.id,
+      label:
+        profile?.id === member.id
+          ? tDashboard("issue.assignee.me", { name: member.name })
+          : member.name,
+    })),
+  ];
 
-  const memberNameById = useMemo(() => {
-    const entries = (memberProfilesResponse?.data ?? []).map(
+  const memberNameById = new Map(
+    (memberProfilesResponse?.data ?? []).map(
       (member) => [member.id, member.name] as const,
-    );
-    return new Map(entries);
-  }, [memberProfilesResponse?.data]);
-
-  const memberById = useMemo(() => {
-    const entries = (memberProfilesResponse?.data ?? []).map(
-      (member) => [member.id, member] as const,
-    );
-    return new Map(entries);
-  }, [memberProfilesResponse?.data]);
-
-  const columnNameById = useMemo(() => {
-    const entries = (columnsResponse?.data ?? []).map(
-      (column) => [column.id, column.name] as const,
-    );
-    return new Map(entries);
-  }, [columnsResponse?.data]);
-
-  const formatDate = useMemo(
-    () =>
-      createDateFormatter(locale, {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-    [locale],
+    )
   );
+
+  const memberById = new Map(
+    (memberProfilesResponse?.data ?? []).map(
+      (member) => [member.id, member] as const,
+    )
+  );
+
+  const columnNameById = new Map(
+    (columnsResponse?.data ?? []).map(
+      (column) => [column.id, column.name] as const,
+    )
+  );
+
+  const formatDate = createDateFormatter(locale, {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 
   const priorityOptions = [
     { value: Priority.LOW, label: tDashboard("issue.priority.low") },

@@ -202,6 +202,7 @@ function CalendarDayButton({
 
   return (
     <Button
+      suppressHydrationWarning
       autoFocus={modifiers.focused}
       variant="ghost"
       size="icon"

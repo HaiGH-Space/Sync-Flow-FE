@@ -47,6 +47,59 @@ type NavigationSidebarProjectListProps = {
   searchQuery: string;
 };
 
+type NavigationSidebarProjectListStatusProps = {
+  projectsError?: Error | null;
+  isProjectsLoading: boolean;
+  canLoadProjects: boolean;
+  projectsCount: number;
+  filteredProjectsCount: number;
+};
+
+export function NavigationSidebarProjectListStatus({
+  projectsError,
+  isProjectsLoading,
+  canLoadProjects,
+  projectsCount,
+  filteredProjectsCount,
+}: NavigationSidebarProjectListStatusProps) {
+  const t = useTranslations("dashboard");
+
+  if (projectsError) {
+    return (
+      <div className="px-3 py-2 text-sm text-destructive">
+        {projectsError.message}
+      </div>
+    );
+  }
+
+  if (isProjectsLoading) {
+    return (
+      <div className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground">
+        <Loader2 className="size-4 animate-spin" />
+        <span>{t("sidebar.loadingProjects")}</span>
+      </div>
+    );
+  }
+
+  if (canLoadProjects && projectsCount === 0) {
+    return (
+      <div className="px-3 py-2 text-sm text-muted-foreground">
+        {t("sidebar.noProjects")}
+      </div>
+    );
+  }
+
+  if (canLoadProjects && projectsCount > 0 && filteredProjectsCount === 0) {
+    return (
+      <div className="px-3 py-2 text-sm text-muted-foreground">
+        {t("sidebar.noSearchResults")}
+      </div>
+    );
+  }
+
+  return null;
+}
+
 export function NavigationSidebarProjectList({
   status,
   projectsError,
@@ -92,33 +145,13 @@ export function NavigationSidebarProjectList({
         </div>
       )}
 
-      {projectsError && (
-        <div className="px-3 py-2 text-sm text-destructive">
-          {projectsError.message}
-        </div>
-      )}
-
-      {isProjectsLoading && (
-        <div className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground">
-          <Loader2 className="size-4 animate-spin" />
-          <span>{t("sidebar.loadingProjects")}</span>
-        </div>
-      )}
-
-      {canLoadProjects && !isProjectsLoading && projects.length === 0 && (
-        <div className="px-3 py-2 text-sm text-muted-foreground">
-          {t("sidebar.noProjects")}
-        </div>
-      )}
-
-      {canLoadProjects &&
-        !isProjectsLoading &&
-        projects.length > 0 &&
-        filteredProjects.length === 0 && (
-          <div className="px-3 py-2 text-sm text-muted-foreground">
-            {t("sidebar.noSearchResults")}
-          </div>
-        )}
+      <NavigationSidebarProjectListStatus
+        projectsError={projectsError}
+        isProjectsLoading={isProjectsLoading}
+        canLoadProjects={canLoadProjects}
+        projectsCount={projects.length}
+        filteredProjectsCount={filteredProjects.length}
+      />
 
       {filteredProjects.map((project) => (
         <NavigationSidebarProjectItem

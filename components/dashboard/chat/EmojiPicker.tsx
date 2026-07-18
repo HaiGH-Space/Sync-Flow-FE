@@ -2,11 +2,9 @@
 
 import {
   useEffect,
-  useMemo,
   useRef,
   useState,
   useDeferredValue,
-  memo,
 } from "react";
 import { Search } from "lucide-react";
 import emojiLibData from "emojilib";
@@ -23,21 +21,19 @@ const ALL_EMOJIS = Object.entries(emojiLibData);
 const INITIAL_EMOJI_BATCH = 40;
 const EMOJI_BATCH_SIZE = 40;
 
-const EmojiButton = memo(
-  ({ emoji, onClick }: { emoji: string; onClick: (e: string) => void }) => (
-    <button
-      type="button"
-      onPointerDown={(e) => e.preventDefault()}
-      onClick={() => onClick(emoji)}
-      className="flex items-center justify-center size-11 text-2xl hover:bg-accent rounded-xl transition-all active:scale-75 hover:scale-110 will-change-transform"
-    >
-      {emoji}
-    </button>
-  ),
+const EmojiButton = ({ emoji, onClick }: { emoji: string; onClick: (e: string) => void }) => (
+  <button
+    type="button"
+    onPointerDown={(e) => e.preventDefault()}
+    onClick={() => onClick(emoji)}
+    className="flex items-center justify-center size-11 text-2xl hover:bg-accent rounded-xl transition-all active:scale-75 hover:scale-110 will-change-transform"
+  >
+    {emoji}
+  </button>
 );
 EmojiButton.displayName = "EmojiButton";
 
-export const EmojiPicker = memo(({ onSelectAction }: EmojiPickerProps) => {
+export const EmojiPicker = ({ onSelectAction }: EmojiPickerProps) => {
   const [search, setSearch] = useState("");
   const deferredSearch = useDeferredValue(search);
 
@@ -45,18 +41,12 @@ export const EmojiPicker = memo(({ onSelectAction }: EmojiPickerProps) => {
   const scrollViewportRef = useRef<HTMLDivElement | null>(null);
   const loadMoreSentinelRef = useRef<HTMLDivElement | null>(null);
 
-  const filteredEmojis = useMemo(() => {
-    const query = deferredSearch.toLowerCase();
-    if (!query) return ALL_EMOJIS;
-    return ALL_EMOJIS.filter(([, keywords]) =>
-      keywords.some((k) => k.includes(query)),
-    );
-  }, [deferredSearch]);
+  const query = deferredSearch.toLowerCase();
+  const filteredEmojis = !query
+    ? ALL_EMOJIS
+    : ALL_EMOJIS.filter(([, keywords]) => keywords.some((k) => k.includes(query)));
 
-  const visibleEmojis = useMemo(
-    () => filteredEmojis.slice(0, visibleCount),
-    [filteredEmojis, visibleCount],
-  );
+  const visibleEmojis = filteredEmojis.slice(0, visibleCount);
 
   useEffect(() => {
     const sentinel = loadMoreSentinelRef.current;
@@ -134,5 +124,5 @@ export const EmojiPicker = memo(({ onSelectAction }: EmojiPickerProps) => {
       </div>
     </div>
   );
-});
+};
 EmojiPicker.displayName = "EmojiPicker";

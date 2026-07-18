@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { z } from "zod";
 import { Priority } from "@/lib/api/issue";
 import { useForm } from "@tanstack/react-form";
@@ -76,10 +76,10 @@ export default function IssueFormDialog({
   const tValidation = useTranslations("validation");
   const issueFormSchema = createIssueFormSchema(tValidation);
 
-  const mergedDefaultValues = useMemo<IssueFormValues>(
-    () => ({ ...baseDefaultValues, ...defaultValues }),
-    [defaultValues],
-  );
+  const mergedDefaultValues: IssueFormValues = {
+    ...baseDefaultValues,
+    ...defaultValues,
+  };
 
   const form = useForm({
     defaultValues: mergedDefaultValues,

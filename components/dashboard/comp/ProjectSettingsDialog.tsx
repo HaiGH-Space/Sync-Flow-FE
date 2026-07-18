@@ -6,7 +6,7 @@ import { Separator } from "@/components/ui/separator"
 import type { Project } from "@/lib/api/project"
 import { useTranslations } from "next-intl"
 import { AlertTriangle, Loader2, Settings2, Trash2 } from "lucide-react"
-import { useMemo, useState } from "react"
+import { useState } from "react"
 import SettingsDialogShell, { type SettingsTab } from "./SettingsDialogShell"
 
 type ProjectSettingsDialogProps = {
@@ -37,7 +37,7 @@ export default function ProjectSettingsDialog({
         onOpenChange(nextOpen)
     }
 
-    const tabs: SettingsTab[] = useMemo(() => [
+    const tabs: SettingsTab[] = [
         {
             value: 'general',
             icon: <Settings2 className="size-4 shrink-0 text-muted-foreground" />,
@@ -168,7 +168,7 @@ export default function ProjectSettingsDialog({
                 </>
             ),
         },
-    ], [tDashboard, tCommon, project, canManage, confirmDelete, isDeleting, onDelete])
+    ]
 
     return (
         <SettingsDialogShell

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { getChatSocket } from "@/lib/api/chat";
@@ -105,23 +105,20 @@ export function useChatChannel(channelId?: string) {
     };
   }, [channelId]);
 
-  const sendMessage = useCallback(
-    (content: string) => {
-      const trimmed = content.trim();
-      if (!trimmed || !channelId) {
-        return;
-      }
+  const sendMessage = (content: string) => {
+    const trimmed = content.trim();
+    if (!trimmed || !channelId) {
+      return;
+    }
 
-      const socket = getChatSocket();
-      logger.debug("[chat] send_message", {
-        channelId,
-        socketId: socket.id,
-        connected: socket.connected,
-      });
-      socket.emit("send_message", { channelId, content: trimmed });
-    },
-    [channelId],
-  );
+    const socket = getChatSocket();
+    logger.debug("[chat] send_message", {
+      channelId,
+      socketId: socket.id,
+      connected: socket.connected,
+    });
+    socket.emit("send_message", { channelId, content: trimmed });
+  };
 
   const messages = channelId ? (messageResponse?.data ?? []) : [];
   const errorMessage =

@@ -16,10 +16,11 @@ import {
   useDashboard,
 } from "@/lib/store/use-dashboard";
 import { MessageCircle, PanelLeftClose, PanelLeftOpen } from "lucide-react";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import { createSprintsQueryOptions } from "@/queries/sprint";
+import type { Sprint } from "@/lib/api/sprint";
 import CreateSprintModal from "@/components/dashboard/comp/CreateSprintModal";
 import { ChatRightPanel } from "@/components/dashboard/layout/ChatRightPanel";
 import NotificationsMenu from "@/components/dashboard/notifications/NotificationsMenu";
@@ -122,6 +123,8 @@ function HeaderTabList() {
   );
 }
 
+const EMPTY_SPRINTS: Sprint[] = [];
+
 function HeaderSprintSelect() {
   const t = useTranslations("dashboard");
   const { projectId } = useParams<{ projectId?: string }>();
@@ -141,10 +144,7 @@ function HeaderSprintSelect() {
     ),
   );
 
-  const sprintOptions = useMemo(
-    () => sprintsResponse?.data?.items ?? [],
-    [sprintsResponse?.data],
-  );
+  const sprintOptions = sprintsResponse?.data?.items ?? EMPTY_SPRINTS;
   const isDisabled = !projectId;
 
   useEffect(() => {

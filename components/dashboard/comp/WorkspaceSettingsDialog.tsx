@@ -28,7 +28,7 @@ import {
   Users,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import z from "zod";
 import SettingsDialogShell, { type SettingsTab } from "./SettingsDialogShell";
@@ -586,105 +586,78 @@ export default function WorkspaceSettingsDialog({
     ),
   );
 
-  const memberProfiles = useMemo(
-    () => memberProfilesResponse?.data ?? [],
-    [memberProfilesResponse?.data],
-  );
-  const workspaceMembers = useMemo(
-    () => workspace.members ?? [],
-    [workspace.members],
-  );
+  const memberProfiles = memberProfilesResponse?.data ?? [];
+  const workspaceMembers = workspace.members ?? [];
 
-  const roleLabel = useMemo(() => {
-    if (role === "OWNER") {
-      return tDashboard("sidebar.role.owner");
-    }
+  let roleLabel = tDashboard("sidebar.role.member");
+  if (role === "OWNER") {
+    roleLabel = tDashboard("sidebar.role.owner");
+  } else if (role === "ADMIN") {
+    roleLabel = tDashboard("sidebar.role.admin");
+  }
 
-    if (role === "ADMIN") {
-      return tDashboard("sidebar.role.admin");
-    }
-
-    return tDashboard("sidebar.role.member");
-  }, [role, tDashboard]);
-
-  const tabs: SettingsTab[] = useMemo(
-    () => [
-      {
-        value: "general",
-        icon: <Settings2 className="size-4 shrink-0 text-muted-foreground" />,
-        label: tDashboard("workspace.tabs.general"),
-        description: tDashboard("workspace.tabs.generalDescription"),
-        content: (
-          <WorkspaceGeneralTabContent
-            workspace={workspace}
-            role={role}
-            roleLabel={roleLabel}
-          />
-        ),
-      },
-      {
-        value: "members",
-        icon: <Users className="size-4 shrink-0 text-muted-foreground" />,
-        label: tDashboard("workspace.tabs.members.title"),
-        description: tDashboard("workspace.tabs.members.description"),
-        content: (
-          <WorkspaceMembersTabContent
-            workspaceMembers={workspaceMembers}
-            memberProfiles={memberProfiles}
-            ownerId={workspace.ownerId}
-            canInviteMember={canInviteMember}
-            inviteForm={inviteForm}
-            isInviting={isInviting}
-          />
-        ),
-      },
-      {
-        value: "permissions",
-        icon: <Shield className="size-4 shrink-0 text-muted-foreground" />,
-        label: tDashboard("workspace.tabs.permissions.title"),
-        description: tDashboard("workspace.tabs.permissions.description"),
-        content: <WorkspacePermissionsTabContent role={role} />,
-      },
-      {
-        value: "danger",
-        icon: (
-          <AlertTriangle className="size-4 shrink-0 text-muted-foreground" />
-        ),
-        label: tDashboard("workspace.settings.tabs.dangerZone"),
-        description: tDashboard(
-          "workspace.settings.tabs.dangerZoneDescription",
-        ),
-        triggerClassName:
-          "data-active:bg-destructive/10 data-active:text-destructive",
-        onClick: () => setConfirmDelete(false),
-        visible: role === "OWNER",
-        content: (
-          <WorkspaceDangerTabContent
-            workspaceName={workspace.name}
-            confirmDelete={confirmDelete}
-            isDeleting={isDeleting}
-            onRequestConfirm={() => setConfirmDelete(true)}
-            onCancelConfirm={() => setConfirmDelete(false)}
-            onDelete={onDelete}
-          />
-        ),
-      },
-    ],
-    [
-      workspace,
-      role,
-      roleLabel,
-      tDashboard,
-      memberProfiles,
-      workspaceMembers,
-      confirmDelete,
-      isDeleting,
-      onDelete,
-      canInviteMember,
-      inviteForm,
-      isInviting,
-    ],
-  );
+  const tabs: SettingsTab[] = [
+    {
+      value: "general",
+      icon: <Settings2 className="size-4 shrink-0 text-muted-foreground" />,
+      label: tDashboard("workspace.tabs.general"),
+      description: tDashboard("workspace.tabs.generalDescription"),
+      content: (
+        <WorkspaceGeneralTabContent
+          workspace={workspace}
+          role={role}
+          roleLabel={roleLabel}
+        />
+      ),
+    },
+    {
+      value: "members",
+      icon: <Users className="size-4 shrink-0 text-muted-foreground" />,
+      label: tDashboard("workspace.tabs.members.title"),
+      description: tDashboard("workspace.tabs.members.description"),
+      content: (
+        <WorkspaceMembersTabContent
+          workspaceMembers={workspaceMembers}
+          memberProfiles={memberProfiles}
+          ownerId={workspace.ownerId}
+          canInviteMember={canInviteMember}
+          inviteForm={inviteForm}
+          isInviting={isInviting}
+        />
+      ),
+    },
+    {
+      value: "permissions",
+      icon: <Shield className="size-4 shrink-0 text-muted-foreground" />,
+      label: tDashboard("workspace.tabs.permissions.title"),
+      description: tDashboard("workspace.tabs.permissions.description"),
+      content: <WorkspacePermissionsTabContent role={role} />,
+    },
+    {
+      value: "danger",
+      icon: (
+        <AlertTriangle className="size-4 shrink-0 text-muted-foreground" />
+      ),
+      label: tDashboard("workspace.settings.tabs.dangerZone"),
+      description: tDashboard(
+        "workspace.settings.tabs.dangerZoneDescription",
+      ),
+      triggerClassName:
+        "data-active:bg-destructive/10 data-active:text-destructive",
+      onClick: () => setConfirmDelete(false),
+      visible: role === "OWNER",
+      content: (
+        <WorkspaceDangerTabContent
+          workspaceName={workspace.name}
+          confirmDelete={confirmDelete}
+          isDeleting={isDeleting}
+          onRequestConfirm={() => setConfirmDelete(true)}
+          onCancelConfirm={() => setConfirmDelete(false)}
+          onDelete={onDelete}
+        />
+      ),
+    },
+  ];
 
   return (
     <SettingsDialogShell

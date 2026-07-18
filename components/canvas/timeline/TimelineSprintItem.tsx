@@ -1,6 +1,6 @@
 "use client";
 
-import { memo } from "react";
+// No react import needed if not using react bindings directly, or we can just import types if needed, but here React is not used except in JSX. We can safely remove it.
 
 import { Badge } from "@/components/ui/badge";
 import {
@@ -123,4 +123,4 @@ function TimelineSprintItem({ step, item }: TimelineSprintItemProps) {
   );
 }
 
-export default memo(TimelineSprintItem);
+export default TimelineSprintItem;

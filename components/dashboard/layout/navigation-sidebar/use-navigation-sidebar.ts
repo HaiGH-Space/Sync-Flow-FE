@@ -1,6 +1,6 @@
 import { useDashboard } from "@/lib/store/use-dashboard";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { useCallback, useMemo, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -66,20 +66,17 @@ export function useNavigationSidebar(workspaceDetail?: Workspace) {
 
   const activeWorkspace = workspaceDetailResponse?.data ?? workspaceDetail;
 
-  const currentWorkspaceRole = useMemo<WorkspaceRole>(() => {
-    if (!activeWorkspace || !profileId) {
-      return "MEMBER";
-    }
-
+  let currentWorkspaceRole: WorkspaceRole = "MEMBER";
+  if (activeWorkspace && profileId) {
     if (activeWorkspace.ownerId === profileId) {
-      return "OWNER";
+      currentWorkspaceRole = "OWNER";
+    } else {
+      const currentMembership = activeWorkspace.members?.find(
+        (member) => member.userId === profileId,
+      );
+      currentWorkspaceRole = currentMembership?.role ?? "MEMBER";
     }
-
-    const currentMembership = activeWorkspace.members?.find(
-      (member) => member.userId === profileId,
-    );
-    return currentMembership?.role ?? "MEMBER";
-  }, [activeWorkspace, profileId]);
+  }
 
   const canManageProject =
     currentWorkspaceRole === "OWNER" || currentWorkspaceRole === "ADMIN";
@@ -101,9 +98,7 @@ export function useNavigationSidebar(workspaceDetail?: Workspace) {
     ),
   );
 
-  const projects = useMemo(() => {
-    return projectsInfiniteData?.pages.flatMap((page) => page.data.items) ?? [];
-  }, [projectsInfiniteData]);
+  const projects = projectsInfiniteData?.pages.flatMap((page) => page.data.items) ?? [];
 
   const isProjectsLoading =
     canLoadProjects && (isFetching && projects.length === 0);
@@ -137,37 +132,26 @@ export function useNavigationSidebar(workspaceDetail?: Workspace) {
     ),
   );
 
-  const filteredProjects = useMemo(() => {
-    const normalizedQuery = searchQuery.trim().toLowerCase();
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+  const filteredProjects = !normalizedQuery
+    ? projects
+    : projects.filter((project) =>
+        project.name.toLowerCase().includes(normalizedQuery),
+      );
 
-    if (!normalizedQuery) {
-      return projects;
-    }
-
-    return projects.filter((project) =>
-      project.name.toLowerCase().includes(normalizedQuery),
-    );
-  }, [projects, searchQuery]);
-
-  const searchHandle = useCallback(async (query: string) => {
+  const searchHandle = async (query: string) => {
     setSearchQuery(query);
-  }, []);
+  };
 
-  const handleSprintSelect = useCallback(
-    (projectId: string, sprintId: string) => {
-      setSelectedSprintId(projectId, sprintId);
-    },
-    [setSelectedSprintId],
-  );
+  const handleSprintSelect = (projectId: string, sprintId: string) => {
+    setSelectedSprintId(projectId, sprintId);
+  };
 
-  const handleChannelSelect = useCallback(
-    (projectId: string, channelId: string) => {
-      setSelectedChannelId(projectId, channelId);
-      setLastActiveChannel(projectId, channelId);
-      setOpenSidebarRight(true);
-    },
-    [setLastActiveChannel, setOpenSidebarRight, setSelectedChannelId],
-  );
+  const handleChannelSelect = (projectId: string, channelId: string) => {
+    setSelectedChannelId(projectId, channelId);
+    setLastActiveChannel(projectId, channelId);
+    setOpenSidebarRight(true);
+  };
 
   const handleDeleteProject = () => {
     if (!settingsProject || !workspaceDetail?.id) {
@@ -209,18 +193,15 @@ export function useNavigationSidebar(workspaceDetail?: Workspace) {
     }
   };
 
-  const handleExpandProjectAction = useCallback((id: string) => {
-    setExpandedProjectId((prev) => {
-      if (prev === id) {
-        return null;
-      }
+  const handleExpandProjectAction = (id: string) => {
+    if (expandedProjectId !== id) {
       // Reset sublist states when expanding a different project
       setActiveTab("sprints");
       setShowAllSprints(false);
       setShowAllChannels(false);
-      return id;
-    });
-  }, []);
+    }
+    setExpandedProjectId((prev) => (prev === id ? null : id));
+  };
 
   return {
     isOpenSidebarLeft,

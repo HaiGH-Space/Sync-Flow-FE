@@ -12,7 +12,9 @@
 
 | Debt item | Why it exists | Where | Risk if ignored | Suggested fix |
 |-----------|---------------|-------|-----------------|---------------|
-| None | - | - | - | - |
+| Redundant manual memoization | React Compiler is active and optimizes rendering automatically | 36 files (e.g., `components/canvas/timeline/*`, `components/dashboard/*`, `components/ui/*`) | Code clutter, overhead, and potential for stale manual dependencies | Delete redundant `useCallback`, `useMemo`, and `memo` wrappers |
+| Boolean prop-heavy components | Components take 5+ boolean/toggle props, making them hard to combine and test | `components/dashboard/layout/navigation-sidebar/NavigationSidebarProjectItem.tsx:43`, `NavigationSidebarProjectList.tsx:50` | Maintenance complexity and poor testability | Split into smaller sub-components or distinct variants |
+| Locale/timezone formatting during render | `toLocaleDateString()` is executed during render without fixed locale/timezone | `components/ui/calendar.tsx:208` | Client-side hydration mismatches on server-rendered pages | Format in a post-mount `useEffect` or pass explicit locale and timeZone parameters |
 
 ### 3) Security Concerns
 
@@ -24,13 +26,13 @@
 
 | Concern | Evidence | Current symptom | Scaling risk | Suggested improvement |
 |---------|----------|-----------------|-------------|-----------------------|
-| Bulk-fetching list views and sidebar controls | `queries/sprint.ts`, `queries/project.ts`, `queries/workspace.ts`, `queries/issue.ts` | Hardcoded `limit: 100` parameter in hook queries | Items beyond the 100-limit will be hidden in sidebars, backlog/planning columns, and workspace lists | Transition to infinite loading, virtualization, or scroll-based pagination |
+| None | - | - | - | - |
 
 ### 5) Fragile/High-Churn Areas
 
 | Area | Why fragile | Churn signal | Safe change strategy |
 |------|-------------|-------------|----------------------|
-| `components/dashboard/layout/navigation-sidebar/*` | Structural refactor to presenter/hook split and collapsible/expandable sprint/channel sublists | Top churn files (13+ edits to `NavigationSidebar.tsx`, 11+ edits to `NavigationSidebarSprintList.tsx`) | Keep UI presentation clean; keep state modifications inside the `useNavigationSidebar` custom hook |
+| None | - | - | - |
 
 ### 6) `[ASK USER]` Questions
 
@@ -43,11 +45,8 @@ None
 - `.github/workflows/security.yml`
 - `.github/workflows/test.yml`
 - `package.json`
-- `queries/sprint.ts`
-- `queries/project.ts`
-- `queries/workspace.ts`
-- `queries/issue.ts`
 - `components/dashboard/layout/navigation-sidebar/`
+- `components/ui/calendar.tsx`
 - `lib/api/api.ts`
 - `lib/api/chat.ts`
 - `lib/api/notification.ts`

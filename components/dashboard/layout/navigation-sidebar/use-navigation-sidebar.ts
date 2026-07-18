@@ -209,18 +209,18 @@ export function useNavigationSidebar(workspaceDetail?: Workspace) {
     }
   };
 
-  const handleExpandProjectAction = useCallback((id: string) => {
-    setExpandedProjectId((prev) => {
-      if (prev === id) {
-        return null;
+  const handleExpandProjectAction = useCallback(
+    (id: string) => {
+      if (expandedProjectId !== id) {
+        // Reset sublist states when expanding a different project
+        setActiveTab("sprints");
+        setShowAllSprints(false);
+        setShowAllChannels(false);
       }
-      // Reset sublist states when expanding a different project
-      setActiveTab("sprints");
-      setShowAllSprints(false);
-      setShowAllChannels(false);
-      return id;
-    });
-  }, []);
+      setExpandedProjectId((prev) => (prev === id ? null : id));
+    },
+    [expandedProjectId],
+  );
 
   return {
     isOpenSidebarLeft,

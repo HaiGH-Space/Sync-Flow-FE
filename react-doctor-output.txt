@@ -1,0 +1,167 @@
+﻿[1mReact Doctor[22m [2mv0.8.1[22m
+
+[32mΓ£ö[39m Select projects [2mΓÇ║[22m fe
+[90m  [39m
+
+  [33mΓÜá[39m [33mMaintainability: Redundant manual memoization[39m [90m├ù36[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/react-compiler-no-manual-memoization[39m
+    This `memo()` is dead weight, since React Compiler already
+    caches the component's output. Delete it.
+[2m    ΓåÆ Delete the `useMemo` / `useCallback` / `memo` call and[22m
+[2m    use the plain value or component. React Compiler caches it[22m
+[2m    for you.[22m
+
+[90m    components/canvas/timeline/TimelineCanvasHeader.tsx:64[39m
+
+[90m    components/canvas/timeline/TimelineSprintItem.tsx:126[39m
+
+[90m    components/canvas/timeline/TimelineSprintRail.tsx:29[39m
+
+[90m    components/canvas/timeline/useTimelineCanvasModel.ts:71[39m
+
+[90m    components/canvas/timeline/useTimelineCanvasModel.ts:75[39m
+
+[90m    components/canvas/timeline/useTimelineCanvasModel.ts:80[39m
+
+[90m    components/canvas/timeline/useTimelineCanvasModel.ts:87[39m
+
+[90m    components/dashboard/chat/EmojiPicker.tsx:26[39m
+
+[90m    components/dashboard/chat/EmojiPicker.tsx:40[39m
+
+[90m    components/dashboard/chat/EmojiPicker.tsx:48[39m
+
+[90m    components/dashboard/chat/EmojiPicker.tsx:56[39m
+
+[90m    components/dashboard/comp/IssueFormDialog.tsx:79[39m
+
+[90m    components/dashboard/comp/ProjectSettingsDialog.tsx:40[39m
+
+[90m    components/dashboard/comp/WorkspaceSettingsDialog.tsx:589[39m
+
+[90m    components/dashboard/comp/WorkspaceSettingsDialog.tsx:593[39m
+
+[90m    components/dashboard/comp/WorkspaceSettingsDialog.tsx:598[39m
+
+[90m    components/dashboard/comp/WorkspaceSettingsDialog.tsx:610[39m
+
+[90m    components/dashboard/comp/issue-detail/use-issue-detail.ts:163[39m
+
+[90m    components/dashboard/comp/issue-detail/use-issue-detail.ts:177[39m
+
+[90m    components/dashboard/comp/issue-detail/use-issue-detail.ts:184[39m
+
+[90m    components/dashboard/comp/issue-detail/use-issue-detail.ts:191[39m
+
+[90m    components/dashboard/comp/issue-detail/use-issue-detail.ts:198[39m
+
+[90m    components/dashboard/layout/DashboardContentLayout.tsx:144[39m
+
+[90m    components/dashboard/layout/navigation-sidebar/use-navigation-sidebar.ts:69[39m
+
+[90m    components/dashboard/layout/navigation-sidebar/use-navigation-sidebar.ts:104[39m
+
+[90m    components/dashboard/layout/navigation-sidebar/use-navigation-sidebar.ts:140[39m
+
+[90m    components/dashboard/layout/navigation-sidebar/use-navigation-sidebar.ts:152[39m
+
+[90m    components/dashboard/layout/navigation-sidebar/use-navigation-sidebar.ts:156[39m
+
+[90m    components/dashboard/layout/navigation-sidebar/use-navigation-sidebar.ts:163[39m
+
+[90m    components/dashboard/layout/navigation-sidebar/use-navigation-sidebar.ts:212[39m
+
+[90m    components/dashboard/notifications/NotificationsMenu.tsx:39[39m
+
+[90m    components/dashboard/notifications/NotificationsMenu.tsx:55[39m
+
+[90m    components/ui/field.tsx:164[39m
+
+[90m    components/ui/timeline.tsx:53[39m
+
+[90m    components/ui/timeline.tsx:64[39m
+
+[90m    hooks/chat/use-chat-channel.ts:108[39m
+
+  [31mΓ£û[39m [31mPerformance: React Compiler can't optimize this[39m
+    This component misses React Compiler's automatic
+    memoization & re-renders more than it should: Calling
+    setState synchronously within an effect can trigger
+    cascading renders. Rewrite the flagged code so the compiler
+    can optimize it.
+[2m    ΓåÆ Effects are intended to synchronize state between React[22m
+[2m    and external systems such as manually updating the DOM,[22m
+[2m    state management libraries, or other platform APIs. In[22m
+[2m    general, the body of an effect should do one or both of the[22m
+[2m    following:[22m
+[2m    * Update external systems with the latest state from React.[22m
+[2m    * Subscribe for updates from some external system, calling[22m
+[2m    setState in a callback function when external state changes.[22m
+[2m    [22m
+[2m    Calling setState synchronously within an effect body causes[22m
+[2m    cascading renders that can hurt performance, and is not[22m
+[2m    recommended.[22m
+[2m    (https://react.dev/learn/you-might-not-need-an-effect).[22m
+
+[90m    components/ui/calendar.tsx:204[39m
+    [2mΓöî[22m[2mΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ[22m[2mΓöÉ[22m
+    [2mΓöé[22m [0m [90m 203 |[39m   [33mReact[39m[33m.[39museEffect(() [33m=>[39m {                            [2mΓöé[22m
+    [2mΓöé[22m [31m[1m>[22m[39m[90m 204 |[39m     setHasHydrated([36mtrue[39m)[33m;[39m                            [2mΓöé[22m
+    [2mΓöé[22m  [90m     |[39m     [31m[1m^[22m[39m                                                [2mΓöé[22m
+    [2mΓöé[22m  [90m 205 |[39m   }[33m,[39m [])[33m;[39m[0m                                            [2mΓöé[22m
+    [2mΓöö[22m[2mΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ[22m[2mΓöÿ[22m
+
+  [33mΓÜá[39m [33mPerformance: useEffect setState flashes on mount[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/rendering-hydration-no-flicker[39m
+    This flashes for your users because useEffect(setState, [])
+    runs after the first paint, so use useSyncExternalStore, or
+    add suppressHydrationWarning
+[2m    ΓåÆ Use `useSyncExternalStore(subscribe, getSnapshot,[22m
+[2m    getServerSnapshot)` or add `suppressHydrationWarning` to[22m
+[2m    the element[22m
+
+[90m    components/ui/calendar.tsx:203[39m
+
+  [33mΓÜá[39m [33mMaintainability: Boolean prop combinations are hard to test[39m [90m├ù3[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/no-many-boolean-props[39m
+    Component "NavigationSidebarProjectItemContent" takes 5
+    on/off props (isExpanded, isSprintsFetching,
+    isChannelsFetchingΓÇª), which is hard to combine & test.
+    Split it into smaller components or named variants.
+[2m    ΓåÆ Split boolean-heavy APIs into smaller components or named[22m
+[2m    variants so combinations stay testable.[22m
+
+[90m    components/dashboard/layout/navigation-sidebar/NavigationSidebarProjectItem.tsx:103[39m
+
+[90m    components/dashboard/layout/navigation-sidebar/NavigationSidebarProjectItem.tsx:198[39m
+
+[90m    components/dashboard/layout/navigation-sidebar/NavigationSidebarProjectList.tsx:103[39m
+
+
+[2m  ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ[22m
+
+  [1mAll 41 issues[22m
+
+  [1mPerformance[22m [2m>[22m [31m1 error[39m[2m, [22m[33m[2m1 warning[22m[39m
+  [1mMaintainability[22m [2m>[22m [33m[2m39 warnings[22m[39m
+
+  [32mΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ[39m  [32m80[39m [2m/ 100[22m [32mNeeds work[39m
+  [32mΓöé Γùá Γùá Γöé[39m  [32mΓûêΓûêΓûêΓûêΓûêΓûêΓûêΓûêΓûêΓûêΓûêΓûêΓûêΓûêΓûêΓûêΓûêΓûêΓûêΓûêΓûêΓûêΓûêΓûêΓûêΓûêΓûêΓûêΓûêΓûêΓûêΓûêΓûêΓûêΓûêΓûêΓûêΓûêΓûêΓûê[39m[2m[32mΓûôΓûôΓûôΓûô[39m[22m[2mΓûæΓûæΓûæΓûæΓûæΓûæ[22m
+  [32mΓöé  Γû╜  Γöé[39m  React Doctor [2m(https://react.doctor)[22m
+  [32mΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ[39m
+
+[90m  You could improve [39m[32m+8%[39m[90m by fixing the top 3 issues[39m
+[90m  Full diagnostics written to C:\Users\NTH\AppData\Local\Temp\react-doctor-cbf273b1-886b-4e86-87e8-4f0c8a771f18[39m
+
+[2m  ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ[22m
+
+  [1mShare:[22m [36mhttps://react.doctor/share?p=fe&s=80&e=1&w=40&f=18[39m
+[2m  Tell others how you did on socials[22m
+
+  [1mDocs:[22m [36mhttps://react.doctor/docs[39m
+[2m  Learn more about fixing issues, setting up CI/CD, and[22m
+[2m  configuring rules with a config file[22m
+
+  [1mGitHub:[22m [36mhttps://github.com/millionco/react-doctor[39m
+[2m  Report issues and star the repository![22m
+

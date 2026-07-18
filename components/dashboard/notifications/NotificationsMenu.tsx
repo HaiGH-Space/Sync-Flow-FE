@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+// No react imports needed as we removed useMemo
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { Bell, CheckCheck, Loader2 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
@@ -36,7 +36,7 @@ const isWorkspaceInvite = (notification: Notification) =>
 export default function NotificationsMenu() {
   const t = useTranslations("dashboard");
   const locale = useLocale();
-  const formatDate = useMemo(() => createDateFormatter(locale), [locale]);
+  const formatDate = createDateFormatter(locale);
   useNotificationChannel();
 
   const { data: unreadCount = 0 } = useQuery(
@@ -52,10 +52,7 @@ export default function NotificationsMenu() {
   const { mutate: acceptWorkspace, isPending: isAcceptingWorkspace } =
     useAcceptWorkspace();
 
-  const notifications = useMemo(
-    () => data?.pages.flatMap((page) => page.data) ?? [],
-    [data],
-  );
+  const notifications = data?.pages.flatMap((page) => page.data) ?? [];
 
   const hasUnread = unreadCount > 0;
 

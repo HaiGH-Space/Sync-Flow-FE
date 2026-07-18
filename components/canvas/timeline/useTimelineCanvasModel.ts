@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useCallback } from "react";
+// No react imports needed as we removed useMemo and useCallback
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 
@@ -68,26 +68,14 @@ export function useTimelineCanvasModel(projectId: string): ViewModel {
     refetch: refetchIssues,
   } = useQuery(createIssuesQueryOptions({ projectId, limit: 100 }));
 
-  const sprints = useMemo(
-    () => sprintsData?.data?.items ?? [],
-    [sprintsData?.data],
-  );
-  const issues = useMemo(
-    () => issuesData?.data?.items ?? [],
-    [issuesData?.data],
-  );
+  const sprints = sprintsData?.data?.items ?? [];
+  const issues = issuesData?.data?.items ?? [];
 
-  const translate = useCallback(
-    (key: string, values?: Record<string, string | number | Date>) =>
-      // bridge the strongly-typed translator to a simple function signature
-      (tDashboard as unknown as (k: string, v?: Record<string, string | number | Date>) => string)(key, values),
-    [tDashboard],
-  );
+  const translate = (key: string, values?: Record<string, string | number | Date>) =>
+    // bridge the strongly-typed translator to a simple function signature
+    (tDashboard as unknown as (k: string, v?: Record<string, string | number | Date>) => string)(key, values);
 
-  const { items, activeStep, header, emptyState } = useMemo(
-    () => buildTimelineModel({ sprints, issues, tDashboard: translate, formatDate }),
-    [sprints, issues, translate, formatDate],
-  );
+  const { items, activeStep, header, emptyState } = buildTimelineModel({ sprints, issues, tDashboard: translate, formatDate });
 
   return {
     isLoading: isSprintsLoading || isIssuesLoading,

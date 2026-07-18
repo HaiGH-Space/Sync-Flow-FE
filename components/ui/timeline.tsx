@@ -3,8 +3,6 @@
 import {
   createContext,
   HTMLAttributes,
-  useCallback,
-  useMemo,
   use,
   useState,
 } from "react";
@@ -50,21 +48,15 @@ function Timeline({
 }: TimelineProps) {
   const [activeStep, setInternalStep] = useState(defaultValue);
 
-  const setActiveStep = useCallback(
-    (step: number) => {
-      if (value === undefined) {
-        setInternalStep(step);
-      }
-      onValueChange?.(step);
-    },
-    [value, onValueChange],
-  );
+  const setActiveStep = (step: number) => {
+    if (value === undefined) {
+      setInternalStep(step);
+    }
+    onValueChange?.(step);
+  };
 
   const currentStep = value ?? activeStep;
-  const contextValue = useMemo(
-    () => ({ activeStep: currentStep, setActiveStep }),
-    [currentStep, setActiveStep],
-  );
+  const contextValue = { activeStep: currentStep, setActiveStep };
 
   return (
     <TimelineContext.Provider value={contextValue}>

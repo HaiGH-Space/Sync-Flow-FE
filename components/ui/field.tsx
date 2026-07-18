@@ -1,6 +1,6 @@
 "use client"
 
-import { memo } from "react"
+// No react imports needed as we removed memo
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
@@ -161,7 +161,7 @@ function FieldSeparator({
   )
 }
 
-const FieldErrorList = memo(function FieldErrorList({
+function FieldErrorList({
   errors,
 }: {
   errors: Array<{ message?: string } | undefined>
@@ -171,7 +171,7 @@ const FieldErrorList = memo(function FieldErrorList({
       {errors.map((error) => error?.message && <li key={error.message}>{error.message}</li>)}
     </ul>
   )
-})
+}
 
 function FieldError({
   className,

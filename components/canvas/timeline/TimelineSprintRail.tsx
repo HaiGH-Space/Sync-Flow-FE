@@ -1,6 +1,6 @@
 "use client";
 
-import { memo } from "react";
+// React is not directly referenced except via JSX
 
 import { Timeline } from "@/components/ui/timeline";
 
@@ -26,4 +26,4 @@ function TimelineSprintRail({ activeStep, items }: TimelineSprintRailProps) {
   );
 }
 
-export default memo(TimelineSprintRail);
+export default TimelineSprintRail;

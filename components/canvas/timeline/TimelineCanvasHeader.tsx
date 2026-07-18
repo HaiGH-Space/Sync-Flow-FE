@@ -1,6 +1,5 @@
 "use client";
 
-import { memo } from "react";
 import { CheckCircle2, Clock3 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -61,4 +60,4 @@ function TimelineCanvasHeader({
   );
 }
 
-export default memo(TimelineCanvasHeader);
+export default TimelineCanvasHeader;

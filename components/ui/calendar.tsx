@@ -31,6 +31,11 @@ function Calendar({
   buttonVariant?: React.ComponentProps<typeof Button>["variant"];
 }) {
   const defaultClassNames = getDefaultClassNames();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <DayPicker
@@ -45,7 +50,7 @@ function Calendar({
       locale={locale}
       formatters={{
         formatMonthDropdown: (date) =>
-          date.toLocaleString(locale?.code, { month: "short" }),
+          mounted ? date.toLocaleString(locale?.code, { month: "short" }) : "",
         ...formatters,
       }}
       classNames={{
@@ -196,6 +201,13 @@ function CalendarDayButton({
   ...props
 }: React.ComponentProps<typeof DayButton> & { locale?: Partial<Locale> }) {
   const defaultClassNames = getDefaultClassNames();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const dataDay = mounted ? day.date.toLocaleDateString(locale?.code) : undefined;
 
   // Use autoFocus instead of a focus side-effect to satisfy react-doctor
   // and avoid using props in effects as event handlers.
@@ -206,7 +218,7 @@ function CalendarDayButton({
       autoFocus={modifiers.focused}
       variant="ghost"
       size="icon"
-      data-day={day.date.toLocaleDateString(locale?.code)}
+      data-day={dataDay}
       data-selected-single={
         modifiers.selected &&
         !modifiers.range_start &&

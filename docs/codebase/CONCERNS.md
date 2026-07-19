@@ -12,9 +12,7 @@
 
 | Debt item | Why it exists | Where | Risk if ignored | Suggested fix |
 |-----------|---------------|-------|-----------------|---------------|
-| Redundant manual memoization | React Compiler is active and optimizes rendering automatically | 36 files (e.g., `components/canvas/timeline/*`, `components/dashboard/*`, `components/ui/*`) | Code clutter, overhead, and potential for stale manual dependencies | Delete redundant `useCallback`, `useMemo`, and `memo` wrappers |
-| Boolean prop-heavy components | Components take 5+ boolean/toggle props, making them hard to combine and test | `components/dashboard/layout/navigation-sidebar/NavigationSidebarProjectItem.tsx:43`, `NavigationSidebarProjectList.tsx:50` | Maintenance complexity and poor testability | Split into smaller sub-components or distinct variants |
-| Locale/timezone formatting during render | `toLocaleDateString()` is executed during render without fixed locale/timezone | `components/ui/calendar.tsx:208` | Client-side hydration mismatches on server-rendered pages | Format in a post-mount `useEffect` or pass explicit locale and timeZone parameters |
+| None | - | - | - | - |
 
 ### 3) Security Concerns
 

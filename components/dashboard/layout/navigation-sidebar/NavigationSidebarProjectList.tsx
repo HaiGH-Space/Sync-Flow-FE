@@ -8,12 +8,39 @@ import { useTranslations } from "next-intl";
 import { NavigationSidebarProjectItem } from "./NavigationSidebarProjectItem";
 import { InfiniteScrollSentinel } from "./InfiniteScrollSentinel";
 
+export type SprintsState = {
+  items?: Sprint[];
+  isFetching: boolean;
+  error?: Error | null;
+  selectedId: string;
+  showAll: boolean;
+  onSelect: (projectId: string, sprintId: string) => void;
+  onEdit: (sprint: Sprint) => void;
+  onToggleShowAll: () => void;
+};
+
+export type ChannelsState = {
+  items?: Channel[];
+  isFetching: boolean;
+  error?: Error | null;
+  selectedId: string;
+  showAll: boolean;
+  onSelect: (projectId: string, channelId: string) => void;
+  onToggleShowAll: () => void;
+};
+
+export type ProjectListStatus = {
+  canLoadProjects: boolean;
+  isProjectsLoading: boolean;
+  projectsError?: Error | null;
+  projectsCount: number;
+  filteredProjectsCount: number;
+};
+
 type NavigationSidebarProjectListProps = {
   status: {
     canLoadProjects: boolean;
     isProjectsLoading: boolean;
-    isSprintsFetching: boolean;
-    isChannelsFetching: boolean;
   };
   projectsError?: Error | null;
   projects: Project[];
@@ -22,23 +49,12 @@ type NavigationSidebarProjectListProps = {
   expandedProjectId: string | null;
   onExpandProjectAction: (projectId: string) => void;
   onOpenProjectSettingsAction: (project: Project) => void;
-  sprints?: Sprint[];
-  sprintsError?: Error | null;
-  selectedSprintId: string;
-  onSelectSprintAction: (projectId: string, sprintId: string) => void;
-  onEditSprintAction: (sprint: Sprint) => void;
-  channels?: Channel[];
-  channelsError?: Error | null;
-  selectedChannelId: string;
-  onSelectChannelAction: (projectId: string, channelId: string) => void;
+  sprintsState: SprintsState;
+  channelsState: ChannelsState;
 
   // Lifted states
   activeTab: string;
   onActiveTabChange: (tab: string) => void;
-  showAllSprints: boolean;
-  onToggleShowAllSprints: () => void;
-  showAllChannels: boolean;
-  onToggleShowAllChannels: () => void;
 
   // Infinite scroll
   hasNextPage: boolean;
@@ -48,21 +64,20 @@ type NavigationSidebarProjectListProps = {
 };
 
 type NavigationSidebarProjectListStatusProps = {
-  projectsError?: Error | null;
-  isProjectsLoading: boolean;
-  canLoadProjects: boolean;
-  projectsCount: number;
-  filteredProjectsCount: number;
+  status: ProjectListStatus;
 };
 
 export function NavigationSidebarProjectListStatus({
-  projectsError,
-  isProjectsLoading,
-  canLoadProjects,
-  projectsCount,
-  filteredProjectsCount,
+  status,
 }: NavigationSidebarProjectListStatusProps) {
   const t = useTranslations("dashboard");
+  const {
+    projectsError,
+    isProjectsLoading,
+    canLoadProjects,
+    projectsCount,
+    filteredProjectsCount,
+  } = status;
 
   if (projectsError) {
     return (
@@ -109,21 +124,10 @@ export function NavigationSidebarProjectList({
   expandedProjectId,
   onExpandProjectAction,
   onOpenProjectSettingsAction,
-  sprints,
-  sprintsError,
-  selectedSprintId,
-  onSelectSprintAction,
-  onEditSprintAction,
-  channels,
-  channelsError,
-  selectedChannelId,
-  onSelectChannelAction,
+  sprintsState,
+  channelsState,
   activeTab,
   onActiveTabChange,
-  showAllSprints,
-  onToggleShowAllSprints,
-  showAllChannels,
-  onToggleShowAllChannels,
   hasNextPage,
   isFetchingNextPage,
   onLoadMoreAction,
@@ -133,8 +137,6 @@ export function NavigationSidebarProjectList({
   const {
     canLoadProjects,
     isProjectsLoading,
-    isSprintsFetching,
-    isChannelsFetching,
   } = status;
 
   return (
@@ -146,11 +148,13 @@ export function NavigationSidebarProjectList({
       )}
 
       <NavigationSidebarProjectListStatus
-        projectsError={projectsError}
-        isProjectsLoading={isProjectsLoading}
-        canLoadProjects={canLoadProjects}
-        projectsCount={projects.length}
-        filteredProjectsCount={filteredProjects.length}
+        status={{
+          projectsError,
+          isProjectsLoading,
+          canLoadProjects,
+          projectsCount: projects.length,
+          filteredProjectsCount: filteredProjects.length,
+        }}
       />
 
       {filteredProjects.map((project) => (
@@ -161,23 +165,10 @@ export function NavigationSidebarProjectList({
           isExpanded={expandedProjectId === project.id}
           onExpandProjectAction={onExpandProjectAction}
           onOpenProjectSettingsAction={onOpenProjectSettingsAction}
-          sprints={sprints}
-          isSprintsFetching={isSprintsFetching}
-          sprintsError={sprintsError}
-          selectedSprintId={selectedSprintId}
-          onSelectSprintAction={onSelectSprintAction}
-          onEditSprintAction={onEditSprintAction}
-          channels={channels}
-          isChannelsFetching={isChannelsFetching}
-          channelsError={channelsError}
-          selectedChannelId={selectedChannelId}
-          onSelectChannelAction={onSelectChannelAction}
+          sprintsState={sprintsState}
+          channelsState={channelsState}
           activeTab={activeTab}
           onActiveTabChange={onActiveTabChange}
-          showAllSprints={showAllSprints}
-          onToggleShowAllSprints={onToggleShowAllSprints}
-          showAllChannels={showAllChannels}
-          onToggleShowAllChannels={onToggleShowAllChannels}
         />
       ))}
 

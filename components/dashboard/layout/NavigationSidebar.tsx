@@ -87,6 +87,27 @@ export function NavigationSidebar({
     searchQuery,
   } = useNavigationSidebar(workspaceDetail);
 
+  const sprintsState = {
+    items: sprintsResponse?.data?.items,
+    isFetching: isSprintsFetching,
+    error: sprintsError,
+    selectedId: selectedSprintIdByProject[expandedProjectId ?? ""] ?? "all",
+    showAll: showAllSprints,
+    onSelect: handleSprintSelect,
+    onEdit: setEditingSprint,
+    onToggleShowAll: () => setShowAllSprints((prev) => !prev),
+  };
+
+  const channelsState = {
+    items: channelsResponse?.data,
+    isFetching: isChannelsFetching,
+    error: channelsError,
+    selectedId: selectedChannelIdByProject[expandedProjectId ?? ""] ?? "",
+    showAll: showAllChannels,
+    onSelect: handleChannelSelect,
+    onToggleShowAll: () => setShowAllChannels((prev) => !prev),
+  };
+
   return (
     <LazyMotion features={domAnimation}>
       <>
@@ -119,8 +140,6 @@ export function NavigationSidebar({
                       status={{
                         canLoadProjects,
                         isProjectsLoading,
-                        isSprintsFetching,
-                        isChannelsFetching,
                       }}
                       projectsError={error}
                       projects={projectsResponse?.data?.items ?? []}
@@ -129,27 +148,10 @@ export function NavigationSidebar({
                       expandedProjectId={expandedProjectId}
                       onExpandProjectAction={setExpandedProjectId}
                       onOpenProjectSettingsAction={setSettingsProject}
-                      sprints={sprintsResponse?.data?.items}
-                      sprintsError={sprintsError}
-                      selectedSprintId={
-                        selectedSprintIdByProject[expandedProjectId ?? ""] ??
-                        "all"
-                      }
-                      onSelectSprintAction={handleSprintSelect}
-                      onEditSprintAction={setEditingSprint}
-                      channels={channelsResponse?.data}
-                      channelsError={channelsError}
-                      selectedChannelId={
-                        selectedChannelIdByProject[expandedProjectId ?? ""] ??
-                        ""
-                      }
-                      onSelectChannelAction={handleChannelSelect}
+                      sprintsState={sprintsState}
+                      channelsState={channelsState}
                       activeTab={activeTab}
                       onActiveTabChange={setActiveTab}
-                      showAllSprints={showAllSprints}
-                      onToggleShowAllSprints={() => setShowAllSprints((prev) => !prev)}
-                      showAllChannels={showAllChannels}
-                      onToggleShowAllChannels={() => setShowAllChannels((prev) => !prev)}
                       hasNextPage={hasNextPage}
                       isFetchingNextPage={isFetchingNextPage}
                       onLoadMoreAction={fetchNextPage}

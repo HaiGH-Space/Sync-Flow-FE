@@ -4,14 +4,14 @@ import type React from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link } from "@/i18n/navigation";
-import type { Channel } from "@/lib/api/channel";
 import type { Project } from "@/lib/api/project";
-import type { Sprint } from "@/lib/api/sprint";
 import { cn } from "@/lib/utils";
 import { ChevronRight, Settings2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { NavigationSidebarChannelList } from "./NavigationSidebarChannelList";
 import { NavigationSidebarSprintList } from "./NavigationSidebarSprintList";
+
+import type { SprintsState, ChannelsState } from "./NavigationSidebarProjectList";
 
 type NavigationSidebarProjectItemProps = {
   project: Project;
@@ -19,25 +19,12 @@ type NavigationSidebarProjectItemProps = {
   isExpanded: boolean;
   onExpandProjectAction: (projectId: string) => void;
   onOpenProjectSettingsAction: (project: Project) => void;
-  sprints?: Sprint[];
-  isSprintsFetching: boolean;
-  sprintsError?: Error | null;
-  selectedSprintId: string;
-  onSelectSprintAction: (projectId: string, sprintId: string) => void;
-  onEditSprintAction: (sprint: Sprint) => void;
-  channels?: Channel[];
-  isChannelsFetching: boolean;
-  channelsError?: Error | null;
-  selectedChannelId: string;
-  onSelectChannelAction: (projectId: string, channelId: string) => void;
+  sprintsState: SprintsState;
+  channelsState: ChannelsState;
 
   // Lifted states
   activeTab: string;
   onActiveTabChange: (tab: string) => void;
-  showAllSprints: boolean;
-  onToggleShowAllSprints: () => void;
-  showAllChannels: boolean;
-  onToggleShowAllChannels: () => void;
 };
 
 export function NavigationSidebarProjectItemHeader({
@@ -104,44 +91,18 @@ export function NavigationSidebarProjectItemContent({
   isExpanded,
   workspaceId,
   projectId,
-  sprints,
-  isSprintsFetching,
-  sprintsError,
-  selectedSprintId,
-  onSelectSprintAction,
-  onEditSprintAction,
-  channels,
-  isChannelsFetching,
-  channelsError,
-  selectedChannelId,
-  onSelectChannelAction,
+  sprintsState,
+  channelsState,
   activeTab,
   onActiveTabChange,
-  showAllSprints,
-  onToggleShowAllSprints,
-  showAllChannels,
-  onToggleShowAllChannels,
 }: {
   isExpanded: boolean;
   workspaceId: string;
   projectId: string;
-  sprints?: Sprint[];
-  isSprintsFetching: boolean;
-  sprintsError?: Error | null;
-  selectedSprintId: string;
-  onSelectSprintAction: (projectId: string, sprintId: string) => void;
-  onEditSprintAction: (sprint: Sprint) => void;
-  channels?: Channel[];
-  isChannelsFetching: boolean;
-  channelsError?: Error | null;
-  selectedChannelId: string;
-  onSelectChannelAction: (projectId: string, channelId: string) => void;
+  sprintsState: SprintsState;
+  channelsState: ChannelsState;
   activeTab: string;
   onActiveTabChange: (tab: string) => void;
-  showAllSprints: boolean;
-  onToggleShowAllSprints: () => void;
-  showAllChannels: boolean;
-  onToggleShowAllChannels: () => void;
 }) {
   const t = useTranslations("dashboard");
 
@@ -166,27 +127,27 @@ export function NavigationSidebarProjectItemContent({
             <NavigationSidebarSprintList
               workspaceId={workspaceId}
               projectId={projectId}
-              sprints={sprints}
-              isFetching={isSprintsFetching}
-              error={sprintsError}
-              selectedSprintId={selectedSprintId}
-              onSelectSprintAction={onSelectSprintAction}
-              onEditSprintAction={onEditSprintAction}
-              showAllSprints={showAllSprints}
-              onToggleShowAllSprints={onToggleShowAllSprints}
+              sprints={sprintsState.items}
+              isFetching={sprintsState.isFetching}
+              error={sprintsState.error}
+              selectedSprintId={sprintsState.selectedId}
+              onSelectSprintAction={sprintsState.onSelect}
+              onEditSprintAction={sprintsState.onEdit}
+              showAllSprints={sprintsState.showAll}
+              onToggleShowAllSprints={sprintsState.onToggleShowAll}
             />
           </TabsContent>
           <TabsContent value="channels">
             <NavigationSidebarChannelList
-              channels={channels}
-              isFetching={isChannelsFetching}
-              error={channelsError}
-              selectedChannelId={selectedChannelId}
-              onSelectChannelAction={onSelectChannelAction}
+              channels={channelsState.items}
+              isFetching={channelsState.isFetching}
+              error={channelsState.error}
+              selectedChannelId={channelsState.selectedId}
+              onSelectChannelAction={channelsState.onSelect}
               workspaceId={workspaceId}
               projectId={projectId}
-              showAllChannels={showAllChannels}
-              onToggleShowAllChannels={onToggleShowAllChannels}
+              showAllChannels={channelsState.showAll}
+              onToggleShowAllChannels={channelsState.onToggleShowAll}
             />
           </TabsContent>
         </Tabs>
@@ -201,23 +162,10 @@ export function NavigationSidebarProjectItem({
   isExpanded,
   onExpandProjectAction,
   onOpenProjectSettingsAction,
-  sprints,
-  isSprintsFetching,
-  sprintsError,
-  selectedSprintId,
-  onSelectSprintAction,
-  onEditSprintAction,
-  channels,
-  isChannelsFetching,
-  channelsError,
-  selectedChannelId,
-  onSelectChannelAction,
+  sprintsState,
+  channelsState,
   activeTab,
   onActiveTabChange,
-  showAllSprints,
-  onToggleShowAllSprints,
-  showAllChannels,
-  onToggleShowAllChannels,
 }: NavigationSidebarProjectItemProps) {
   return (
     <div className="rounded-md my-2">
@@ -232,23 +180,10 @@ export function NavigationSidebarProjectItem({
         isExpanded={isExpanded}
         workspaceId={workspaceId}
         projectId={project.id}
-        sprints={sprints}
-        isSprintsFetching={isSprintsFetching}
-        sprintsError={sprintsError}
-        selectedSprintId={selectedSprintId}
-        onSelectSprintAction={onSelectSprintAction}
-        onEditSprintAction={onEditSprintAction}
-        channels={channels}
-        isChannelsFetching={isChannelsFetching}
-        channelsError={channelsError}
-        selectedChannelId={selectedChannelId}
-        onSelectChannelAction={onSelectChannelAction}
+        sprintsState={sprintsState}
+        channelsState={channelsState}
         activeTab={activeTab}
         onActiveTabChange={onActiveTabChange}
-        showAllSprints={showAllSprints}
-        onToggleShowAllSprints={onToggleShowAllSprints}
-        showAllChannels={showAllChannels}
-        onToggleShowAllChannels={onToggleShowAllChannels}
       />
     </div>
   );

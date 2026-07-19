@@ -1,5 +1,5 @@
 'use client'
-import { useCallback, useMemo, useState } from 'react'
+import { useState } from 'react'
 import type { SortingState } from '@tanstack/react-table'
 import {
   flexRender,
@@ -61,27 +61,21 @@ export default function BacklogTable({
   const [priorityFilter, setPriorityFilter] = useState<'all' | Priority>('all')
   const [statusFilter, setStatusFilter] = useState('all')
 
-  const dateFormatter = useMemo(() => createDateFormatter(locale), [locale])
+  const dateFormatter = createDateFormatter(locale)
 
-  const tableColumns = useMemo(
-    () => createBacklogTableColumns({ tDashboard, dateFormatter }),
-    [dateFormatter, tDashboard]
-  )
+  const tableColumns = createBacklogTableColumns({ tDashboard, dateFormatter })
 
-  const statusOptions = useMemo(
-    () => Array.from(new Set(rows.map((issue) => issue.statusName))).filter(Boolean).sort((a, b) => a.localeCompare(b)),
-    [rows]
-  )
+  const statusOptions = Array.from(new Set(rows.map((issue) => issue.statusName)))
+    .filter(Boolean)
+    .sort((a, b) => a.localeCompare(b))
 
-  const rowsByDropdownFilters = useMemo(() => {
-    return rows.filter((issue) => {
-      const matchPriority = priorityFilter === 'all' || issue.priority === priorityFilter
-      const matchStatus = statusFilter === 'all' || issue.statusName === statusFilter
-      return matchPriority && matchStatus
-    })
-  }, [priorityFilter, rows, statusFilter])
+  const rowsByDropdownFilters = rows.filter((issue) => {
+    const matchPriority = priorityFilter === 'all' || issue.priority === priorityFilter
+    const matchStatus = statusFilter === 'all' || issue.statusName === statusFilter
+    return matchPriority && matchStatus
+  })
 
-  const globalFilterFn = useCallback((row: { original: IssueRow }, _columnId: string, filterValue: unknown) => {
+  const globalFilterFn = (row: { original: IssueRow }, _columnId: string, filterValue: unknown) => {
     const search = String(filterValue ?? '').trim().toLowerCase()
     if (!search) return true
 
@@ -94,7 +88,7 @@ export default function BacklogTable({
     ]
 
     return tokens.some((token) => token.toLowerCase().includes(search))
-  }, [])
+  }
 
   // TanStack Table returns non-memoizable functions; keep this hook outside React Compiler memoization.
   // eslint-disable-next-line react-hooks/incompatible-library
@@ -112,14 +106,14 @@ export default function BacklogTable({
 
   const hasActiveFilters = priorityFilter !== 'all' || statusFilter !== 'all'
 
-  const handlePriorityFilterChange = useCallback((value: string) => {
+  const handlePriorityFilterChange = (value: string) => {
     setPriorityFilter(value as 'all' | Priority)
-  }, [])
+  }
 
-  const handleResetFilters = useCallback(() => {
+  const handleResetFilters = () => {
     setPriorityFilter('all')
     setStatusFilter('all')
-  }, [])
+  }
 
   return (
     <div className="space-y-4">

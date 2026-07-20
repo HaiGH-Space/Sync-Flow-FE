@@ -42,6 +42,7 @@ request -> proxy.ts locale/auth gate -> app/[locale]/layout.tsx providers -> rou
 | Optimistic mutation + invalidation | `hooks/mutations/*`, `components/canvas/board/*` | Keeps drag-and-drop and CRUD flows responsive            |
 | Locale message bundles             | `i18n/en/*`, `i18n/vi/*` (with modular feature sub-modules) | Supports bilingual UI copy through `next-intl`           |
 | Standardized API Pagination       | `queries/*`, `lib/api/api.ts`, `components/canvas/backlog/*` | Wraps API lists in a `PaginatedData` envelope (`items`, `total`, `page`, `limit`) to optimize data transfer and support server-side table pagination |
+| Auto-memoized rendering            | Throughout components under `components/`        | Leverages React Compiler to automatically optimize component rendering performance, eliminating manual `useMemo` and `useCallback` boilerplate |
 
 ### 5) Known Architectural Risks
 

@@ -9,7 +9,7 @@
 | Primary language    | TypeScript / TSX                                          | `package.json`, `tsconfig.json`, `app/`, `components/`         |
 | Runtime + version   | Next.js 16.2.9 and React 19.2.3; Node.js v18+ (v24.12.0 in local dev) | `package.json`, `next.config.ts`                               |
 | Package manager     | pnpm                                                      | `pnpm-lock.yaml`, `pnpm-workspace.yaml`                        |
-| Module/build system | Next.js App Router with TypeScript and ESLint flat config | `app/`, `next.config.ts`, `eslint.config.mjs`, `tsconfig.json` |
+| Module/build system | Next.js App Router with TypeScript, ESLint flat config, and React Compiler | `app/`, `next.config.ts`, `eslint.config.mjs`, `tsconfig.json` |
 
 ### 2) Production Frameworks and Dependencies
 
@@ -51,6 +51,9 @@
 | `tailwindcss`                   | Tailwind CSS v4 framework    | `package.json`, `postcss.config.mjs` |
 | `babel-plugin-react-compiler`   | React Compiler support       | `package.json`, `next.config.ts`     |
 | `vitest`                        | Unit/integration test runner | `package.json`, `vitest.config.ts`   |
+
+> [!NOTE]
+> **React Compiler Native Integration**: The React Compiler is enabled natively via `reactCompiler: true` in `next.config.ts` (leveraging React 19 native optimizations). It analyzes components at build time and automatically caches component results, hooks, and callbacks. Developers should never write manual memoization wrappers (`useMemo`, `useCallback`, `memo()`) as they add redundant overhead and are flagged as issues by static codebase analysis.
 
 ### 4) Key Commands
 

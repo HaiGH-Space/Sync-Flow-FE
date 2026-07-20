@@ -7,9 +7,10 @@ _Sync anything, anywhere, with anyone._
 [![Build Status](https://img.shields.io/github/actions/workflow/status/HaiGH-Space/Sync-Flow/react-doctor.yml?branch=master&style=flat-square&label=React%20Doctor)](https://github.com/HaiGH-Space/Sync-Flow/actions)
 [![Next.js](https://img.shields.io/badge/Next.js-16.2.9-black?style=flat-square)](https://nextjs.org)
 [![React](https://img.shields.io/badge/React-19.2.3-blue?style=flat-square)](https://react.dev)
+[![React Compiler](https://img.shields.io/badge/React%20Compiler-Enabled-blueviolet?style=flat-square)](https://react.dev/learn/react-compiler)
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-v4-38bdf8?style=flat-square)](https://tailwindcss.com)
 
-Sync Flow is a premium, real-time collaboration workspace designed for issue tracking, agile sprint planning, and team communication. Built using Next.js 16 (App Router), React 19, and Tailwind CSS v4.
+Sync Flow is a premium, real-time collaboration workspace designed for issue tracking, agile sprint planning, and team communication.
 
 </div>
 
@@ -22,11 +23,12 @@ Sync Flow is a premium, real-time collaboration workspace designed for issue tra
 - **Multi-locale Gated Routing**: Inherent native localization support for English (`en`) and Vietnamese (`vi`) using `next-intl`.
 - **Hybrid Security Model**: Protected routes gated via a hybrid JWT/Redis cookie authentication framework.
 - **Sleek Workspace Navigation**: Expandable sidebars, active workspace rails, collapsible sublists, and zinc-scale responsive panels.
+- **Zero-Manual-Memoization Architecture**: Leverages the React Compiler to automatically optimize component rendering, resulting in a cleaner codebase without manual `useMemo` or `useCallback` hooks.
 
 ## Technology Stack
 
 - **Framework**: Next.js `16.2.9` (App Router)
-- **UI Library**: React `19.2.3`
+- **UI Library & Compiler**: React `19.2.3` with React Compiler (natively enabled via `reactCompiler: true`)
 - **State Management**: React Query `^5.90.20` (Server state) & Zustand `^5.0.11` (Persisted UI state)
 - **Styling**: Tailwind CSS `v4` & Framer Motion `^12.40.0`
 - **Form Handling**: `@tanstack/react-form` + `zod`
@@ -68,6 +70,7 @@ Sync Flow is a premium, real-time collaboration workspace designed for issue tra
    ```
 
 4. Run the development server locally:
+
    ```bash
    pnpm dev
    ```
@@ -82,6 +85,9 @@ pnpm lint     # Run ESLint validation
 pnpm doctor   # Run React Doctor codebase audit
 pnpm build    # Perform a full production Next.js build
 ```
+
+> [!TIP]
+> **React Compiler & Memoization Rules**: Since React Compiler compiles and memoizes components automatically, manual memoization (e.g. `useMemo`, `useCallback`, and `memo()`) is redundant and considered dead weight. Static codebase analysis with `pnpm doctor` checks for and flags manual memoization. Do not write manual memoization wrappers for new hooks or components.
 
 ---
 
@@ -129,6 +135,7 @@ types/                    # Global TypeScript interfaces
 - **State Flow & Board Ordering**: Midpoint insertion calculations are performed optimistically on the client using helpers in `lib/ordering.ts`. Fast mutations are managed through a "flush-and-sequence" queue hook pattern (`useColumnReorder` and `useIssueMove`) to prevent race conditions.
 - **Presenter/Hook Pattern**: Complex features (such as `NavigationSidebar` and `IssueDetailDialog`) isolate UI rendering from state management using custom hooks (`useNavigationSidebar`, `useIssueDetail`).
 - **Centralized API Gating**: Target URL resolution is managed dynamically by `lib/api/api-config.ts` (using client-side relative `/api-proxy` paths and direct backend endpoints on the server).
+- **Auto-Memoization**: The React Compiler is active natively in the build flow, optimizing renders globally. UI components should remain presentational and completely free of manual memoization hooks.
 
 ---
 

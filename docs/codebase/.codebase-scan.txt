@@ -385,6 +385,7 @@ NEXT_PUBLIC_API_URL=http://localhost:8000
 None found.
 
 === GIT RECENT COMMITS (last 20) ===
+cb9c1c3 docs: add architecture and stack documentation and update README with React Compiler details
 965c3ec Merge pull request #28 from HaiGH-Space/fix/technical-debt
 cb119e8 docs: remove resolved technical debt items from CONCERNS.md
 85d509e fix: resolve calendar toLocaleDateString hydration mismatch and remove unused type imports
@@ -404,28 +405,27 @@ a8e7852 refactor(sidebar): migrate projects to infinite loading list and make su
 2a6fcb1 feat(queries,canvas): shift query limits to 1000 and resolve compiler warnings
 8156506 chore: ignore superpowers documentation directory in frontend workspace
 4e24fef Merge pull request #25 from HaiGH-Space/refactor/resolve-concerns
-6d19a08 feat: add GitHub Actions workflow for automated secret scanning with Gitleaks
 
 === HIGH-CHURN FILES (last 90 days, top 20) ===
   28 docs/codebase/CONCERNS.md
   12 components/dashboard/layout/DashboardContentLayout.tsx
   11 components/dashboard/layout/NavigationSidebar.tsx
-  11 components/dashboard/chat/Composer.tsx
-  11 package.json
+   9 docs/codebase/.codebase-scan.txt
    9 components/dashboard/layout/navigation-sidebar/NavigationSidebarSprintList.tsx
-   9 pnpm-lock.yaml
+   9 package.json
    9 components/auth/AuthCard.tsx
    9 components/auth/SuccessState.tsx
+   8 README.md
    8 components/canvas/board/useIssueMove.ts
-   8 docs/codebase/.codebase-scan.txt
+   8 components/dashboard/chat/Composer.tsx
    8 components/dashboard/comp/IssueDetailDialog.tsx
    8 .github/workflows/react-doctor.yml
+   7 docs/codebase/STACK.md
    7 components/dashboard/layout/navigation-sidebar/NavigationSidebarProjectItem.tsx
    7 components/dashboard/layout/navigation-sidebar/use-navigation-sidebar.ts
    7 components/dashboard/notifications/NotificationsMenu.tsx
    7 components/canvas/board/KanbanColumn.tsx
    7 components/dashboard/layout/navigation-sidebar/NavigationSidebarChannelList.tsx
-   7 README.md
    7 components/canvas/board/KanbanCard.tsx
 
 === MONOREPO SIGNALS ===

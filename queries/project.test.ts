@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { QueryFunctionContext } from '@tanstack/react-query'
 import { projectKeys, createProjectsInfiniteQueryOptions } from './project'
 import { projectService } from '@/lib/api/project'
 
@@ -31,7 +30,9 @@ describe('project infinite query options', () => {
     }
     vi.mocked(projectService.getProjectsByWorkspaceId).mockResolvedValue(mockResponse)
 
-    const result = await options.queryFn!({ pageParam: 1, queryKey: options.queryKey, meta: undefined } as any)
+    const result = await options.queryFn!(
+      { pageParam: 1, queryKey: options.queryKey, meta: undefined, signal: new AbortController().signal } as unknown as Parameters<NonNullable<typeof options.queryFn>>[0]
+    )
     expect(result).toBe(mockResponse)
     expect(projectService.getProjectsByWorkspaceId).toHaveBeenCalledWith({ workspaceId: 'ws-123', page: 1, limit: 20 })
 

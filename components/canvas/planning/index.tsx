@@ -140,7 +140,7 @@ export default function PlanningCanvas({ projectId }: PlanningCanvasProps) {
     );
   }
 
-  const DndProvider = DragDropProvider as any;
+  const DndProvider = DragDropProvider as unknown as React.ComponentType<{ children?: React.ReactNode; sensors?: unknown; onDragStart?: unknown; onDragOver?: unknown; onDragEnd?: unknown }>;
 
   return (
     <DndProvider onDragEnd={handleDragEnd}>

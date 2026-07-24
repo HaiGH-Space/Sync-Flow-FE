@@ -177,7 +177,7 @@ export default function BoardCanvas({ projectId }: BoardCanvasProps) {
     );
   }
 
-  const DndProvider = DragDropProvider as any;
+  const DndProvider = DragDropProvider as unknown as React.ComponentType<{ children?: React.ReactNode; sensors?: unknown; onDragStart?: unknown; onDragOver?: unknown; onDragEnd?: unknown }>;
 
   return (
     <>

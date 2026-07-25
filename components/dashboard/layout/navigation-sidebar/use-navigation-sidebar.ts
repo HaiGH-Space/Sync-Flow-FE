@@ -203,6 +203,27 @@ export function useNavigationSidebar(workspaceDetail?: Workspace) {
     setExpandedProjectId((prev) => (prev === id ? null : id));
   };
 
+  const sprintsState = {
+    items: sprintsResponse?.data?.items,
+    isFetching: isSprintsFetching,
+    error: sprintsError,
+    selectedId: selectedSprintIdByProject[expandedProjectId ?? ""] ?? "all",
+    showAll: showAllSprints,
+    onSelect: handleSprintSelect,
+    onEdit: setEditingSprint,
+    onToggleShowAll: () => setShowAllSprints((prev) => !prev),
+  };
+
+  const channelsState = {
+    items: channelsResponse?.data,
+    isFetching: isChannelsFetching,
+    error: channelsError,
+    selectedId: selectedChannelIdByProject[expandedProjectId ?? ""] ?? "",
+    showAll: showAllChannels,
+    onSelect: handleChannelSelect,
+    onToggleShowAll: () => setShowAllChannels((prev) => !prev),
+  };
+
   return {
     isOpenSidebarLeft,
     selectedSprintIdByProject,
@@ -251,6 +272,9 @@ export function useNavigationSidebar(workspaceDetail?: Workspace) {
     setShowAllChannels,
     activeTab,
     setActiveTab,
+
+    // Pre-composed states
+    sprintsState,
+    channelsState,
   };
 }
-

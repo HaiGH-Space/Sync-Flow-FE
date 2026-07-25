@@ -44,15 +44,12 @@ export function NavigationSidebar({
 }) {
   const {
     isOpenSidebarLeft,
-    selectedSprintIdByProject,
-    selectedChannelIdByProject,
     t,
     expandedProjectId,
     setExpandedProjectId,
     settingsProject,
     setSettingsProject,
     editingSprint,
-    setEditingSprint,
     canLoadProjects,
     currentWorkspaceRole,
     canManageProject,
@@ -60,53 +57,20 @@ export function NavigationSidebar({
     error,
     isProjectsLoading,
     isDeletingProject,
-    sprintsResponse,
-    sprintsError,
-    isSprintsFetching,
-    channelsResponse,
-    channelsError,
-    isChannelsFetching,
     filteredProjects,
     searchHandle,
-    handleSprintSelect,
-    handleChannelSelect,
     handleDeleteProject,
     handleSettingsOpenChange,
     handleEditSprintOpenChange,
-    // Infinite paging
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-    // Sublist states
-    showAllSprints,
-    setShowAllSprints,
-    showAllChannels,
-    setShowAllChannels,
+    sprintsState,
+    channelsState,
     activeTab,
     setActiveTab,
     searchQuery,
   } = useNavigationSidebar(workspaceDetail);
-
-  const sprintsState = {
-    items: sprintsResponse?.data?.items,
-    isFetching: isSprintsFetching,
-    error: sprintsError,
-    selectedId: selectedSprintIdByProject[expandedProjectId ?? ""] ?? "all",
-    showAll: showAllSprints,
-    onSelect: handleSprintSelect,
-    onEdit: setEditingSprint,
-    onToggleShowAll: () => setShowAllSprints((prev) => !prev),
-  };
-
-  const channelsState = {
-    items: channelsResponse?.data,
-    isFetching: isChannelsFetching,
-    error: channelsError,
-    selectedId: selectedChannelIdByProject[expandedProjectId ?? ""] ?? "",
-    showAll: showAllChannels,
-    onSelect: handleChannelSelect,
-    onToggleShowAll: () => setShowAllChannels((prev) => !prev),
-  };
 
   return (
     <LazyMotion features={domAnimation}>

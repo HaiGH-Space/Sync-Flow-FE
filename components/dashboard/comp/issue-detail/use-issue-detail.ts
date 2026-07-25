@@ -40,7 +40,7 @@ export type IssueDetailEditableAction =
   | { type: "deleteIssueDialogOpened" }
   | { type: "deleteIssueDialogClosed" };
 
-function createIssueDetailEditableState(
+export function createIssueDetailEditableState(
   issue: Issue,
 ): IssueDetailEditableState {
   return {
@@ -54,7 +54,7 @@ function createIssueDetailEditableState(
   };
 }
 
-function issueDetailEditableReducer(
+export function issueDetailEditableReducer(
   state: IssueDetailEditableState,
   action: IssueDetailEditableAction,
 ): IssueDetailEditableState {

@@ -9,7 +9,11 @@ import type { ApiResponse, PaginatedData } from '@/lib/api/api';
 import { issueService } from '@/lib/api/issue';
 import type { Issue } from '@/lib/api/issue';
 import { issueKeys } from '@/queries/issue';
-import { getTailOrder, getInsertOrder } from '@/lib/ordering';
+import {
+    calculateNewOrder,
+    applyOptimisticIssueMove,
+    applyRollbackIssueMove,
+} from '@/lib/board/issue-move-utils';
 
 type DragEndHandler = NonNullable<ComponentProps<typeof DragDropProvider>['onDragEnd']>;
 type DragEndEvent = Parameters<DragEndHandler>[0];
@@ -74,21 +78,11 @@ export function useIssueMove({ projectId }: UseIssueMoveParams): UseIssueMoveRes
             });
         },
         onError: (_err, vars) => {
-            queryClient.setQueryData<ApiResponse<PaginatedData<Issue>>>(issueKeys.list(projectId, { limit: 100 }), (old) => {
-                if (!old?.data) return old;
-                return {
-                    ...old,
-                    data: {
-                        ...old.data,
-                        items: old.data.items.map((issue) =>
-                            issue.id === vars.issueId ? { ...issue, columnId: vars.originalColumnId, order: vars.originalOrder } : issue,
-                        ),
-                    }
-                };
-            });
+            queryClient.setQueryData<ApiResponse<PaginatedData<Issue>>>(issueKeys.list(projectId, { limit: 100 }), (old) =>
+                applyRollbackIssueMove(old, vars.issueId, vars.originalColumnId, vars.originalOrder)
+            );
         },
     });
-
 
     const handleTaskDrop = (event: DragEndEvent): boolean => {
         const { operation, canceled } = event;
@@ -114,39 +108,22 @@ export function useIssueMove({ projectId }: UseIssueMoveParams): UseIssueMoveRes
         const originalColumnId = originalColumn?.columnId ?? '';
         const originalOrder = originalColumn?.order ?? 0;
 
-        // Get issues currently in the target column (excluding the one being moved)
         const targetIssues = currentIssues.data.items
             .filter((issue) => issue.columnId === targetColumnId && issue.id !== issueId)
             .toSorted((a, b) => a.order - b.order);
 
-        let newOrder: number;
-        if (targetType === 'column') {
-            const lastIssue = targetIssues[targetIssues.length - 1];
-            newOrder = getTailOrder(lastIssue?.order);
-        } else {
-            const targetIssueId = target.id as string;
-            const targetIndex = targetIssues.findIndex((issue) => issue.id === targetIssueId);
-            if (targetIndex === -1) {
-                const lastIssue = targetIssues[targetIssues.length - 1];
-                newOrder = getTailOrder(lastIssue?.order);
-            } else {
-                const prevIssue = targetIssues[targetIndex - 1];
-                const nextIssue = targetIssues[targetIndex];
-                const insertResult = getInsertOrder(prevIssue?.order, nextIssue?.order);
-                newOrder = insertResult.order;
-            }
-        }
-
-        // Optimistically move the card before persisting.
-        queryClient.setQueryData<ApiResponse<PaginatedData<Issue>>>(issueKeys.list(projectId, { limit: 100 }), {
-            ...currentIssues,
-            data: {
-                ...currentIssues.data,
-                items: currentIssues.data.items.map((issue) =>
-                    issue.id === issueId ? { ...issue, columnId: targetColumnId as string, order: newOrder } : issue,
-                ),
-            }
+        const newOrder = calculateNewOrder({
+            targetType,
+            targetId: target.id as string,
+            targetColumnId: targetColumnId as string,
+            targetIssues,
+            sourceIssueId: issueId,
         });
+
+        queryClient.setQueryData<ApiResponse<PaginatedData<Issue>>>(
+            issueKeys.list(projectId, { limit: 100 }),
+            (old) => applyOptimisticIssueMove(old, issueId, targetColumnId as string, newOrder)
+        );
 
         const debounceMap = getDebounceMap();
         const pendingUpdates = getPendingUpdates();
@@ -174,10 +151,7 @@ export function useIssueMove({ projectId }: UseIssueMoveParams): UseIssueMoveRes
         };
 
         pendingUpdates.set(issueId, runUpdate);
-        debounceMap.set(
-            issueId,
-            setTimeout(runUpdate, 300),
-        );
+        debounceMap.set(issueId, setTimeout(runUpdate, 300));
 
         return true;
     };

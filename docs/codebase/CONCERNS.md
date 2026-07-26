@@ -29,12 +29,8 @@
 
 ### 5) Fragile/High-Churn Areas
 
-| Area | Why fragile | Churn signal | Safe change strategy |
-|------|-------------|-------------|----------------------|
-| `components/dashboard/layout/DashboardContentLayout.tsx` | Central layout shell wrapping multiple dynamic sidebars and panels | 12 commits in 90 days | Maintain prop contracts and hook separation |
-| `components/dashboard/layout/NavigationSidebar.tsx` | Orchestrates project lists, sprint items, channels, and active project selections | 11 commits in 90 days | Keep child lists stateless and delegate mutations to `useNavigationSidebar` |
-| `components/canvas/board/useIssueMove.ts` | Manages complex sparse ordering calculations and optimistic position updates | 8 commits in 90 days | Verify with unit tests in `lib/ordering.test.ts` before modifying calculation logic |
-| `components/dashboard/comp/IssueDetailDialog.tsx` | Combines issue metadata editing, comment threads, user assignees, and status select | 8 commits in 90 days | Keep sub-dialogs decoupled and use `@tanstack/react-form` |
+None
+
 
 ### 6) `[ASK USER]` Questions
 

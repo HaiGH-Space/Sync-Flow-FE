@@ -11,6 +11,7 @@ import {
   getNotificationSocket,
   type Notification,
   type NotificationListResponse,
+  type NotificationsBulkUpdatedPayload,
 } from "@/lib/api/notification";
 import { notificationKeys } from "@/queries/notification";
 
@@ -35,6 +36,43 @@ const findNotificationInCache = (
   }
 
   return notificationsById.get(notificationId) ?? null;
+};
+
+const findBulkNotificationsInCache = (
+  queryClient: QueryClient,
+  ids: string[],
+) => {
+  const cachedLists = queryClient.getQueriesData<
+    InfiniteData<NotificationListResponse>
+  >({ queryKey: notificationKeys.list() });
+
+  const idSet = new Set(ids);
+  const foundNotifications = new Map<string, Notification>();
+
+  for (const [, data] of cachedLists) {
+    if (!data) {
+      continue;
+    }
+    for (const page of data.pages) {
+      for (const item of page.data) {
+        if (idSet.has(item.id)) {
+          foundNotifications.set(item.id, item);
+        }
+      }
+    }
+  }
+
+  let unreadCountBefore = 0;
+  for (const notification of foundNotifications.values()) {
+    if (!notification.isRead) {
+      unreadCountBefore += 1;
+    }
+  }
+
+  return {
+    foundCount: foundNotifications.size,
+    unreadCountBefore,
+  };
 };
 
 const prependNotification = (
@@ -89,6 +127,37 @@ const replaceNotification = (
   };
 };
 
+const replaceBulkNotifications = (
+  previous: InfiniteData<NotificationListResponse>,
+  ids: string[],
+  isRead: boolean,
+): InfiniteData<NotificationListResponse> => {
+  const idSet = new Set(ids);
+  const now = isRead ? new Date().toISOString() : null;
+
+  const nextPages = previous.pages.map((page) => {
+    let hasMatch = false;
+    const nextData = page.data.map((item) => {
+      if (idSet.has(item.id)) {
+        hasMatch = true;
+        return {
+          ...item,
+          isRead,
+          readAt: now,
+        };
+      }
+      return item;
+    });
+
+    return hasMatch ? { ...page, data: nextData } : page;
+  });
+
+  return {
+    ...previous,
+    pages: nextPages,
+  };
+};
+
 export function useNotificationChannel() {
   const queryClient = useQueryClient();
 
@@ -134,12 +203,52 @@ export function useNotificationChannel() {
       }
     };
 
+    const handleBulkUpdated = (payload: NotificationsBulkUpdatedPayload) => {
+      const { ids, status } = payload;
+      const isRead = status === "READ";
+
+      const { foundCount, unreadCountBefore } = findBulkNotificationsInCache(
+        queryClient,
+        ids,
+      );
+
+      queryClient.setQueriesData<InfiniteData<NotificationListResponse>>(
+        { queryKey: notificationKeys.list() },
+        (old) => (old ? replaceBulkNotifications(old, ids, isRead) : old),
+      );
+
+      const allFound = foundCount === ids.length;
+
+      if (!allFound) {
+        queryClient.invalidateQueries({
+          queryKey: notificationKeys.unreadCount(),
+        });
+        return;
+      }
+
+      if (isRead) {
+        queryClient.setQueryData<number>(
+          notificationKeys.unreadCount(),
+          (old) =>
+            typeof old === "number" ? Math.max(0, old - unreadCountBefore) : old,
+        );
+      } else {
+        const newlyUnread = ids.length - unreadCountBefore;
+        queryClient.setQueryData<number>(
+          notificationKeys.unreadCount(),
+          (old) => (typeof old === "number" ? old + newlyUnread : old),
+        );
+      }
+    };
+
     socket.on("notification_created", handleCreated);
     socket.on("notification_updated", handleUpdated);
+    socket.on("notifications_bulk_updated", handleBulkUpdated);
 
     return () => {
       socket.off("notification_created", handleCreated);
       socket.off("notification_updated", handleUpdated);
+      socket.off("notifications_bulk_updated", handleBulkUpdated);
     };
   }, [queryClient]);
 }

@@ -83,9 +83,17 @@ async function markAllAsRead() {
   return api.patch<Notification[]>("/notifications/me/read-all", {});
 }
 
+export type NotificationsBulkUpdatedPayload = {
+  ids: string[];
+  status: "READ" | "UNREAD" | string;
+};
+
 type NotificationServerEvents = {
   notification_created: (notification: Notification) => void;
   notification_updated: (notification: Notification) => void;
+  notifications_bulk_updated: (
+    payload: NotificationsBulkUpdatedPayload,
+  ) => void;
   error: (payload: { message: string }) => void;
 };
 

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { getNotificationSocket, disconnectNotificationSocket } from "./notification";
+import { getNotificationSocket, disconnectNotificationSocket, type NotificationsBulkUpdatedPayload } from "./notification";
 import { io } from "socket.io-client";
 
 vi.mock("socket.io-client", () => {
@@ -37,3 +37,15 @@ describe("notification socket lifecycle", () => {
     expect(socket3).not.toBe(socket1);
   });
 });
+
+describe("notification types", () => {
+  it("should have correct structure for NotificationsBulkUpdatedPayload", () => {
+    const payload: NotificationsBulkUpdatedPayload = {
+      ids: ["notif-1", "notif-2"],
+      status: "READ",
+    };
+    expect(payload.ids).toEqual(["notif-1", "notif-2"]);
+    expect(payload.status).toBe("READ");
+  });
+});
+

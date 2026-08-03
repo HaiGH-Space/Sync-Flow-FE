@@ -31,11 +31,13 @@ export function ChannelCallPanel({ channelId }: Props) {
   const isReconnecting = connectionState === ConnectionState.Reconnecting;
 
   return (
-    <div className="relative flex flex-col h-[500px] w-full border-b bg-card rounded-lg overflow-hidden my-3">
+    <div className="relative flex flex-col h-125 w-full border-b bg-card rounded-lg overflow-hidden my-3">
       {isReconnecting && (
         <div className="absolute inset-0 z-20 bg-background/80 backdrop-blur flex items-center justify-center gap-2">
           <Loader2 className="w-6 h-6 animate-spin text-amber-500" />
-          <span className="font-medium text-sm">Reconnecting to meeting call...</span>
+          <span className="font-medium text-sm">
+            Reconnecting to meeting call...
+          </span>
         </div>
       )}
       <VideoConference />

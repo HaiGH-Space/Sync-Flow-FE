@@ -1,5 +1,6 @@
 "use client";
 
+import "@livekit/components-styles";
 import React, { useEffect } from "react";
 import { LiveKitRoom, RoomAudioRenderer } from "@livekit/components-react";
 import { DisconnectReason } from "livekit-client";

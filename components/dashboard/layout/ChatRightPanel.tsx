@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDashboard } from "@/lib/store/use-dashboard";
 import { useProfile } from "@/hooks/use-profile";
 import { ChannelHeader } from "@/components/dashboard/chat/ChannelHeader";
+import { ChannelCallPanel } from "@/components/channel/channel-call-panel";
 import { MessageList } from "@/components/dashboard/chat/MessageList";
 import { Composer } from "@/components/dashboard/chat/Composer";
 import { useChatChannel } from "@/hooks/chat/use-chat-channel";
@@ -19,7 +20,7 @@ export function ChatRightPanel() {
   const setOpenSidebarRight = useDashboard(
     (state) => state.setOpenSidebarRight,
   );
-  const { projectId } = useParams<{ projectId?: string }>();
+  const { workspaceId, projectId } = useParams<{ workspaceId?: string; projectId?: string }>();
   const selectedChannelId = useDashboard(
     (state) => state.selectedChannelIdByProject[projectId ?? ""] ?? "",
   );
@@ -72,10 +73,18 @@ export function ChatRightPanel() {
           className="flex h-full min-h-0 flex-col overflow-hidden"
         >
           {selectedChannelId ? (
-            <div className="flex h-full min-h-0 flex-col px-4 pb-4">
+            <div className="flex h-full min-h-0 flex-col px-4 pb-4 overflow-y-auto">
               <div className="shrink-0">
-                <ChannelHeader title={t("chatRightPanel.channelTitle")} />
+                <ChannelHeader
+                  title={t("chatRightPanel.channelTitle")}
+                  workspaceId={workspaceId}
+                  channelId={selectedChannelId}
+                />
               </div>
+              <ChannelCallPanel
+                workspaceId={workspaceId ?? ""}
+                channelId={selectedChannelId}
+              />
               {error ? (
                 <div className="flex-1 min-h-0 py-4 text-sm text-destructive">
                   {error}
@@ -112,3 +121,4 @@ export function ChatRightPanel() {
     </aside>
   );
 }
+

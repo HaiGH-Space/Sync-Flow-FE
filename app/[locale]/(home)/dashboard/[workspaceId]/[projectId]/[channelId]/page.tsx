@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { ChannelHeader } from "@/components/dashboard/chat/ChannelHeader";
 import { Composer } from "@/components/dashboard/chat/Composer";
 import { MessageList } from "@/components/dashboard/chat/MessageList";
-import { ChannelCallPanel } from "@/components/channel/channel-call-panel";
+import { ChannelCallPanel } from "@/components/channel/ChannelCallPanel";
 import { useProfile } from "@/hooks/use-profile";
 import { useChatChannel } from "@/hooks/chat/use-chat-channel";
 

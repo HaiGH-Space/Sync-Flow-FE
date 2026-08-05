@@ -5,7 +5,7 @@ import { ThemeProvider } from "@/components/ui/theme-provider";
 import { MotionProvider } from "@/components/ui/motion-provider";
 import { Toaster } from "@/components/ui/sonner";
 import QueryProvider from "@/components/ui/query-provider";
-import { GlobalCallProvider } from "@/components/call/global-call-provider";
+import { GlobalCallProvider } from "@/components/call/GlobalCallProvider";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";

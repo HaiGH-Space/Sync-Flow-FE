@@ -1,24 +1,33 @@
 "use client";
 
-import { useEffect } from "react";
-import { usePathname, useParams } from "next/navigation";
+import { useEffect, useRef } from "react";
+import { useParams } from "next/navigation";
 import { useCallStore } from "@/lib/store/use-call-store";
 
 export function useVideoCallRouteSync() {
   const activeCall = useCallStore((s) => s.activeCall);
   const setMinimized = useCallStore((s) => s.setMinimized);
   const params = useParams();
-  const pathname = usePathname();
+  const prevChannelIdRef = useRef<string | null>(null);
 
   useEffect(() => {
-    if (!activeCall) return;
+    if (!activeCall) {
+      prevChannelIdRef.current = null;
+      return;
+    }
 
     const currentChannelId = (params?.channelId as string) || (params?.id as string);
 
-    if (currentChannelId === activeCall.channelId) {
-      setMinimized(false);
-    } else {
+    // Auto-minimize only when transitioning away from the call's channel for the first time
+    if (
+      prevChannelIdRef.current === activeCall.channelId &&
+      currentChannelId &&
+      currentChannelId !== activeCall.channelId
+    ) {
       setMinimized(true);
     }
-  }, [activeCall, params, pathname, setMinimized]);
+
+    prevChannelIdRef.current = currentChannelId || null;
+  }, [activeCall, params, setMinimized]);
 }
+

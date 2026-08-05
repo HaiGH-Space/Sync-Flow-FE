@@ -14,6 +14,7 @@ import {
 import { NavigationSidebarFooter } from "./navigation-sidebar/NavigationSidebarFooter";
 import { NavigationSidebarHeader } from "./navigation-sidebar/NavigationSidebarHeader";
 import { NavigationSidebarProjectList } from "./navigation-sidebar/NavigationSidebarProjectList";
+import { SidebarCallWidget } from "./navigation-sidebar/SidebarCallWidget";
 import { useNavigationSidebar } from "./navigation-sidebar/use-navigation-sidebar";
 
 const sidebarContainerVariants: Variants = {
@@ -124,6 +125,7 @@ export function NavigationSidebar({
                   </div>
                 </div>
 
+                <SidebarCallWidget />
                 <NavigationSidebarFooter />
               </div>
             </m.aside>

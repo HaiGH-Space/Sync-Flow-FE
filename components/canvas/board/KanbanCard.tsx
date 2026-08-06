@@ -100,12 +100,14 @@ function KanbanCard(props: KanbanCardProps) {
           </div>
         </div>
       </div>
-      <IssueDetailDialog
-        isOpen={isViewDetailOpen}
-        openChange={setIsViewDetailOpen}
-        projectId={props.projectId}
-        issueId={props.id}
-      />
+      {isViewDetailOpen && (
+        <IssueDetailDialog
+          isOpen={isViewDetailOpen}
+          openChange={setIsViewDetailOpen}
+          projectId={props.projectId}
+          issueId={props.id}
+        />
+      )}
     </>
   );
 }

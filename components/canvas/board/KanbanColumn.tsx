@@ -36,15 +36,17 @@ function KanbanColumn(props: ColumnProps) {
   // re-renders for every other column.
   const selectColumnTasks = (
     data: ApiResponse<PaginatedData<Issue>>,
-  ): TaskProps[] =>
-    (data.data?.items ?? [])
-      .filter((issue) => {
-        const matchColumn = issue.columnId === props.columnId;
-        const matchSprint =
-          selectedSprintId === "all" || issue.sprintId === selectedSprintId;
-        return matchColumn && matchSprint;
-      })
+  ): TaskProps[] => {
+    const items = data.data?.items;
+    if (!items || items.length === 0) return [];
+    return items
+      .filter(
+        (issue) =>
+          issue.columnId === props.columnId &&
+          (selectedSprintId === "all" || issue.sprintId === selectedSprintId),
+      )
       .toSorted((a, b) => a.order - b.order);
+  };
 
   const { data: tasks = [] } = useQuery(
     createIssuesQueryOptions(
@@ -90,18 +92,22 @@ function KanbanColumn(props: ColumnProps) {
       <ScrollArea className="flex-1 min-h-0 px-3">
         <div>
           {tasks.map((task) => (
-            <KanbanCard
-              projectId={props.projectId}
+            <div
               key={task.id}
-              id={task.id}
-              title={task.title}
-              priority={task.priority}
-              storyPoint={undefined}
-              description={task.description}
-              assigneeId={task.assigneeId}
-              columnId={task.columnId}
-              order={task.order}
-            />
+              className="[content-visibility:auto] [contain-intrinsic-size:1px_88px]"
+            >
+              <KanbanCard
+                projectId={props.projectId}
+                id={task.id}
+                title={task.title}
+                priority={task.priority}
+                storyPoint={undefined}
+                description={task.description}
+                assigneeId={task.assigneeId}
+                columnId={task.columnId}
+                order={task.order}
+              />
+            </div>
           ))}
         </div>
       </ScrollArea>

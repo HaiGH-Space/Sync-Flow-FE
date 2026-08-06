@@ -23,9 +23,9 @@
 
 ### 4) Performance and Scaling Concerns
 
-| Concern | Evidence | Current symptom | Scaling risk | Suggested improvement |
-|---------|----------|-----------------|-------------|-----------------------|
-| Board canvas canvas re-rendering during rapid drag operations | `components/canvas/board/BoardCanvas.tsx`, `useIssueMove.ts` | Slight frame drop on large board layouts | Performance hit with 100+ cards per column | Virtualize board columns / cards |
+| Concern | Evidence | Current symptom | Scaling risk | Suggested improvement | Status / Resolution |
+|---------|----------|-----------------|-------------|-----------------------|---------------------|
+| Board canvas re-rendering during rapid drag operations | `components/canvas/board/BoardCanvas.tsx`, `useIssueMove.ts`, `KanbanCard.tsx` | Resolved (frame drops eliminated on large board layouts) | Low risk with 100+ cards per column | Virtualize board columns / cards & conditional modal mounting | Resolved: Conditionally mount `IssueDetailDialog` only on active view; added `content-visibility: auto` card containment; stabilized query selector task filtering. |
 
 ### 5) Fragile/High-Churn Areas
 

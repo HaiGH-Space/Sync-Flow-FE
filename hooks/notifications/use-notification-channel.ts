@@ -14,6 +14,7 @@ import {
   type NotificationsBulkUpdatedPayload,
 } from "@/lib/api/notification";
 import { notificationKeys } from "@/queries/notification";
+import { useUserStore } from "@/lib/store/use-user-profile";
 
 const findNotificationInCache = (
   queryClient: QueryClient,
@@ -159,10 +160,11 @@ const replaceBulkNotifications = (
 };
 
 export function useNotificationChannel() {
+  const token = useUserStore((s) => s.token);
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    const socket = getNotificationSocket();
+    const socket = getNotificationSocket(token);
 
     const handleCreated = (notification: Notification) => {
       queryClient.setQueriesData<InfiniteData<NotificationListResponse>>(
@@ -250,5 +252,5 @@ export function useNotificationChannel() {
       socket.off("notification_updated", handleUpdated);
       socket.off("notifications_bulk_updated", handleBulkUpdated);
     };
-  }, [queryClient]);
+  }, [queryClient, token]);
 }

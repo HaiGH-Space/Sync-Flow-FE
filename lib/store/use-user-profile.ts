@@ -9,12 +9,14 @@ type UserProfileActions = {
 
 type UserProfileStore = {
   userProfile?: UserProfile;
+  token?: string;
 } & UserProfileActions;
 
 export const useUserStore = create<UserProfileStore>((set) => ({
   logout: async () => {
     await authService.logout();
-    set({ userProfile: undefined });
+    set({ userProfile: undefined, token: undefined });
   },
-  setUserProfile: (profile: UserProfile) => set({ userProfile: profile }),
+  setUserProfile: (profile: UserProfile) =>
+    set({ userProfile: profile, token: profile.token }),
 }));

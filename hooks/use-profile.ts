@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query"
 import { useEffect } from "react"
 
 export const useProfile = () => {
-    const { userProfile, setUserProfile } = useUserStore()
+    const { userProfile, setUserProfile, token } = useUserStore()
 
     const query = useQuery({
         queryKey: ['userProfile'],
@@ -14,7 +14,7 @@ export const useProfile = () => {
             const response = await userService.getUserProfile()
             return response.data
         },
-        initialData: userProfile ?? undefined,
+        initialData: (userProfile && token) ? userProfile : undefined,
         staleTime: 1000 * 60 * 10,
     })
 

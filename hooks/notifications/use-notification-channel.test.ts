@@ -14,6 +14,12 @@ vi.mock("react", () => {
   };
 });
 
+vi.mock("@/lib/store/use-user-profile", () => ({
+  useUserStore: vi.fn((selector) =>
+    selector ? selector({ token: "test-token" }) : { token: "test-token" },
+  ),
+}));
+
 const mockSocketOn = vi.fn();
 const mockSocketOff = vi.fn();
 

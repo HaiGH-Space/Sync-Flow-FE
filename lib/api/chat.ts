@@ -23,9 +23,9 @@ let chatSocket: Socket<ChatServerEvents, ChatClientEvents> | null = null;
 export const getChatSocket = (token?: string) => {
   const sessionToken = token || getCookieValue("session_token");
   if (chatSocket) {
-    if (sessionToken && chatSocket.io.opts) {
-      chatSocket.io.opts.auth = {
-        ...(chatSocket.io.opts.auth as Record<string, unknown> | undefined),
+    if (sessionToken) {
+      chatSocket.auth = {
+        ...(chatSocket.auth as Record<string, unknown> | undefined),
         session_token: sessionToken,
       };
     }

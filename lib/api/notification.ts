@@ -107,9 +107,9 @@ let notificationSocket: Socket<
 export const getNotificationSocket = (token?: string) => {
   const sessionToken = token || getCookieValue("session_token");
   if (notificationSocket) {
-    if (sessionToken && notificationSocket.io.opts) {
-      notificationSocket.io.opts.auth = {
-        ...(notificationSocket.io.opts.auth as Record<string, unknown> | undefined),
+    if (sessionToken) {
+      notificationSocket.auth = {
+        ...(notificationSocket.auth as Record<string, unknown> | undefined),
         session_token: sessionToken,
       };
     }

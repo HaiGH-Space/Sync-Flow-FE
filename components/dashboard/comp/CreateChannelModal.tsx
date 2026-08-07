@@ -24,7 +24,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import FieldAnimation from "@/components/auth/FieldAnimation";
 import { useCreateChannel } from "@/hooks/mutations/channel";
 import { createWorkspaceMemberProfilesQueryOptions } from "@/queries/workspace-member";
-import { ChannelType } from "@/lib/api/channel";
+import { ChannelType, ChannelVisibility } from "@/lib/api/channel";
 import { useProfile } from "@/hooks/use-profile";
 
 const createChannelSchema = () =>
@@ -69,6 +69,7 @@ export default function CreateChannelModal({
     );
 
   const memberProfiles = memberProfilesResponse?.data ?? [];
+  const allMemberIds = memberProfiles.map((m) => m.id);
 
   const form = useForm({
     defaultValues,
@@ -77,10 +78,16 @@ export default function CreateChannelModal({
       onChange: schema,
     },
     onSubmit: async ({ value }) => {
+      const selectedMembers =
+        value.memberIds && value.memberIds.length > 0
+          ? value.memberIds
+          : allMemberIds;
+
       const payload = {
         name: value.name?.trim() ? value.name.trim() : undefined,
         type: ChannelType.GROUP,
-        memberIds: value.memberIds,
+        visibility: ChannelVisibility.PUBLIC,
+        memberIds: selectedMembers,
       };
 
       createChannel(payload, {
@@ -135,22 +142,29 @@ export default function CreateChannelModal({
             {(field) => {
               const isInvalid =
                 field.state.meta.isTouched && !field.state.meta.isValid;
-              const selectedIds = new Set(field.state.value ?? []);
+              const currentSelected =
+                field.state.value && field.state.value.length > 0
+                  ? field.state.value
+                  : allMemberIds;
+              const selectedIds = new Set(currentSelected);
 
               const handleToggleMember = (
                 memberId: string,
                 checked: boolean,
               ) => {
+                const baseList =
+                  field.state.value && field.state.value.length > 0
+                    ? field.state.value
+                    : allMemberIds;
+
                 if (!checked) {
                   field.handleChange(
-                    (field.state.value ?? []).filter(
-                      (id: string) => id !== memberId,
-                    ),
+                    baseList.filter((id: string) => id !== memberId),
                   );
                   return;
                 }
 
-                field.handleChange([...(field.state.value ?? []), memberId]);
+                field.handleChange([...baseList, memberId]);
               };
 
               return (

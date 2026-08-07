@@ -5,10 +5,16 @@ export enum ChannelType {
   DIRECT = "DIRECT",
 }
 
+export enum ChannelVisibility {
+  PUBLIC = "PUBLIC",
+  PRIVATE = "PRIVATE",
+}
+
 export interface Channel {
   id: string;
   name: string | null;
   type: ChannelType;
+  visibility?: ChannelVisibility;
   projectId: string;
   createdAt: string;
   updatedAt: string;
@@ -17,6 +23,7 @@ export interface Channel {
 export interface CreateChannelRequest {
   name?: string;
   type: ChannelType;
+  visibility?: ChannelVisibility;
   memberIds: string[];
 }
 

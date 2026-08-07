@@ -4,21 +4,19 @@ import {
   channelKeys,
   createChannelsQueryOptions,
 } from './channel'
-import { channelService } from '@/lib/api/channel'
+import {
+  channelService,
+  ChannelType,
+  ChannelVisibility,
+} from '@/lib/api/channel'
 
-vi.mock('@/lib/api/channel', () => {
+vi.mock('@/lib/api/channel', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/lib/api/channel')>()
   return {
+    ...actual,
     channelService: {
       getChannelsByProjectId: vi.fn(),
       createChannel: vi.fn(),
-    },
-    ChannelType: {
-      GROUP: 'GROUP',
-      DIRECT: 'DIRECT',
-    },
-    ChannelVisibility: {
-      PUBLIC: 'PUBLIC',
-      PRIVATE: 'PRIVATE',
     },
   }
 })
@@ -52,11 +50,20 @@ describe('channel query options', () => {
           {
             id: 'ch-1',
             name: 'General',
-            type: 'GROUP' as const,
-            visibility: 'PUBLIC' as const,
+            type: ChannelType.GROUP,
+            visibility: ChannelVisibility.PUBLIC,
             projectId: 'proj-123',
             createdAt: '2026-08-07T00:00:00Z',
             updatedAt: '2026-08-07T00:00:00Z',
+            members: [
+              {
+                id: 'cm-1',
+                channelId: 'ch-1',
+                userId: 'usr-1',
+                joinedAt: '2026-08-07T00:00:00Z',
+                lastReadAt: '2026-08-07T00:00:00Z',
+              },
+            ],
           },
         ],
       }

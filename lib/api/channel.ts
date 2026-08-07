@@ -10,6 +10,14 @@ export enum ChannelVisibility {
   PRIVATE = "PRIVATE",
 }
 
+export interface ChannelMember {
+  id: string;
+  channelId: string;
+  userId: string;
+  joinedAt: string;
+  lastReadAt?: string | null;
+}
+
 export interface Channel {
   id: string;
   name: string | null;
@@ -18,13 +26,14 @@ export interface Channel {
   projectId: string;
   createdAt: string;
   updatedAt: string;
+  members?: ChannelMember[];
 }
 
 export interface CreateChannelRequest {
   name?: string;
   type: ChannelType;
   visibility?: ChannelVisibility;
-  memberIds: string[];
+  memberIds?: string[];
 }
 
 async function getChannelsByProjectId(projectId: string) {

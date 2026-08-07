@@ -81,7 +81,7 @@ export default function CreateChannelModal({
       const selectedMembers =
         value.memberIds && value.memberIds.length > 0
           ? value.memberIds
-          : allMemberIds;
+          : undefined;
 
       const payload = {
         name: value.name?.trim() ? value.name.trim() : undefined,

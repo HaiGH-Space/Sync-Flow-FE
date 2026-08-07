@@ -107,11 +107,21 @@ let notificationSocket: Socket<
 export const getNotificationSocket = (token?: string) => {
   const sessionToken = token || getCookieValue("session_token");
   if (notificationSocket) {
-    if (sessionToken) {
+    const currentAuthToken = (
+      notificationSocket.auth as Record<string, unknown> | undefined
+    )?.session_token;
+    if (sessionToken && sessionToken !== currentAuthToken) {
       notificationSocket.auth = {
         ...(notificationSocket.auth as Record<string, unknown> | undefined),
         session_token: sessionToken,
       };
+      if (notificationSocket.disconnected) {
+        notificationSocket.connect();
+      } else {
+        notificationSocket.disconnect().connect();
+      }
+    } else if (sessionToken && notificationSocket.disconnected) {
+      notificationSocket.connect();
     }
     logger.debug("[notifications] reuse socket", {
       id: notificationSocket.id,

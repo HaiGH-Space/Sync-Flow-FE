@@ -23,11 +23,21 @@ let chatSocket: Socket<ChatServerEvents, ChatClientEvents> | null = null;
 export const getChatSocket = (token?: string) => {
   const sessionToken = token || getCookieValue("session_token");
   if (chatSocket) {
-    if (sessionToken) {
+    const currentAuthToken = (
+      chatSocket.auth as Record<string, unknown> | undefined
+    )?.session_token;
+    if (sessionToken && sessionToken !== currentAuthToken) {
       chatSocket.auth = {
         ...(chatSocket.auth as Record<string, unknown> | undefined),
         session_token: sessionToken,
       };
+      if (chatSocket.disconnected) {
+        chatSocket.connect();
+      } else {
+        chatSocket.disconnect().connect();
+      }
+    } else if (sessionToken && chatSocket.disconnected) {
+      chatSocket.connect();
     }
     logger.debug("[chat] reuse socket", {
       id: chatSocket.id,

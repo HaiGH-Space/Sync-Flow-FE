@@ -10,6 +10,7 @@ import {
   type GetMessagesResponse,
   type Message,
 } from "@/lib/api/message";
+import { useUserStore } from "@/lib/store/use-user-profile";
 
 const messageQueryKey = (channelId: string) => ["channel-messages", channelId];
 
@@ -19,6 +20,7 @@ type SocketErrorState = {
 } | null;
 
 export function useChatChannel(channelId?: string) {
+  const token = useUserStore((s) => s.token);
   const [socketError, setSocketError] = useState<SocketErrorState>(null);
   const activeChannelIdRef = useRef<string | undefined>(channelId);
   const queryClient = useQueryClient();
@@ -38,7 +40,7 @@ export function useChatChannel(channelId?: string) {
   });
 
   useEffect(() => {
-    const socket = getChatSocket();
+    const socket = getChatSocket(token);
 
     const handleNewMessage = (message: Message) => {
       if (message.channelId !== activeChannelIdRef.current) {
@@ -71,14 +73,14 @@ export function useChatChannel(channelId?: string) {
       socket.off("new_message", handleNewMessage);
       socket.off("error", handleError);
     };
-  }, [queryClient]);
+  }, [queryClient, token]);
 
   useEffect(() => {
     if (!channelId) {
       return;
     }
 
-    const socket = getChatSocket();
+    const socket = getChatSocket(token);
     const joinChannel = () => {
       logger.debug("[chat] join_channel", {
         channelId,
@@ -103,7 +105,7 @@ export function useChatChannel(channelId?: string) {
     return () => {
       socket.off("connect", joinChannel);
     };
-  }, [channelId]);
+  }, [channelId, token]);
 
   const sendMessage = (content: string) => {
     const trimmed = content.trim();
@@ -111,7 +113,7 @@ export function useChatChannel(channelId?: string) {
       return;
     }
 
-    const socket = getChatSocket();
+    const socket = getChatSocket(token);
     logger.debug("[chat] send_message", {
       channelId,
       socketId: socket.id,

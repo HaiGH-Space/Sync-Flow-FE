@@ -20,19 +20,24 @@ type ChatClientEvents = {
 
 let chatSocket: Socket<ChatServerEvents, ChatClientEvents> | null = null;
 
-export const getChatSocket = () => {
+export const getChatSocket = (token?: string) => {
+  const sessionToken = token || getCookieValue("session_token");
   if (chatSocket) {
-    const existingToken = getCookieValue("session_token");
+    if (sessionToken && chatSocket.io.opts) {
+      chatSocket.io.opts.auth = {
+        ...(chatSocket.io.opts.auth as Record<string, unknown> | undefined),
+        session_token: sessionToken,
+      };
+    }
     logger.debug("[chat] reuse socket", {
       id: chatSocket.id,
       connected: chatSocket.connected,
-      hasSessionToken: !!existingToken,
+      hasSessionToken: !!sessionToken,
     });
     return chatSocket;
   }
 
   const socketUrl = getWebSocketUrl("chat");
-  const sessionToken = getCookieValue("session_token");
   logger.debug("[chat] create socket", {
     socketUrl,
     hasSessionToken: !!sessionToken,
@@ -44,7 +49,7 @@ export const getChatSocket = () => {
   });
 
   chatSocket.on("connect", () => {
-    const latestToken = getCookieValue("session_token");
+    const latestToken = token || getCookieValue("session_token");
     logger.debug("[chat] connected", {
       id: chatSocket?.id,
       hasSessionToken: !!latestToken,

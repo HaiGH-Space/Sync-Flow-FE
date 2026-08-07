@@ -9,6 +9,7 @@ export interface UserProfile {
   emailVerified: boolean;
   image?: string;
   hasSeenWelcome: boolean;
+  token?: string;
 }
 
 export type UpdateMyAvatarParams =

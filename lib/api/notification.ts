@@ -104,19 +104,24 @@ let notificationSocket: Socket<
   NotificationClientEvents
 > | null = null;
 
-export const getNotificationSocket = () => {
+export const getNotificationSocket = (token?: string) => {
+  const sessionToken = token || getCookieValue("session_token");
   if (notificationSocket) {
-    const existingToken = getCookieValue("session_token");
+    if (sessionToken && notificationSocket.io.opts) {
+      notificationSocket.io.opts.auth = {
+        ...(notificationSocket.io.opts.auth as Record<string, unknown> | undefined),
+        session_token: sessionToken,
+      };
+    }
     logger.debug("[notifications] reuse socket", {
       id: notificationSocket.id,
       connected: notificationSocket.connected,
-      hasSessionToken: !!existingToken,
+      hasSessionToken: !!sessionToken,
     });
     return notificationSocket;
   }
 
   const socketUrl = getWebSocketUrl("notifications");
-  const sessionToken = getCookieValue("session_token");
   logger.debug("[notifications] create socket", {
     socketUrl,
     hasSessionToken: !!sessionToken,
@@ -128,7 +133,7 @@ export const getNotificationSocket = () => {
   });
 
   notificationSocket.on("connect", () => {
-    const latestToken = getCookieValue("session_token");
+    const latestToken = token || getCookieValue("session_token");
     logger.debug("[notifications] connected", {
       id: notificationSocket?.id,
       hasSessionToken: !!latestToken,

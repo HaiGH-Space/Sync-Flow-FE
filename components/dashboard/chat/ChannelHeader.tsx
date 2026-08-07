@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import { ChannelCallHeaderButton } from "@/components/channel/channel-call-header-button";
+import { ChannelCallHeaderButton } from "@/components/channel/ChannelCallHeaderButton";
 
 type ChannelHeaderProps = {
   title?: string;

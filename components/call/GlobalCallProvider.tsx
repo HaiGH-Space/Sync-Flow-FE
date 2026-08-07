@@ -6,7 +6,7 @@ import { LiveKitRoom, RoomAudioRenderer } from "@livekit/components-react";
 import { DisconnectReason } from "livekit-client";
 import { useCallStore } from "@/lib/store/use-call-store";
 import { useVideoCallRouteSync } from "@/hooks/use-video-call";
-import { FloatingCallWidget } from "./floating-call-widget";
+import { FullscreenCallOverlay } from "./FullscreenCallOverlay";
 import { toast } from "sonner";
 
 export function GlobalCallProvider({ children }: { children: React.ReactNode }) {
@@ -58,7 +58,7 @@ export function GlobalCallProvider({ children }: { children: React.ReactNode }) 
     >
       <RoomAudioRenderer />
       {children}
-      {activeCall && isMinimized && <FloatingCallWidget />}
+      {activeCall && !isMinimized && <FullscreenCallOverlay />}
     </LiveKitRoom>
   );
 }

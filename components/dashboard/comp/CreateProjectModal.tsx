@@ -103,10 +103,7 @@ export default function CreateProjectModal({
             })}
           </DialogDescription>
         </DialogHeader>
-        <form
-          id="create-project-form"
-          action={form.handleSubmit}
-        >
+        <form id="create-project-form" action={form.handleSubmit}>
           <FieldAnimation
             form={form}
             name="name"

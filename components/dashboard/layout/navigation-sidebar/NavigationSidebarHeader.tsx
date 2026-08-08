@@ -22,12 +22,12 @@ export function NavigationSidebarHeader({
   return (
     <div className="h-14 px-4 flex flex-row justify-between items-center gap-2 border-b border-sidebar-border bg-sidebar/90 backdrop-blur overflow-hidden min-w-0">
       {workspaceDetail ? (
-        <>
+        <div className="w-full h-9 flex justify-between items-center">
           <WorkspaceSettingsMenu role={role} />
           {canManageProject && (
             <CreateProjectModal workspaceDetail={workspaceDetail} />
           )}
-        </>
+        </div>
       ) : (
         <h2 className="text-lg font-semibold truncate">
           {t("sidebar.noWorkspaceSelected")}

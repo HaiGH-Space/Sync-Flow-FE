@@ -92,8 +92,8 @@ export function NavigationSidebar({
                   canManageProject={canManageProject}
                 />
 
-                <div className="p-4 flex-1 flex flex-col mt-4 overflow-y-auto">
-                  <div className="mb-4">
+                <div className="px-4 flex-1 flex flex-col overflow-y-auto">
+                  <div className="mt-4 mb-4">
                     <Search
                       placeholder={t("sidebar.searchPlaceholder")}
                       onSearch={searchHandle}

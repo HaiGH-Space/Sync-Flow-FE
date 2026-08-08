@@ -11,7 +11,10 @@ import { useTranslations } from "next-intl";
 import { NavigationSidebarChannelList } from "./NavigationSidebarChannelList";
 import { NavigationSidebarSprintList } from "./NavigationSidebarSprintList";
 
-import type { SprintsState, ChannelsState } from "./NavigationSidebarProjectList";
+import type {
+  SprintsState,
+  ChannelsState,
+} from "./NavigationSidebarProjectList";
 
 type NavigationSidebarProjectItemProps = {
   project: Project;
@@ -110,15 +113,15 @@ export function NavigationSidebarProjectItemContent({
     <div
       className={cn(
         "grid transition-[grid-template-rows,opacity] duration-200 ease-out overflow-hidden",
-        isExpanded ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0",
+        isExpanded
+          ? "grid-rows-[1fr] opacity-100"
+          : "grid-rows-[0fr] opacity-0",
       )}
     >
       <div className="min-h-0">
         <Tabs value={activeTab} onValueChange={onActiveTabChange}>
           <TabsList variant="line" className="mx-3 mt-2">
-            <TabsTrigger value="sprints">
-              {t("sidebar.sprintsTab")}
-            </TabsTrigger>
+            <TabsTrigger value="sprints">{t("sidebar.sprintsTab")}</TabsTrigger>
             <TabsTrigger value="channels">
               {t("sidebar.channelsTab")}
             </TabsTrigger>
@@ -168,7 +171,7 @@ export function NavigationSidebarProjectItem({
   onActiveTabChange,
 }: NavigationSidebarProjectItemProps) {
   return (
-    <div className="rounded-md my-2">
+    <div className="rounded-md mb-2">
       <NavigationSidebarProjectItemHeader
         project={project}
         workspaceId={workspaceId}
@@ -188,4 +191,3 @@ export function NavigationSidebarProjectItem({
     </div>
   );
 }
-

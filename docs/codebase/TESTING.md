@@ -47,3 +47,5 @@ pnpm build
 - `lib/ordering.test.ts`
 - `lib/logger.test.ts`
 - `queries/workspace.test.ts`
+- `hooks/notifications/use-notification-channel.test.ts`
+- `hooks/use-socket-sync.test.ts`

@@ -9,6 +9,7 @@
 | Backend app API         | API                      | Workspaces, projects, issues, columns, sprints, comments, uploads, users | Cookie-based session via `session_token`; requests include credentials | High        | `lib/api/api.ts`, `next.config.ts`, `proxy.ts`, `lib/api/*.ts` |
 | Socket.IO chat endpoint | API / realtime socket    | Channel joins and message delivery                                       | `session_token` cookie / socket auth payload                           | High        | `lib/api/chat.ts`                                              |
 | Socket.IO notifications | API / realtime socket    | Realtime workspace invites and user notifications                        | `session_token` cookie / socket auth payload                           | High        | `lib/api/notification.ts`                                      |
+| LiveKit Cloud / WebRTC  | API / WebRTC socket      | Channel video and audio call sessions                                    | `session_token` / LiveKit room token                                   | Medium      | `components/call/*`, `hooks/use-video-call.ts`, `hooks/mutations/use-video-call.ts` |
 | Locale message bundles  | Internal content loading | `en` and `vi` translation bundles loaded by `next-intl`                  | N/A                                                                    | Medium      | `i18n/request.ts`, `i18n/en/*`, `i18n/vi/*`                    |
 
 ### 2) Data Stores
@@ -45,6 +46,8 @@
 - `lib/api/api.ts`
 - `lib/api/chat.ts`
 - `lib/api/notification.ts`
+- `components/call/GlobalCallProvider.tsx`
+- `hooks/use-video-call.ts`
 - `lib/api/workspace.ts`
 - `lib/api/issue.ts`
 - `lib/api/channel.ts`

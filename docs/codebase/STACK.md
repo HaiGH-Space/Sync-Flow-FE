@@ -15,6 +15,10 @@
 
 | Dependency              | Version    | Role in system                      | Evidence                                                                             |
 | ----------------------- | ---------- | ----------------------------------- | ------------------------------------------------------------------------------------ |
+| `livekit-client`          | `^2.21.0`  | WebRTC video/audio client SDK       | `package.json`, `hooks/use-video-call.ts`                                            |
+| `@livekit/components-react`| `^2.9.23` | LiveKit video/audio UI components   | `package.json`, `components/call/*`                                                  |
+| `@livekit/components-styles`| `^1.2.0` | LiveKit UI default component styling| `package.json`, `components/call/*`                                                  |
+| `lucide-react`            | `^0.563.0` | UI vector icon package              | `package.json`, components under `components/`                                       |
 | `next`                  | `16.2.9`   | App framework and routing           | `package.json`                                                                       |
 | `react` / `react-dom`   | `19.2.3`   | UI runtime                          | `package.json`                                                                       |
 | `next-intl`             | `^4.8.2`   | Locale routing and translations     | `package.json`, `i18n/*`, `app/[locale]/*`                                           |

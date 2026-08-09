@@ -27,6 +27,7 @@ request -> proxy.ts locale/auth gate -> app/[locale]/layout.tsx providers -> rou
 | ---------------------------------------------- | ------------------------------------------------------------------ | ------------------------------ | ------------------------------------------------------------------------------- |
 | `app/[locale]`                                 | Route shell, locale validation, redirects, page composition        | Backend request logic          | `app/[locale]/layout.tsx`, `app/[locale]/(home)/page.tsx`, `proxy.ts`           |
 | `components/dashboard` and `components/canvas` | UI composition, interaction handling, dialogs, drag-and-drop flows | API client construction        | `components/dashboard/layout/*`, `components/canvas/board/*`                    |
+| `components/call`                              | LiveKit video/audio overlay, floating call widget, participant context menu | Direct backend URL resolution  | `components/call/GlobalCallProvider.tsx`, `components/call/FullscreenCallOverlay.tsx` |
 | `queries/`                                     | Query keys, stale times, query option factories                    | Writes or UI state             | `queries/workspace.ts`, `queries/issue.ts`, `queries/column.ts`                 |
 | `hooks/mutations/`                             | API writes and cache invalidation                                  | Query key definitions          | `hooks/mutations/workspace.ts`, `hooks/mutations/column.ts`                     |
 | `lib/api/`                                     | Request transport and service methods                              | Rendering or routing decisions | `lib/api/api.ts`, `lib/api/workspace.ts`, `lib/api/issue.ts`, `lib/api/chat.ts` |
@@ -41,6 +42,7 @@ request -> proxy.ts locale/auth gate -> app/[locale]/layout.tsx providers -> rou
 | Zustand persisted store            | `lib/store/use-dashboard.ts`                     | Preserves dashboard UI state across navigations          |
 | Optimistic mutation + invalidation | `hooks/mutations/*`, `components/canvas/board/*` | Keeps drag-and-drop and CRUD flows responsive            |
 | Locale message bundles             | `i18n/en/*`, `i18n/vi/*` (with modular feature sub-modules) | Supports bilingual UI copy through `next-intl`           |
+| LiveKit Call Provider              | `components/call/GlobalCallProvider.tsx`, `hooks/use-video-call.ts` | Manages WebRTC video/audio call state, room connections, minimized floating widget, and fullscreen overlays across routes |
 | Standardized API Pagination       | `queries/*`, `lib/api/api.ts`, `components/canvas/backlog/*` | Wraps API lists in a `PaginatedData` envelope (`items`, `total`, `page`, `limit`) to optimize data transfer and support server-side table pagination |
 | Auto-memoized rendering            | Throughout components under `components/`        | Leverages React Compiler to automatically optimize component rendering performance, eliminating manual `useMemo` and `useCallback` boilerplate |
 

@@ -7,7 +7,7 @@
 | Path             | Purpose                                                         | Evidence                                                                                |
 | ---------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
 | `app/`           | Next.js App Router route tree and root styles                   | `app/[locale]/layout.tsx`, `app/globals.css`                                            |
-| `components/`    | Shared UI, auth, dashboard, and canvas feature components       | `components/auth/*`, `components/dashboard/*`, `components/canvas/*`                    |
+| `components/`    | Shared UI, auth, dashboard, canvas, video call, and channel feature components | `components/auth/*`, `components/dashboard/*`, `components/canvas/*`, `components/call/*`, `components/channel/*` |
 | `hooks/`         | Client hooks and mutation wrappers                              | `hooks/*`                                                                               |
 | `i18n/`          | Locale routing and translation bundles                          | `i18n/*`                                                                                |
 | `lib/`           | API clients, utilities, ordering helpers, and client store code | `lib/*`                                                                                 |
@@ -53,5 +53,7 @@
 - `components/dashboard/comp/issue-detail/use-issue-detail.ts`
 - `components/dashboard/chat/Composer.tsx`
 - `components/dashboard/chat/use-composer.ts`
+- `components/call/GlobalCallProvider.tsx`
+- `hooks/use-video-call.ts`
 - `tsconfig.json`
 - `package.json`

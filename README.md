@@ -20,8 +20,9 @@ Sync Flow is a high-performance, real-time collaboration workspace built for iss
 
 - **Agile Kanban Board & Planning Views**: Drag-and-drop board layouts with optimistic ordering, interactive sprint backlogs, status columns, and timeline progress rails.
 - **Real-time Communication Channels**: Instant messaging channels and live workspace notification alerts powered by Socket.IO sockets.
+- **Live Video & Audio Calls**: WebRTC channel calls powered by LiveKit Cloud integration, featuring persistent global call state, floating overlay widgets, participant menus, and fullscreen view.
 - **Native Localization Support**: Built-in multi-locale gated routing for English (`en`) and Vietnamese (`vi`) powered by `next-intl`.
-- **Hybrid Auth Security Model**: Protected routes and WebSocket channels secured via HttpOnly session cookies (`session_token`).
+- **Hybrid Auth Security Model**: Protected routes, WebSocket channels, and video call tokens secured via HttpOnly session cookies (`session_token`).
 - **Sleek Workspace Navigation**: Expandable sidebars, active workspace rails, collapsible sublists, and zinc-scale responsive panels.
 - **Zero-Manual-Memoization Architecture**: Leverages the React Compiler to automatically optimize component rendering performance without manual `useMemo` or `useCallback` hooks.
 
@@ -35,6 +36,7 @@ Sync Flow is a high-performance, real-time collaboration workspace built for iss
 | **UI Library** | [React](https://react.dev) + React Compiler | `19.2.3` | UI library with native auto-memoization enabled |
 | **State Management** | [TanStack React Query](https://tanstack.com/query) | `^5.90.20` | Server state caching, invalidation, & query factories |
 | **Client UI State** | [Zustand](https://zustand-demo.pmnd.rs) | `^5.0.11` | Persisted client UI state management |
+| **Realtime Video Calls** | [LiveKit WebRTC](https://livekit.io) | `^2.21.0` | Cloud WebRTC video & audio call sessions |
 | **Styling & Motion** | [Tailwind CSS](https://tailwindcss.com) & [Framer Motion](https://framer.com/motion) | `^4.0.0` / `^12.40.0` | Modern CSS utilities and fluid UI animations |
 | **Form Handling** | [@tanstack/react-form](https://tanstack.com/form) & [Zod](https://zod.dev) | `^1.28.0` / `^4.3.6` | Type-safe form state & validation |
 | **Realtime WebSockets** | [Socket.IO Client](https://socket.io) | `^4.8.1` | Socket connections for chat & notification feeds |
@@ -106,7 +108,9 @@ pnpm build    # Execute production Next.js compilation
 app/                      # Next.js App Router route tree & layout providers
 components/               # UI components categorized by feature domain
   ├── auth/               # Animated auth card layouts and background animations
+  ├── call/               # LiveKit video/audio call provider, floating widget, & overlay
   ├── canvas/             # Board (Kanban), Backlog table, Planning, & Timeline rails
+  ├── channel/            # Channel header call controls & action buttons
   ├── dashboard/          # Chat channels, notification menus, and shell layouts
   │   ├── chat/           # Message list, composer, and useComposer hook
   │   ├── comp/           # Dialogs (includes modular issue-detail dialog)

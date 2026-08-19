@@ -56,6 +56,13 @@ export function useIssueMove({ projectId }: UseIssueMoveParams): UseIssueMoveRes
     useEffect(() => {
         return () => {
             flushRef.current();
+            if (issueDebounceMap.current) {
+                issueDebounceMap.current.forEach((timer) => clearTimeout(timer));
+                issueDebounceMap.current.clear();
+            }
+            if (issuePendingUpdates.current) {
+                issuePendingUpdates.current.clear();
+            }
         };
     }, []);
 

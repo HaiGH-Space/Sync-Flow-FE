@@ -16,6 +16,18 @@ import type { Sprint } from "@/lib/api/sprint";
 import type { Workspace } from "@/lib/api/workspace";
 import type { WorkspaceRole } from "./navigation-sidebar.types";
 
+export function getWorkspaceRole(
+  activeWorkspace?: Workspace,
+  profileId?: string,
+): WorkspaceRole {
+  if (!activeWorkspace || !profileId) return "MEMBER";
+  if (activeWorkspace.ownerId === profileId) return "OWNER";
+  const currentMembership = activeWorkspace.members?.find(
+    (member) => member.userId === profileId,
+  );
+  return currentMembership?.role ?? "MEMBER";
+}
+
 export function useNavigationSidebar(workspaceDetail?: Workspace) {
   const isOpenSidebarLeft = useDashboard((state) => state.isOpenSidebarLeft);
   const selectedSprintIdByProject = useDashboard(
@@ -66,17 +78,7 @@ export function useNavigationSidebar(workspaceDetail?: Workspace) {
 
   const activeWorkspace = workspaceDetailResponse?.data ?? workspaceDetail;
 
-  let currentWorkspaceRole: WorkspaceRole = "MEMBER";
-  if (activeWorkspace && profileId) {
-    if (activeWorkspace.ownerId === profileId) {
-      currentWorkspaceRole = "OWNER";
-    } else {
-      const currentMembership = activeWorkspace.members?.find(
-        (member) => member.userId === profileId,
-      );
-      currentWorkspaceRole = currentMembership?.role ?? "MEMBER";
-    }
-  }
+  const currentWorkspaceRole = getWorkspaceRole(activeWorkspace, profileId);
 
   const canManageProject =
     currentWorkspaceRole === "OWNER" || currentWorkspaceRole === "ADMIN";

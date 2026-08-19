@@ -29,13 +29,13 @@
 
 ### 5) Fragile/High-Churn Areas
 
-| Area / File | Churn (Commits) | Risk / Reason | Suggested Handling |
-|-------------|-----------------|---------------|--------------------|
-| `components/dashboard/layout/NavigationSidebar.tsx` (and subcomponents) | 14 | Frequent UX iterations around workspace/project/sprint expansion | Keep state logic encapsulated in `use-navigation-sidebar.ts` |
-| `components/dashboard/layout/DashboardContentLayout.tsx` | 13 | Core layout wrapper composing header, rail, sidebar, and panels | Ensure layout refactors do not break grid/flex responsiveness |
-| `lib/api/notification.ts` | 9 | Real-time notification socket payload parsing & cache invalidation | Maintain strict typing and session token pass-through |
-| `components/canvas/board/useIssueMove.ts` | 9 | Midpoint ordering, column transitions, and flush-and-sequence queue | Thoroughly test drag reordering logic with `lib/ordering.ts` |
-| `components/canvas/board/KanbanCard.tsx` & `KanbanColumn.tsx` | 8 | Board rendering performance and dnd-kit integration | Maintain `content-visibility: auto` optimizations and memoization avoidance |
+| Area / File | Churn (Commits) | Risk / Reason | Suggested Handling | Status / Mitigation |
+|-------------|-----------------|---------------|--------------------|---------------------|
+| `components/dashboard/layout/NavigationSidebar.tsx` (and `use-navigation-sidebar.ts`) | 14 | Frequent UX iterations around workspace/project/sprint expansion | Keep state logic encapsulated in `use-navigation-sidebar.ts` | **Hardened:** Extracted `getWorkspaceRole` pure function with full unit test coverage. |
+| `components/dashboard/layout/DashboardContentLayout.tsx` | 13 | Core layout wrapper composing header, rail, sidebar, and panels | Ensure layout refactors do not break grid/flex responsiveness | **Hardened:** Extracted `getSidebarActiveStates` for SSR hydration safety with unit tests. |
+| `lib/api/notification.ts` | 9 | Real-time notification socket payload parsing & cache invalidation | Maintain strict typing and session token pass-through | **Hardened:** Added comprehensive REST API unit tests and socket lifecycle test coverage. |
+| `components/canvas/board/useIssueMove.ts` | 9 | Midpoint ordering, column transitions, and flush-and-sequence queue | Thoroughly test drag reordering logic with `lib/ordering.ts` | **Hardened:** Added unmount timer/map cleanup and unit test coverage for drag hooks. |
+| `components/canvas/board/KanbanCard.tsx` & `KanbanColumn.tsx` | 8 | Board rendering performance and dnd-kit integration | Maintain `content-visibility: auto` optimizations and memoization avoidance | **Hardened:** Extracted `filterAndSortColumnTasks` pure selector with unit tests. |
 
 ### 6) `[ASK USER]` Questions
 

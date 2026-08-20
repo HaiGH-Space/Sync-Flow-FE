@@ -17,9 +17,10 @@
 
 ### 3) Security Concerns
 
-| Risk | OWASP category (if applicable) | Evidence | Current mitigation | Gap |
-|------|--------------------------------|----------|--------------------|-----|
-| Authentication dependency on `session_token` cookie | A07:2021 Identification and Authentication Failures | `proxy.ts`, `lib/api/chat.ts` | HttpOnly session cookie validation at middleware & socket connection | Cross-subdomain cookie leakage if cookie scope is overbroad |
+| Risk | OWASP category (if applicable) | Evidence | Current mitigation | Gap | Status / Mitigation |
+|------|--------------------------------|----------|--------------------|-----|---------------------|
+| Authentication dependency on `session_token` cookie | A07:2021 Identification and Authentication Failures | `proxy.ts`, `lib/api/chat.ts` | HttpOnly session cookie validation at middleware & socket connection | Cross-subdomain cookie leakage if cookie scope is overbroad | **Hardened:** Validated `session_token` format & hygiene in `proxy.ts` & `lib/cookies.ts`, enforced host-only cookie scope guidelines, set HTTP security response headers (`X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`), and added unit test coverage in `proxy.test.ts` & `lib/cookies.test.ts`. |
+
 
 ### 4) Performance and Scaling Concerns
 

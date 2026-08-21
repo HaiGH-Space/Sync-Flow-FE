@@ -31,10 +31,13 @@ export default function PlanningCanvas({ projectId }: PlanningCanvasProps) {
     data: issuesResponse,
     isLoading,
     error,
-  } = useQuery(createIssuesQueryOptions({ projectId, limit: 100 }));
+  } = useQuery(createIssuesQueryOptions({ projectId, limit: 100, includeTotal: false }));
 
   const { data: sprintsResponse } = useQuery(
-    createSprintsQueryOptions({ projectId, limit: 100 }, { enabled: !!projectId }),
+    createSprintsQueryOptions(
+      { projectId, limit: 100, includeTotal: false },
+      { enabled: !!projectId },
+    ),
   );
 
   const issues = issuesResponse?.data?.items ?? [];

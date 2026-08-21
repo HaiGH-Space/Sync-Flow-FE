@@ -28,11 +28,11 @@ export function createIssuesQueryOptions<
     params: { projectId: string } & PaginationQuery,
     options?: QueryOptions<PaginatedData<Issue>, TData>
 ) {
-    const { projectId, page, limit } = params;
+    const { projectId, page, limit, includeTotal } = params;
     return queryOptions({
         staleTime: 1000 * 60 * 5,
         ...options,
-        queryKey: issueKeys.list(projectId, { page, limit }),
-        queryFn: () => issueService.getIssuesByProjectId({ projectId, page, limit }),
+        queryKey: issueKeys.list(projectId, { page, limit, includeTotal }),
+        queryFn: () => issueService.getIssuesByProjectId({ projectId, page, limit, includeTotal }),
     });
 }

@@ -42,12 +42,14 @@ async function getProjectsByWorkspaceId({
   workspaceId,
   page,
   limit,
+  includeTotal,
 }: {
   workspaceId: string;
 } & PaginationQuery): Promise<ApiResponse<PaginatedData<Project>>> {
   const searchParams = new URLSearchParams();
   if (page) searchParams.append("page", String(page));
   if (limit) searchParams.append("limit", String(limit));
+  if (includeTotal !== undefined) searchParams.append("includeTotal", String(includeTotal));
   const queryString = searchParams.toString();
   return api.get<PaginatedData<Project>>(
     `${WORKSPACE_BASE_URL}/${workspaceId}${PROJECT_BASE_URL}${queryString ? `?${queryString}` : ""}`,

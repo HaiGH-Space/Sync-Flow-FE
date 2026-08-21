@@ -45,12 +45,14 @@ async function getIssuesByProjectId({
   projectId,
   page,
   limit,
+  includeTotal,
 }: {
   projectId: string;
 } & PaginationQuery): Promise<ApiResponse<PaginatedData<Issue>>> {
   const searchParams = new URLSearchParams();
   if (page) searchParams.append("page", String(page));
   if (limit) searchParams.append("limit", String(limit));
+  if (includeTotal !== undefined) searchParams.append("includeTotal", String(includeTotal));
   const queryString = searchParams.toString();
   return api.get<PaginatedData<Issue>>(
     `${PROJECT_BASE_URL}/${projectId}${ISSUE_BASE_URL}${queryString ? `?${queryString}` : ""}`,

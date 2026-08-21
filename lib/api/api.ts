@@ -10,7 +10,7 @@ export interface ApiResponse<T> extends BaseResponse {
 
 export interface PaginatedData<T> {
   items: T[];
-  total: number;
+  total?: number;
   page: number;
   limit: number;
 }
@@ -18,6 +18,7 @@ export interface PaginatedData<T> {
 export interface PaginationQuery {
   page?: number;
   limit?: number;
+  includeTotal?: boolean;
 }
 
 export interface ApiError extends BaseResponse {

@@ -16,12 +16,12 @@ export function createSprintsQueryOptions<
   params: { projectId: string } & PaginationQuery,
   options?: QueryOptions<PaginatedData<Sprint>, TData>
 ) {
-  const { projectId, page, limit } = params
+  const { projectId, page, limit, includeTotal } = params
 
   return queryOptions({
     staleTime: 1000 * 60 * 5,
     ...options,
-    queryKey: sprintKeys.list(projectId, { page, limit }),
-    queryFn: () => sprintService.getSprint({ projectId, page, limit }),
+    queryKey: sprintKeys.list(projectId, { page, limit, includeTotal }),
+    queryFn: () => sprintService.getSprint({ projectId, page, limit, includeTotal }),
   })
 }

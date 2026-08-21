@@ -93,7 +93,7 @@ export function useNavigationSidebar(workspaceDetail?: Workspace) {
     isFetchingNextPage,
   } = useInfiniteQuery(
     createProjectsInfiniteQueryOptions(
-      { workspaceId: workspaceDetail?.id ?? "", limit: 20 },
+      { workspaceId: workspaceDetail?.id ?? "", limit: 20, includeTotal: false },
       {
         enabled: canLoadProjects,
       },
@@ -114,7 +114,7 @@ export function useNavigationSidebar(workspaceDetail?: Workspace) {
     isFetching: isSprintsFetching,
   } = useQuery(
     createSprintsQueryOptions(
-      { projectId: expandedProjectId ?? "", limit: 100 },
+      { projectId: expandedProjectId ?? "", limit: 100, includeTotal: false },
       {
         enabled: !!expandedProjectId && isOpenSidebarLeft,
       },

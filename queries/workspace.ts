@@ -8,8 +8,10 @@ export const workspaceKeys = {
   all: ['workspaces'] as const,
   list: (params?: PaginationQuery) =>
     params ? [...workspaceKeys.all, 'me', params] as const : [...workspaceKeys.all, 'me'] as const,
-  infiniteList: (limit: number) =>
-    [...workspaceKeys.all, 'me', 'infinite', { limit }] as const,
+  infiniteList: (limit: number, includeTotal?: boolean) =>
+    includeTotal !== undefined
+      ? [...workspaceKeys.all, 'me', 'infinite', { limit, includeTotal }] as const
+      : [...workspaceKeys.all, 'me', 'infinite', { limit }] as const,
   detail: (workspaceId: string) => [...workspaceKeys.all, workspaceId] as const,
 }
 
@@ -30,27 +32,32 @@ export function createMyWorkspacesQueryOptions<
 export function createMyWorkspacesInfiniteQueryOptions<
   TData = InfiniteData<ApiResponse<PaginatedData<Workspace>>>
 >(
-  params?: { limit?: number },
+  params?: { limit?: number; includeTotal?: boolean },
   options?: CustomInfiniteQueryOptions<ApiResponse<PaginatedData<Workspace>>, TData, number>
 ) {
   const limit = params?.limit ?? 20
+  const includeTotal = params?.includeTotal
 
   return infiniteQueryOptions({
     staleTime: Infinity,
     ...options,
-    queryKey: workspaceKeys.infiniteList(limit),
+    queryKey: workspaceKeys.infiniteList(limit, includeTotal),
     queryFn: ({ pageParam }) =>
       workspaceService.getMyWorkspace({
         page: pageParam ?? 1,
         limit,
+        includeTotal,
       }),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
       const page = Number(lastPage.data.page)
       const limitVal = Number(lastPage.data.limit)
-      const total = Number(lastPage.data.total)
-      const hasMore = page * limitVal < total
-      return hasMore ? page + 1 : undefined
+      if (lastPage.data.total !== undefined) {
+        const total = Number(lastPage.data.total)
+        return page * limitVal < total ? page + 1 : undefined
+      }
+      const itemsLength = lastPage.data.items?.length ?? 0
+      return itemsLength === limitVal ? page + 1 : undefined
     },
   })
 }

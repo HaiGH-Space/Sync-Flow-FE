@@ -22,7 +22,7 @@ export function useHeaderSprintSelect() {
 
   const { data: sprintsResponse, isLoading, isSuccess } = useQuery(
     createSprintsQueryOptions(
-      { projectId: projectId ?? "", limit: 100 },
+      { projectId: projectId ?? "", limit: 100, includeTotal: false },
       {
         enabled: !!projectId,
       },

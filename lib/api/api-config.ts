@@ -5,6 +5,9 @@ export const API_PREFIX = "/api-proxy";
  * Returns the backend API URL from the environment, falling back to the default local port.
  */
 export function getBackendUrl(): string {
+  if (typeof window === "undefined" && process.env.INTERNAL_API_URL) {
+    return process.env.INTERNAL_API_URL;
+  }
   return process.env.NEXT_PUBLIC_API_URL || DEFAULT_API_URL;
 }
 

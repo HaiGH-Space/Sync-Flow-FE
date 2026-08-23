@@ -7,7 +7,7 @@ import { useTranslations } from "next-intl";
 import { useProfile } from "@/hooks/use-profile";
 import { createWorkspaceDetailQueryOptions } from "@/queries/workspace";
 import { createProjectsInfiniteQueryOptions } from "@/queries/project";
-import { createSprintsQueryOptions } from "@/queries/sprint";
+import { createSprintsInfiniteQueryOptions } from "@/queries/sprint";
 import { createChannelsQueryOptions } from "@/queries/channel";
 import { useDeleteProject } from "@/hooks/mutations/project";
 import { toast } from "sonner";
@@ -109,17 +109,21 @@ export function useNavigationSidebar(workspaceDetail?: Workspace) {
     useDeleteProject(workspaceDetail?.id ?? "");
 
   const {
-    data: sprintsResponse,
+    data: sprintsInfiniteData,
     error: sprintsError,
     isFetching: isSprintsFetching,
-  } = useQuery(
-    createSprintsQueryOptions(
-      { projectId: expandedProjectId ?? "", limit: 100, includeTotal: false },
+    fetchNextPage: fetchNextSprintPage,
+    hasNextPage: hasNextSprintPage,
+  } = useInfiniteQuery(
+    createSprintsInfiniteQueryOptions(
+      { projectId: expandedProjectId ?? "", limit: 20, includeTotal: false },
       {
         enabled: !!expandedProjectId && isOpenSidebarLeft,
       },
     ),
   );
+
+  const sprintsList = sprintsInfiniteData?.pages.flatMap((page) => page.data.items) ?? [];
 
   const {
     data: channelsResponse,
@@ -206,7 +210,7 @@ export function useNavigationSidebar(workspaceDetail?: Workspace) {
   };
 
   const sprintsState = {
-    items: sprintsResponse?.data?.items,
+    items: sprintsList,
     isFetching: isSprintsFetching,
     error: sprintsError,
     selectedId: selectedSprintIdByProject[expandedProjectId ?? ""] ?? "all",
@@ -214,6 +218,8 @@ export function useNavigationSidebar(workspaceDetail?: Workspace) {
     onSelect: handleSprintSelect,
     onEdit: setEditingSprint,
     onToggleShowAll: () => setShowAllSprints((prev) => !prev),
+    fetchNextPage: fetchNextSprintPage,
+    hasNextPage: !!hasNextSprintPage,
   };
 
   const channelsState = {
@@ -248,7 +254,7 @@ export function useNavigationSidebar(workspaceDetail?: Workspace) {
     isProjectsLoading,
     deleteProject,
     isDeletingProject,
-    sprintsResponse,
+    sprintsResponse: { data: { items: sprintsList } },
     sprintsError,
     isSprintsFetching,
     channelsResponse,

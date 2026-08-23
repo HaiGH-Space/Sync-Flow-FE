@@ -12,4 +12,4 @@ Use the existing React Query and API patterns in this repo.
 - Keep HTTP transport and per-resource service objects in `lib/api/*`; do not call `fetch` directly from components.
 - When a resource changes, update the service wrapper, query factory, and invalidation path together.
 
-See [docs/codebase/ARCHITECTURE.md](docs/codebase/ARCHITECTURE.md), [docs/codebase/CONVENTIONS.md](docs/codebase/CONVENTIONS.md), and [docs/codebase/INTEGRATIONS.md](docs/codebase/INTEGRATIONS.md) for the deeper conventions.
+See [docs/codebase/ARCHITECTURE.md](../../docs/codebase/ARCHITECTURE.md), [docs/codebase/CONVENTIONS.md](../../docs/codebase/CONVENTIONS.md), and [docs/codebase/INTEGRATIONS.md](../../docs/codebase/INTEGRATIONS.md) for the deeper conventions.

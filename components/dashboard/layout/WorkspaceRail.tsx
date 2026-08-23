@@ -1,39 +1,66 @@
 "use client";
 
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { Workspace } from "@/lib/api/workspace";
 import { cn, getFirstLetters } from "@/lib/utils";
 import CreateWorkspaceModal from "../comp/CreateWorkspaceModal";
+import { ChevronDown, Loader2 } from "lucide-react";
 
 type WorkspaceRailProps = {
   workspaceList: Workspace[] | undefined;
   isPending: boolean;
   workspaceActiveId?: string;
+  fetchNextPage?: () => void;
+  hasNextPage?: boolean;
+  isFetchingNextPage?: boolean;
 };
 
 export function WorkspaceRail({
   workspaceList,
   isPending,
   workspaceActiveId,
+  fetchNextPage,
+  hasNextPage,
+  isFetchingNextPage,
 }: WorkspaceRailProps) {
   return (
-    <div className="border-r border-sidebar-border w-20 h-full bg-sidebar flex flex-col items-center gap-4 p-4">
+    <div className="border-r border-sidebar-border w-20 h-full bg-sidebar flex flex-col items-center gap-4 p-4 overflow-y-auto">
       {isPending ? (
         <>
           {Array.from({ length: 3 }).map((_, index) => (
-            <Skeleton key={index} className="size-10rounded-xl " />
+            <Skeleton key={index} className="size-10 rounded-xl" />
           ))}
         </>
       ) : (
-        workspaceList?.map((ws) => (
-          <WorkspaceItem
-            key={ws.id}
-            name={ws.name}
-            isActive={workspaceActiveId === ws.id}
-            id={ws.id}
-          />
-        ))
+        <>
+          {workspaceList?.map((ws) => (
+            <WorkspaceItem
+              key={ws.id}
+              name={ws.name}
+              isActive={workspaceActiveId === ws.id}
+              id={ws.id}
+            />
+          ))}
+
+          {hasNextPage && fetchNextPage && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-8 rounded-full text-muted-foreground hover:text-foreground mt-1"
+              onClick={() => fetchNextPage()}
+              disabled={isFetchingNextPage}
+              title="Load more workspaces"
+            >
+              {isFetchingNextPage ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                <ChevronDown className="size-4" />
+              )}
+            </Button>
+          )}
+        </>
       )}
       <div className="mt-auto pt-2">
         <CreateWorkspaceModal />
@@ -41,11 +68,13 @@ export function WorkspaceRail({
     </div>
   );
 }
+
 type WorkspaceItemProps = {
   name: string;
   isActive: boolean;
   id: string;
 };
+
 function WorkspaceItem({ name, isActive, id }: WorkspaceItemProps) {
   return (
     <div className="relative group flex items-center justify-center">

@@ -8,7 +8,16 @@ import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 
 export default function DashBoardLayout({ children }: { children: React.ReactNode }) {
-    const { workspaceList, isPending, error, workspaceId, activeWorkspace } = useCurrentWorkspace()
+    const {
+        workspaceList,
+        isPending,
+        error,
+        workspaceId,
+        activeWorkspace,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage
+    } = useCurrentWorkspace()
     const t = useTranslations('dashboard');
 
     useEffect(() => {
@@ -18,7 +27,14 @@ export default function DashBoardLayout({ children }: { children: React.ReactNod
     }, [error, t])
 
     return <div className="flex flex-row w-full h-screen">
-        <WorkspaceRail workspaceList={workspaceList} isPending={isPending} workspaceActiveId={workspaceId} />
+        <WorkspaceRail
+            workspaceList={workspaceList}
+            isPending={isPending}
+            workspaceActiveId={workspaceId}
+            fetchNextPage={fetchNextPage}
+            hasNextPage={hasNextPage}
+            isFetchingNextPage={isFetchingNextPage}
+        />
         <NavigationSidebar workspaceDetail={activeWorkspace} />
         <DashboardContentLayout>
             {children}

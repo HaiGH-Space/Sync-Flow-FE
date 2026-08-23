@@ -138,6 +138,8 @@ export function NavigationSidebarProjectItemContent({
               onEditSprintAction={sprintsState.onEdit}
               showAllSprints={sprintsState.showAll}
               onToggleShowAllSprints={sprintsState.onToggleShowAll}
+              fetchNextPage={sprintsState.fetchNextPage}
+              hasNextPage={sprintsState.hasNextPage}
             />
           </TabsContent>
           <TabsContent value="channels">

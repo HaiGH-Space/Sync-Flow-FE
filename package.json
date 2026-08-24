@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "eslint",
     "audit": "pnpm audit --prod",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:e2e": "playwright test"
   },
   "pnpm": {
     "overrides": {
@@ -51,6 +52,7 @@
     "zustand": "^5.0.11"
   },
   "devDependencies": {
+    "@playwright/test": "^1.50.0",
     "@tailwindcss/postcss": "^4",
     "@tanstack/eslint-plugin-query": "^5.91.4",
     "@types/node": "^20",

@@ -11,9 +11,9 @@
 
 ### 2) Technical Debt
 
-| Debt item              | Why it exists                                     | Where          | Risk if ignored                                                            | Suggested fix                                         | Status / Resolution                                                                                                                                                                                                                                           |
-| ---------------------- | ------------------------------------------------- | -------------- | -------------------------------------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| E2E test suite missing | Rapid frontend prototyping prioritized unit tests | Workspace root | Potential regressions in complex drag-and-drop or socket interaction flows | Add Playwright / Cypress end-to-end integration tests | **Hardened:** Configured Playwright E2E integration test suite (`playwright.config.ts`), added `e2e/auth-navigation.spec.ts` covering route protection, locale routing, and cookie session authentication, added `pnpm test:e2e` script, and updated CI (`test.yml`). |
+| Debt item              | Why it exists                                     | Where          | Risk if ignored                                                            | Suggested fix                                         |
+| ---------------------- | ------------------------------------------------- | -------------- | -------------------------------------------------------------------------- | ----------------------------------------------------- |
+| E2E test suite missing | Rapid frontend prototyping prioritized unit tests | Workspace root | Potential regressions in complex drag-and-drop or socket interaction flows | Add Playwright / Cypress end-to-end integration tests |
 
 ### 3) Security Concerns
 

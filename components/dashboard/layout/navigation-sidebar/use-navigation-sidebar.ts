@@ -7,7 +7,7 @@ import { useTranslations } from "next-intl";
 import { useProfile } from "@/hooks/use-profile";
 import { createWorkspaceDetailQueryOptions } from "@/queries/workspace";
 import { createProjectsInfiniteQueryOptions } from "@/queries/project";
-import { createSprintsQueryOptions } from "@/queries/sprint";
+import { createSprintsInfiniteQueryOptions } from "@/queries/sprint";
 import { createChannelsQueryOptions } from "@/queries/channel";
 import { useDeleteProject } from "@/hooks/mutations/project";
 import { toast } from "sonner";
@@ -15,6 +15,18 @@ import type { Project } from "@/lib/api/project";
 import type { Sprint } from "@/lib/api/sprint";
 import type { Workspace } from "@/lib/api/workspace";
 import type { WorkspaceRole } from "./navigation-sidebar.types";
+
+export function getWorkspaceRole(
+  activeWorkspace?: Workspace,
+  profileId?: string,
+): WorkspaceRole {
+  if (!activeWorkspace || !profileId) return "MEMBER";
+  if (activeWorkspace.ownerId === profileId) return "OWNER";
+  const currentMembership = activeWorkspace.members?.find(
+    (member) => member.userId === profileId,
+  );
+  return currentMembership?.role ?? "MEMBER";
+}
 
 export function useNavigationSidebar(workspaceDetail?: Workspace) {
   const isOpenSidebarLeft = useDashboard((state) => state.isOpenSidebarLeft);
@@ -66,17 +78,7 @@ export function useNavigationSidebar(workspaceDetail?: Workspace) {
 
   const activeWorkspace = workspaceDetailResponse?.data ?? workspaceDetail;
 
-  let currentWorkspaceRole: WorkspaceRole = "MEMBER";
-  if (activeWorkspace && profileId) {
-    if (activeWorkspace.ownerId === profileId) {
-      currentWorkspaceRole = "OWNER";
-    } else {
-      const currentMembership = activeWorkspace.members?.find(
-        (member) => member.userId === profileId,
-      );
-      currentWorkspaceRole = currentMembership?.role ?? "MEMBER";
-    }
-  }
+  const currentWorkspaceRole = getWorkspaceRole(activeWorkspace, profileId);
 
   const canManageProject =
     currentWorkspaceRole === "OWNER" || currentWorkspaceRole === "ADMIN";
@@ -91,7 +93,7 @@ export function useNavigationSidebar(workspaceDetail?: Workspace) {
     isFetchingNextPage,
   } = useInfiniteQuery(
     createProjectsInfiniteQueryOptions(
-      { workspaceId: workspaceDetail?.id ?? "", limit: 20 },
+      { workspaceId: workspaceDetail?.id ?? "", limit: 20, includeTotal: false },
       {
         enabled: canLoadProjects,
       },
@@ -107,17 +109,21 @@ export function useNavigationSidebar(workspaceDetail?: Workspace) {
     useDeleteProject(workspaceDetail?.id ?? "");
 
   const {
-    data: sprintsResponse,
+    data: sprintsInfiniteData,
     error: sprintsError,
     isFetching: isSprintsFetching,
-  } = useQuery(
-    createSprintsQueryOptions(
-      { projectId: expandedProjectId ?? "", limit: 100 },
+    fetchNextPage: fetchNextSprintPage,
+    hasNextPage: hasNextSprintPage,
+  } = useInfiniteQuery(
+    createSprintsInfiniteQueryOptions(
+      { projectId: expandedProjectId ?? "", limit: 20, includeTotal: false },
       {
         enabled: !!expandedProjectId && isOpenSidebarLeft,
       },
     ),
   );
+
+  const sprintsList = sprintsInfiniteData?.pages.flatMap((page) => page.data.items) ?? [];
 
   const {
     data: channelsResponse,
@@ -204,7 +210,7 @@ export function useNavigationSidebar(workspaceDetail?: Workspace) {
   };
 
   const sprintsState = {
-    items: sprintsResponse?.data?.items,
+    items: sprintsList,
     isFetching: isSprintsFetching,
     error: sprintsError,
     selectedId: selectedSprintIdByProject[expandedProjectId ?? ""] ?? "all",
@@ -212,6 +218,8 @@ export function useNavigationSidebar(workspaceDetail?: Workspace) {
     onSelect: handleSprintSelect,
     onEdit: setEditingSprint,
     onToggleShowAll: () => setShowAllSprints((prev) => !prev),
+    fetchNextPage: fetchNextSprintPage,
+    hasNextPage: !!hasNextSprintPage,
   };
 
   const channelsState = {
@@ -246,7 +254,7 @@ export function useNavigationSidebar(workspaceDetail?: Workspace) {
     isProjectsLoading,
     deleteProject,
     isDeletingProject,
-    sprintsResponse,
+    sprintsResponse: { data: { items: sprintsList } },
     sprintsError,
     isSprintsFetching,
     channelsResponse,

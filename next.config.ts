@@ -6,12 +6,13 @@ const withNextIntl = createNextIntlPlugin();
 const nextConfig: NextConfig = {
   reactCompiler: true,
   async rewrites() {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || DEFAULT_API_URL;
-    console.log('🔗 Rewriting to API:', apiUrl);
+    const apiUrl = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || DEFAULT_API_URL;
+    const cleanApiUrl = apiUrl.replace(/\/+$/, "");
+    console.log('🔗 Rewriting to API:', cleanApiUrl);
     return [
       {
         source: `${API_PREFIX}/:path*`,
-        destination: `${apiUrl}/:path*`,
+        destination: `${cleanApiUrl}/:path*`,
       },
     ];
   }

@@ -6,7 +6,7 @@ import {
   createMyWorkspacesInfiniteQueryOptions,
   createWorkspaceDetailQueryOptions,
 } from './workspace'
-import { workspaceService } from '@/lib/api/workspace'
+import { workspaceService, type Workspace } from '@/lib/api/workspace'
 
 vi.mock('@/lib/api/workspace', () => {
   return {
@@ -79,7 +79,7 @@ describe('workspace query options', () => {
   })
 
   describe('createMyWorkspacesInfiniteQueryOptions', () => {
-    it('returns options with correct queryKey and getNextPageParam', () => {
+    it('returns options with correct queryKey and getNextPageParam when total is present', () => {
       const options = createMyWorkspacesInfiniteQueryOptions({ limit: 10 })
       expect(options.queryKey).toEqual(['workspaces', 'me', 'infinite', { limit: 10 }])
       
@@ -90,6 +90,25 @@ describe('workspace query options', () => {
       }
       const next = options.getNextPageParam(mockPageResponse, [mockPageResponse], 1, [1])
       expect(next).toBe(2)
+    })
+
+    it('handles includeTotal: false and getNextPageParam fallback using items length', () => {
+      const options = createMyWorkspacesInfiniteQueryOptions({ limit: 2, includeTotal: false })
+      expect(options.queryKey).toEqual(['workspaces', 'me', 'infinite', { limit: 2, includeTotal: false }])
+
+      const mockResponseFull = {
+        statusCode: 200,
+        message: 'success',
+        data: { items: [{ id: 'w1' }, { id: 'w2' }] as unknown as Workspace[], page: 1, limit: 2 }
+      }
+      expect(options.getNextPageParam(mockResponseFull, [mockResponseFull], 1, [1])).toBe(2)
+
+      const mockResponsePartial = {
+        statusCode: 200,
+        message: 'success',
+        data: { items: [{ id: 'w1' }] as unknown as Workspace[], page: 2, limit: 2 }
+      }
+      expect(options.getNextPageParam(mockResponsePartial, [mockResponseFull, mockResponsePartial], 2, [1, 2])).toBeUndefined()
     })
   })
 })

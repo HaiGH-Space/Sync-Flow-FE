@@ -48,7 +48,10 @@ export default function CreateIssueModal({
   );
 
   const { data: sprintsResponse } = useQuery(
-    createSprintsQueryOptions({ projectId, limit: 100 }, { enabled: !!projectId }),
+    createSprintsQueryOptions(
+      { projectId, limit: 100, includeTotal: false },
+      { enabled: !!projectId },
+    ),
   );
 
   const assigneeOptions = memberProfilesResponse?.data

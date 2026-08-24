@@ -32,6 +32,7 @@ async function getMyWorkspace(params?: PaginationQuery): Promise<ApiResponse<Pag
   const searchParams = new URLSearchParams();
   if (params?.page) searchParams.append("page", String(params.page));
   if (params?.limit) searchParams.append("limit", String(params.limit));
+  if (params?.includeTotal !== undefined) searchParams.append("includeTotal", String(params.includeTotal));
   const queryString = searchParams.toString();
   return api.get<PaginatedData<Workspace>>(
     `${WORKSPACE_BASE_URL}/me${queryString ? `?${queryString}` : ""}`,

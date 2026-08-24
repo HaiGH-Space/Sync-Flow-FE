@@ -25,6 +25,22 @@ export type TaskProps = Pick<
   "id" | "columnId" | "title" | "priority" | "description" | "assigneeId" | "order"
 >;
 
+export function filterAndSortColumnTasks(
+  data: ApiResponse<PaginatedData<Issue>> | undefined,
+  columnId: string,
+  selectedSprintId: string = "all",
+): TaskProps[] {
+  const items = data?.data?.items;
+  if (!items || items.length === 0) return [];
+  return items
+    .filter(
+      (issue) =>
+        issue.columnId === columnId &&
+        (selectedSprintId === "all" || issue.sprintId === selectedSprintId),
+    )
+    .toSorted((a, b) => a.order - b.order);
+}
+
 function KanbanColumn(props: ColumnProps) {
   const selectedSprintId = useDashboard(
     (state) => state.selectedSprintIdByProject[props.projectId] ?? "all",
@@ -36,21 +52,11 @@ function KanbanColumn(props: ColumnProps) {
   // re-renders for every other column.
   const selectColumnTasks = (
     data: ApiResponse<PaginatedData<Issue>>,
-  ): TaskProps[] => {
-    const items = data.data?.items;
-    if (!items || items.length === 0) return [];
-    return items
-      .filter(
-        (issue) =>
-          issue.columnId === props.columnId &&
-          (selectedSprintId === "all" || issue.sprintId === selectedSprintId),
-      )
-      .toSorted((a, b) => a.order - b.order);
-  };
+  ): TaskProps[] => filterAndSortColumnTasks(data, props.columnId, selectedSprintId);
 
   const { data: tasks = [] } = useQuery(
     createIssuesQueryOptions(
-      { projectId: props.projectId, limit: 100 },
+      { projectId: props.projectId, limit: 100, includeTotal: false },
       {
         select: selectColumnTasks,
       },

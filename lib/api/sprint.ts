@@ -36,12 +36,14 @@ async function getSprint({
   projectId,
   page,
   limit,
+  includeTotal,
 }: {
   projectId: string;
 } & PaginationQuery): Promise<ApiResponse<PaginatedData<Sprint>>> {
   const searchParams = new URLSearchParams();
   if (page) searchParams.append("page", String(page));
   if (limit) searchParams.append("limit", String(limit));
+  if (includeTotal !== undefined) searchParams.append("includeTotal", String(includeTotal));
   const queryString = searchParams.toString();
   return api.get<PaginatedData<Sprint>>(
     `projects/${projectId}/sprints${queryString ? `?${queryString}` : ""}`,

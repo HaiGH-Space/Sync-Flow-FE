@@ -9,6 +9,17 @@ import { HeaderSprintSelect } from "@/components/dashboard/layout/header/HeaderS
 import { ChatRightPanel } from "@/components/dashboard/layout/ChatRightPanel";
 import NotificationsMenu from "@/components/dashboard/notifications/NotificationsMenu";
 
+export function getSidebarActiveStates(
+  hasHydrated: boolean,
+  isOpenSidebarLeft: boolean,
+  isOpenSidebarRight: boolean,
+) {
+  return {
+    activeSidebarLeft: hasHydrated ? isOpenSidebarLeft : true,
+    activeSidebarRight: hasHydrated ? isOpenSidebarRight : false,
+  };
+}
+
 export default function DashboardContentLayout({
   children,
 }: {
@@ -33,8 +44,11 @@ export default function DashboardContentLayout({
     }
   }, []);
 
-  const activeSidebarLeft = hasHydrated ? isOpenSidebarLeft : true;
-  const activeSidebarRight = hasHydrated ? isOpenSidebarRight : false;
+  const { activeSidebarLeft, activeSidebarRight } = getSidebarActiveStates(
+    hasHydrated,
+    isOpenSidebarLeft,
+    isOpenSidebarRight,
+  );
 
   return (
     <div className="flex flex-col flex-1 h-full overflow-hidden bg-white dark:bg-background">

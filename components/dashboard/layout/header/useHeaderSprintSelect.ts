@@ -2,10 +2,10 @@
 
 import { useEffect } from "react";
 import { useParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { useDashboard } from "@/lib/store/use-dashboard";
-import { createSprintsQueryOptions } from "@/queries/sprint";
+import { createSprintsInfiniteQueryOptions } from "@/queries/sprint";
 import type { Sprint } from "@/lib/api/sprint";
 
 const EMPTY_SPRINTS: Sprint[] = [];
@@ -20,16 +20,17 @@ export function useHeaderSprintSelect() {
     (state) => state.setSelectedSprintId,
   );
 
-  const { data: sprintsResponse, isLoading, isSuccess } = useQuery(
-    createSprintsQueryOptions(
-      { projectId: projectId ?? "", limit: 100 },
+  const { data: sprintsInfiniteData, isLoading, isSuccess } = useInfiniteQuery(
+    createSprintsInfiniteQueryOptions(
+      { projectId: projectId ?? "", limit: 50, includeTotal: false },
       {
         enabled: !!projectId,
       },
     ),
   );
 
-  const sprintOptions = sprintsResponse?.data?.items ?? EMPTY_SPRINTS;
+  const sprintOptions =
+    sprintsInfiniteData?.pages.flatMap((page) => page.data.items) ?? EMPTY_SPRINTS;
   const isDisabled = !projectId;
 
   useEffect(() => {

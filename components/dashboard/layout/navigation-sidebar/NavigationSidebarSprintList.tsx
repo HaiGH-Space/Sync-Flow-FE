@@ -22,6 +22,8 @@ type NavigationSidebarSprintListProps = {
   // Lifted states
   showAllSprints: boolean;
   onToggleShowAllSprints: () => void;
+  fetchNextPage?: () => void;
+  hasNextPage?: boolean;
 };
 
 export function NavigationSidebarSprintList({
@@ -35,6 +37,8 @@ export function NavigationSidebarSprintList({
   onEditSprintAction,
   showAllSprints,
   onToggleShowAllSprints,
+  fetchNextPage,
+  hasNextPage,
 }: NavigationSidebarSprintListProps) {
   const t = useTranslations("dashboard");
   const { push } = useRouter();
@@ -131,15 +135,35 @@ export function NavigationSidebarSprintList({
             </NavigationSidebarItem>
           );
         })}
-        {sprints && sprints.length > DEFAULT_LIMIT && (
+        {((sprints && sprints.length > DEFAULT_LIMIT) || hasNextPage) && (
           <Button
             type="button"
             variant="ghost"
             size="sm"
             className="h-8 w-full justify-center text-xs text-muted-foreground hover:text-foreground mt-1"
-            onClick={onToggleShowAllSprints}
+            onClick={() => {
+              if (!isExpanded) {
+                onToggleShowAllSprints();
+              } else if (hasNextPage && fetchNextPage) {
+                fetchNextPage();
+              } else {
+                onToggleShowAllSprints();
+              }
+            }}
+            disabled={isFetching}
           >
-            {isExpanded ? t("sidebar.showLess") : t("sidebar.showMore")}
+            {isFetching ? (
+              <span className="flex items-center gap-1.5">
+                <Loader2 className="size-3 animate-spin" />
+                {t("sidebar.loadingSprints")}
+              </span>
+            ) : !isExpanded ? (
+              t("sidebar.showMore")
+            ) : hasNextPage ? (
+              t("sidebar.showMore")
+            ) : (
+              t("sidebar.showLess")
+            )}
           </Button>
         )}
       </div>

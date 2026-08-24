@@ -1,19 +1,31 @@
-import { useQuery } from '@tanstack/react-query'
+import { useInfiniteQuery } from '@tanstack/react-query'
 import { useParams } from 'next/navigation'
-import { createMyWorkspacesQueryOptions } from '@/queries/workspace'
+import { createMyWorkspacesInfiniteQueryOptions } from '@/queries/workspace'
 
 export const useCurrentWorkspace = () => {
     const params = useParams<{ workspaceId?: string }>()
-    const workspaceId = params.workspaceId
+    const workspaceId = params?.workspaceId
 
-    const { data: workspaceResponse, isPending, error } = useQuery(createMyWorkspacesQueryOptions({ limit: 100 }))
-    const workspaceList = workspaceResponse?.data?.items
-    const activeWorkspace = workspaceList?.find(w => w.id === workspaceId)
+    const {
+        data,
+        isPending,
+        error,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage
+    } = useInfiniteQuery(createMyWorkspacesInfiniteQueryOptions({ limit: 20, includeTotal: false }))
+
+    const workspaceList = data?.pages.flatMap((page) => page.data.items) ?? []
+    const activeWorkspace = workspaceList.find(w => w.id === workspaceId)
+
     return {
         workspaceList,
         activeWorkspace,
         workspaceId,
         isPending,
-        error
+        error,
+        fetchNextPage,
+        hasNextPage: !!hasNextPage,
+        isFetchingNextPage
     }
 }

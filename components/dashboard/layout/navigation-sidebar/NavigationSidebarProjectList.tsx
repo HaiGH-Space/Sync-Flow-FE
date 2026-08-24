@@ -17,6 +17,8 @@ export type SprintsState = {
   onSelect: (projectId: string, sprintId: string) => void;
   onEdit: (sprint: Sprint) => void;
   onToggleShowAll: () => void;
+  fetchNextPage?: () => void;
+  hasNextPage?: boolean;
 };
 
 export type ChannelsState = {

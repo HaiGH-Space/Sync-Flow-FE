@@ -75,9 +75,11 @@ components\canvas\backlog\types.ts
 components\canvas\board
 components\canvas\board\BoardCanvas.tsx
 components\canvas\board\KanbanCard.tsx
+components\canvas\board\KanbanColumn.test.ts
 components\canvas\board\KanbanColumn.tsx
 components\canvas\board\useBoardDragHandlers.ts
 components\canvas\board\useColumnReorder.ts
+components\canvas\board\useIssueMove.test.ts
 components\canvas\board\useIssueMove.ts
 components\canvas\planning
 components\canvas\planning\index.tsx
@@ -123,6 +125,7 @@ components\dashboard\comp\WorkspaceSettingsDialog.tsx
 components\dashboard\comp\WorkspaceSettingsMenu.tsx
 components\dashboard\layout
 components\dashboard\layout\ChatRightPanel.tsx
+components\dashboard\layout\DashboardContentLayout.test.ts
 components\dashboard\layout\DashboardContentLayout.tsx
 components\dashboard\layout\header
 components\dashboard\layout\navigation-sidebar
@@ -174,6 +177,15 @@ docs\codebase\INTEGRATIONS.md
 docs\codebase\STACK.md
 docs\codebase\STRUCTURE.md
 docs\codebase\TESTING.md
+docs\superpowers
+docs\superpowers\plans
+docs\superpowers\plans\2026-08-19-fragile-areas-hardening.md
+docs\superpowers\plans\2026-08-20-session-token-security-plan.md
+docs\superpowers\plans\2026-08-23-top-risks-mitigation.md
+docs\superpowers\specs
+docs\superpowers\specs\2026-08-19-fragile-areas-hardening-design.md
+docs\superpowers\specs\2026-08-20-session-token-security-design.md
+docs\superpowers\specs\2026-08-23-top-risks-mitigation-design.md
 doctor.config.json
 eslint.config.mjs
 hooks
@@ -188,18 +200,6 @@ hooks\mutations\notification.ts
 hooks\mutations\project.ts
 hooks\mutations\sprint.ts
 hooks\mutations\upload.ts
-hooks\mutations\use-video-call.ts
-hooks\mutations\user.ts
-hooks\mutations\workspace-member.ts
-hooks\mutations\workspace.ts
-hooks\notifications
-hooks\notifications\use-notification-channel.test.ts
-hooks\notifications\use-notification-channel.ts
-hooks\use-current-workspace.ts
-hooks\use-profile.ts
-hooks\use-socket-sync.test.ts
-hooks\use-socket-sync.ts
-hooks\use-video-call.ts
 
 === STACK DETECTION (manifest files) ===
 
@@ -333,10 +333,10 @@ importers:
         version: 0.563.0(react@19.2.3)
       next:
         specifier: 16.2.9
-        version: 16.2.9(@babel/core@7.29.7)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        version: 16.2.9(@babel/core@7.29.7)(@playwright/test@1.62.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       next-intl:
         specifier: ^4.8.2
-        version: 4.13.0(next@16.2.9(@babel/core@7.29.7)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(typescript@5.9.3)
+        version: 4.13.0(next@16.2.9(@babel/core@7.29.7)(@playwright/test@1.62.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(typescript@5.9.3)
       next-themes:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -353,7 +353,7 @@ importers:
         specifier: 19.2.3
         version: 19.2.3(react@19.2.3)
 
-[TRUNCATED] Showing first 80 of 9334 lines.
+[TRUNCATED] Showing first 80 of 9373 lines.
 
 === ENTRY POINTS ===
 No common entry points found. Check 'main' or 'scripts.start' in manifest files above.
@@ -388,6 +388,19 @@ NEXT_PUBLIC_API_URL=http://127.0.0.1:8000
 None found.
 
 === GIT RECENT COMMITS (last 20) ===
+411a579 Merge pull request #37 from HaiGH-Space/fix/sidebar-bulk-fetching
+1e699a7 ci: add GitHub Actions test workflow, document codebase concerns, and remove Playwright E2E configuration
+7faa684 feat: implement Playwright E2E testing suite with authentication and navigation coverage and integrate into CI pipeline
+231d5ae feat: implement workspace navigation rail and project sidebar with sprint and channel management logic
+60b57bf docs: update AGENTS.md with new tech stack details, testing conventions, and proxy configuration references
+4777962 feat: implement issue creation modal and modularize core API services and query configurations
+9a682ec docs: create codebase concerns documentation to track technical debt, security, and performance optimizations
+d5ddbb3 feat(security): validate session_token hygiene and set security response headers in proxy middleware
+cddee40 feat(security): add session token validation and secure cookie option helpers
+1499353 docs: create codebase concerns documentation to track risks, technical debt, and high-churn areas
+67b78d1 feat: implement Kanban board column component, navigation sidebar logic, and associated test suites
+241ea2f Merge pull request #36 from HaiGH-Space/feat/update-docs
+d998ec6 docs: add comprehensive codebase documentation covering architecture, structure, stack, and testing protocols
 cebe721 feat: implement workspace settings menu and navigation sidebar components for dashboard project management
 b98f718 Merge pull request #35 from HaiGH-Space/feat/websocket-auth-explicit-token
 d58890c test: add unit tests for useNotificationChannel hook socket handling and cache updates
@@ -395,65 +408,52 @@ d58890c test: add unit tests for useNotificationChannel hook socket handling and
 a6c706e feat: implement useProfile hook and initialize chat and notification WebSocket services
 95fc771 fix(fe): update getChatSocket and getNotificationSocket to accept explicit session token
 dfc9c52 feat: implement API services, user state management, and real-time chat and notification hooks
-3b1c9df feat: add channel creation modal and associated API services with query tests
-d1e5f34 feat: implement CreateChannelModal and add associated API service and query hooks
-22a17cf feat: implement kanban board components and document codebase concerns
-dc1d58c feat: implement chat right panel and update channel page route structure
-901ed28 feat: implement global video call support with minimized sidebar widget and overlay controls
-3dd3d34 feat: implement global video call provider with persistent state and sidebar widget integration
-e1b382e Merge pull request #33 from HaiGH-Space/fix/api-proxy-connection
-0eacd0c feat: add api-config utility to handle environment-based URL resolution and proxying
-f5dcd27 Merge pull request #32 from HaiGH-Space/feat/liveKit-video-audio-calls
-233195c feat: implement ChannelCallPanel component with LiveKit integration and reconnection handling
-b215586 feat(chat): mount ChannelCallHeaderButton and ChannelCallPanel inside ChatRightPanel
-0928554 feat(channel): integrate ChannelCallHeaderButton and ChannelCallPanel into channel view
-4ed7a05 fix(call): move LiveKit styles import to GlobalCallProvider for Tailwind v4 build compatibility
 
 === HIGH-CHURN FILES (last 90 days, top 20) ===
-  31 docs/codebase/CONCERNS.md
-  14 components/dashboard/layout/NavigationSidebar.tsx
-  13 components/dashboard/layout/DashboardContentLayout.tsx
-  10 docs/codebase/.codebase-scan.txt
-   9 lib/api/notification.ts
-   9 package.json
+  36 docs/codebase/CONCERNS.md
+  11 components/dashboard/layout/navigation-sidebar/use-navigation-sidebar.ts
+  11 docs/codebase/.codebase-scan.txt
+  11 components/dashboard/layout/NavigationSidebar.tsx
+  10 components/dashboard/layout/DashboardContentLayout.tsx
+   9 components/canvas/board/KanbanColumn.tsx
    9 components/canvas/board/useIssueMove.ts
    9 README.md
-   9 components/dashboard/layout/navigation-sidebar/NavigationSidebarSprintList.tsx
-   8 components/dashboard/layout/navigation-sidebar/NavigationSidebarProjectItem.tsx
-   8 components/canvas/board/KanbanCard.tsx
-   8 components/canvas/board/KanbanColumn.tsx
-   8 components/dashboard/layout/navigation-sidebar/use-navigation-sidebar.ts
-   8 components/auth/AuthCard.tsx
-   8 components/dashboard/comp/IssueDetailDialog.tsx
-   8 components/auth/SuccessState.tsx
-   8 .github/workflows/react-doctor.yml
+   8 package.json
+   8 pnpm-lock.yaml
+   8 components/dashboard/layout/navigation-sidebar/NavigationSidebarSprintList.tsx
+   8 lib/api/notification.ts
+   7 components/dashboard/layout/navigation-sidebar/NavigationSidebarProjectItem.tsx
    7 lib/api/chat.ts
-   7 pnpm-lock.yaml
-   7 docs/codebase/STACK.md
+   6 components/canvas/timeline/useTimelineCanvasModel.ts
+   6 docs/codebase/STACK.md
+   6 docs/codebase/TESTING.md
+   6 components/dashboard/layout/navigation-sidebar/NavigationSidebarChannelList.tsx
+   5 hooks/use-current-workspace.ts
+   5 components/canvas/planning/index.tsx
 
 === MONOREPO SIGNALS ===
 Monorepo tool detected: pnpm-workspace.yaml
 
 === CODE METRICS ===
-Total files scanned: 364
-Total lines of code: 18410
+Total files scanned: 378
+Total lines of code: 19151
 
 Files by language:
-  TypeScript: 128
-  Other: 126
+  TypeScript: 136
+  Other: 132
   TypeScript/React: 110
 
 Top 10 largest files:
 tsconfig.tsbuildinfo: 498.5KB
-pnpm-lock.yaml: 341.1KB
-.agents\skills\vercel-react-best-practices\AGENTS.md: 105.7KB
+pnpm-lock.yaml: 342.4KB
+.agents\skills\vercel-react-best-practices\AGENTS.md: 109.4KB
 .agents\skills\design-taste-frontend\SKILL.md: 86.4KB
 app\favicon.ico: 25.3KB
 .agents\skills\vercel-composition-patterns\AGENTS.md: 23.0KB
+docs\superpowers\plans\2026-08-23-top-risks-mitigation.md: 20.7KB
 components\dashboard\comp\WorkspaceSettingsDialog.tsx: 19.8KB
 .agents\skills\redesign-existing-projects\SKILL.md: 14.9KB
 components\auth\SuccessState.tsx: 12.3KB
-components\canvas\board\BoardCanvas.tsx: 11.7KB
 
 === CI/CD PIPELINES ===
 CI/CD: GitHub Actions

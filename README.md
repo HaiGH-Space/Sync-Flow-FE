@@ -4,13 +4,15 @@
 
 _Sync anything, anywhere, with anyone._
 
-[![Build Status](https://img.shields.io/github/actions/workflow/status/HaiGH-Space/Sync-Flow/react-doctor.yml?branch=master&style=flat-square&label=React%20Doctor)](https://github.com/HaiGH-Space/Sync-Flow/actions)
+[![Test Suite](https://img.shields.io/github/actions/workflow/status/HaiGH-Space/Sync-Flow/test.yml?branch=master&style=flat-square&label=Tests)](https://github.com/HaiGH-Space/Sync-Flow/actions)
+[![Security Audit](https://img.shields.io/github/actions/workflow/status/HaiGH-Space/Sync-Flow/security.yml?branch=master&style=flat-square&label=Security%20Audit)](https://github.com/HaiGH-Space/Sync-Flow/actions)
+[![React Doctor](https://img.shields.io/github/actions/workflow/status/HaiGH-Space/Sync-Flow/react-doctor.yml?branch=master&style=flat-square&label=React%20Doctor)](https://github.com/HaiGH-Space/Sync-Flow/actions)
 [![Next.js](https://img.shields.io/badge/Next.js-16.2.9-black?style=flat-square)](https://nextjs.org)
 [![React](https://img.shields.io/badge/React-19.2.3-blue?style=flat-square)](https://react.dev)
 [![React Compiler](https://img.shields.io/badge/React%20Compiler-Enabled-blueviolet?style=flat-square)](https://react.dev/learn/react-compiler)
-[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-v4-38bdf8?style=flat-square)](https://tailwindcss.com)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-v4-38bdf8?style=flat-square)](https://tailwindcss.com)
 
-Sync Flow is a high-performance, real-time collaboration workspace built for issue tracking, agile sprint management, and instant team communication.
+Sync Flow is a high-performance, real-time collaboration workspace built for agile project planning, issue tracking, instant team messaging, and live video/audio conferencing.
 
 </div>
 
@@ -18,33 +20,33 @@ Sync Flow is a high-performance, real-time collaboration workspace built for iss
 
 ## Features
 
-- **Agile Kanban Board & Planning Views**: Drag-and-drop board layouts with optimistic ordering, interactive sprint backlogs, status columns, and timeline progress rails.
-- **Real-time Communication Channels**: Instant messaging channels and live workspace notification alerts powered by Socket.IO sockets.
-- **Live Video & Audio Calls**: WebRTC channel calls powered by LiveKit Cloud integration, featuring persistent global call state, floating overlay widgets, participant menus, and fullscreen view.
-- **Native Localization Support**: Built-in multi-locale gated routing for English (`en`) and Vietnamese (`vi`) powered by `next-intl`.
-- **Hybrid Auth Security Model**: Protected routes, WebSocket channels, and video call tokens secured via HttpOnly session cookies (`session_token`).
-- **Sleek Workspace Navigation**: Expandable sidebars, active workspace rails, collapsible sublists, and zinc-scale responsive panels.
-- **Zero-Manual-Memoization Architecture**: Leverages the React Compiler to automatically optimize component rendering performance without manual `useMemo` or `useCallback` hooks.
+- **Agile Board & Planning Canvas**: Interactive drag-and-drop Kanban board with midpoint ordering math, sprint backlogs with server-side pagination, planning views, and timeline progress rails.
+- **Real-Time Communication**: Instant channel chat and workspace notification alerts powered by Socket.IO WebSockets.
+- **Live Video & Audio Calling**: WebRTC channel calls powered by LiveKit Cloud integration, featuring persistent global call state, floating overlay widgets, participant menus, and fullscreen mode.
+- **Native Localization**: Built-in multi-locale routing for English (`en`) and Vietnamese (`vi`) powered by `next-intl`.
+- **Hybrid Security Model**: Session-token cookie validation, security response headers (`X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`), and automated Gitleaks secret scanning.
+- **Sleek Workspace Navigation**: Expandable sidebars, active workspace rails with infinite loading, and responsive Zinc theme styling.
+- **Zero-Manual-Memoization Architecture**: Powered by the React 19 Compiler to automatically optimize component rendering performance without manual `useMemo` or `useCallback` hooks.
 
 ---
 
 ## Technology Stack
 
-| Category | Technology / Library | Version | Description |
+| Layer | Technology / Library | Version | Description |
 |---|---|---|---|
-| **Framework** | [Next.js](https://nextjs.org) (App Router) | `16.2.9` | React framework with server rendering & routing |
-| **UI Library** | [React](https://react.dev) + React Compiler | `19.2.3` | UI library with native auto-memoization enabled |
-| **State Management** | [TanStack React Query](https://tanstack.com/query) | `^5.90.20` | Server state caching, invalidation, & query factories |
-| **Client UI State** | [Zustand](https://zustand-demo.pmnd.rs) | `^5.0.11` | Persisted client UI state management |
-| **Realtime Video Calls** | [LiveKit WebRTC](https://livekit.io) | `^2.21.0` | Cloud WebRTC video & audio call sessions |
-| **Styling & Motion** | [Tailwind CSS](https://tailwindcss.com) & [Framer Motion](https://framer.com/motion) | `^4.0.0` / `^12.40.0` | Modern CSS utilities and fluid UI animations |
-| **Form Handling** | [@tanstack/react-form](https://tanstack.com/form) & [Zod](https://zod.dev) | `^1.28.0` / `^4.3.6` | Type-safe form state & validation |
-| **Realtime WebSockets** | [Socket.IO Client](https://socket.io) | `^4.8.1` | Socket connections for chat & notification feeds |
-| **Internationalization** | [next-intl](https://next-intl-docs.vercel.app) | `^4.8.2` | Internationalized routing and translation bundles |
-| **Test Runner** | [Vitest](https://vitest.dev) | `^4.1.9` | Modern unit & integration test runner |
+| **Framework** | [Next.js](https://nextjs.org) (App Router) | `16.2.9` | React framework with server rendering & App Router |
+| **UI Runtime** | [React](https://react.dev) + React Compiler | `19.2.3` | React with native auto-memoization enabled |
+| **Server State** | [TanStack React Query](https://tanstack.com/query) | `^5.90.20` | Server state caching, query factories, and invalidations |
+| **Client UI State** | [Zustand](https://zustand-demo.pmnd.rs) | `^5.0.11` | Persisted client state for dashboard and video call controls |
+| **WebRTC Media** | [LiveKit](https://livekit.io) | `^2.21.0` | Cloud WebRTC video & audio call sessions |
+| **Styling & Motion** | [Tailwind CSS](https://tailwindcss.com) & [Framer Motion](https://framer.com/motion) | `^4.0.0` / `^12.40.0` | Modern CSS styling tokens and fluid UI animations |
+| **Form Validation** | [@tanstack/react-form](https://tanstack.com/form) & [Zod](https://zod.dev) | `^1.28.0` / `^4.3.6` | Type-safe form state and schema validation |
+| **Realtime WebSockets** | [Socket.IO Client](https://socket.io) | `^4.8.1` | Realtime socket connections for chat & notifications |
+| **Localization** | [next-intl](https://next-intl-docs.vercel.app) | `^4.8.2` | Locale-aware routing and modular translation bundles |
+| **Test Runner** | [Vitest](https://vitest.dev) | `^4.1.9` | Fast unit and integration test runner (22 test suites) |
 
 > [!NOTE]
-> This repository contains the **Frontend** codebase. The corresponding **Backend** service code is maintained in the adjacent `be/` workspace.
+> This repository contains the **Frontend** application. The corresponding **Backend** service is maintained in the companion `be/` workspace.
 
 ---
 
@@ -54,7 +56,7 @@ Sync Flow is a high-performance, real-time collaboration workspace built for iss
 
 - **Node.js** v18+ (tested on v24.12.0)
 - **pnpm** package manager
-- Running Sync Flow backend service instance (defaults to `http://localhost:8000`)
+- Running Sync Flow backend service instance (defaults to `http://127.0.0.1:8000`)
 
 ### Installation & Local Setup
 
@@ -86,13 +88,13 @@ Sync Flow is a high-performance, real-time collaboration workspace built for iss
 
 ---
 
-## Quality Assurance & Verification
+## Quality Assurance & Testing
 
 Maintain code quality, linting standards, and compiler optimization rules with standard repository commands:
 
 ```bash
+pnpm test     # Run Vitest unit & integration test suite (22 test suites, 83 tests)
 pnpm lint     # Run ESLint static analysis
-pnpm test     # Run Vitest unit & integration tests
 pnpm doctor   # Run React Doctor codebase diagnostic audit
 pnpm build    # Execute production Next.js compilation
 ```
@@ -129,25 +131,27 @@ docs/codebase/            # Structured repository documentation suite
 
 ## Architecture Overview
 
-```
-[Browser Client]
+```text
+HTTP Request / Navigation
        │
-       ▼ (Validates cookies & locale)
-  [proxy.ts Middleware]
+       ▼
+   [proxy.ts Middleware] ───► (Locale routing, session_token check, security headers)
        │
-       ▼ (Bootstraps layout context & providers)
-  [app/[locale]/layout.tsx]
+       ▼
+ [app/[locale]/layout.tsx] ──► (ThemeProvider, QueryProvider, next-intl, GlobalCallProvider)
        │
-       ├─► [queries/*] ───────► (React Query data fetching) ─► [lib/api/api-config.ts] ─► [/api-proxy Rewrite] ─► [Backend API]
-       ├─► [hooks/mutations] ─► (Optimistic UI updates) ─────► [lib/api/api-config.ts] ─► [/api-proxy Rewrite] ─► [Backend API]
-       └─► [lib/api/chat] ────► (Real-time WebSockets) ──────► [lib/api/api-config.ts] ──────────────────────► [Backend WebSockets]
+       ├───► [queries/*] ───────► (TanStack Query fetching) ─► [/api-proxy Rewrite] ─► [Backend API]
+       ├───► [hooks/mutations] ─► (Optimistic UI mutations) ──► [/api-proxy Rewrite] ─► [Backend API]
+       ├───► [lib/api/chat] ────► (Real-time Socket.IO chat) ────────────────────────► [Backend WebSockets]
+       ├───► [lib/api/video] ───► (LiveKit WebRTC token & room) ─────────────────────► [LiveKit Cloud]
+       └───► [lib/store/*] ─────► (Persisted Zustand state in LocalStorage)
 ```
 
 - **Authentication & Gated Routes**: Managed via `proxy.ts` middleware, verifying the HttpOnly `session_token` cookie and applying locale redirects.
-- **Real-time WebSockets**: WebSockets for `/chat` and `/notifications` authenticate using the client's `session_token` cookie.
+- **Real-Time WebSockets**: WebSockets for `/chat` and `/notifications` authenticate using the client's `session_token` cookie.
 - **Sparse Board Reordering**: Drag-and-drop operations compute midpoint values using `lib/ordering.ts` helpers. Rapid reorders run optimistically through flush-and-sequence queue hooks (`useColumnReorder`, `useIssueMove`).
-- **Presenter/Hook Pattern**: Complex components separate UI layout from state logic via dedicated custom hooks (`useNavigationSidebar`, `useIssueDetail`, `useComposer`).
-- **Centralized API Proxying**: API endpoints resolve dynamically in `lib/api/api-config.ts` using client relative `/api-proxy` rewrites to prevent direct backend URL hardcoding.
+- **Presenter/Hook Pattern**: Complex components separate UI layout from state logic via dedicated custom hooks (`useNavigationSidebar`, `useIssueDetailState`, `useComposer`).
+- **Centralized API Proxying**: API endpoints resolve dynamically in `lib/api/api-config.ts` using client relative `/api-proxy` rewrites to prevent direct backend URL hardcoding, supporting `INTERNAL_API_URL` during SSR.
 
 ---
 
@@ -155,7 +159,7 @@ docs/codebase/            # Structured repository documentation suite
 
 Detailed architectural specs and integration maps are maintained in [`docs/codebase/`](docs/codebase):
 
-- [**STACK.md**](docs/codebase/STACK.md) — Tech stack, framework versions, dev tooling, and scripts.
+- [**STACK.md**](docs/codebase/STACK.md) — Tech stack, framework versions, dev tooling, CI workflows, and scripts.
 - [**STRUCTURE.md**](docs/codebase/STRUCTURE.md) — Directory topology, entry points, and module boundaries.
 - [**ARCHITECTURE.md**](docs/codebase/ARCHITECTURE.md) — System flow, layers, reordering strategies, and risks.
 - [**CONVENTIONS.md**](docs/codebase/CONVENTIONS.md) — Naming rules, error handling, query factories, and Compiler rules.

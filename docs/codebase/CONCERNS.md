@@ -7,13 +7,13 @@
 | Severity | Concern | Evidence | Impact | Suggested action | Status / Resolution |
 |----------|---------|----------|--------|------------------|---------------------|
 | Low | Bulk-fetching limit of 100 on sidebar navigation lists | `queries/workspace.ts`, `queries/project.ts`, `queries/sprint.ts` | Navigation sidebars may truncate lists if a workspace has >100 projects/sprints or user has >100 workspaces | Implement infinite loading or paginated sidebars | **Hardened:** Migrated projects, workspaces, and sprints queries to `useInfiniteQuery` with pagination handlers in `WorkspaceRail` and `NavigationSidebar`. |
-| Low | Direct backend URL resolution differences between server SSR & client proxy | `lib/api/api-config.ts`, `next.config.ts` | Misconfigurations could break backend API rewrites | Maintain `next.config.ts` rewrite alignment | **Hardened:** Supported `INTERNAL_API_URL` during SSR in `lib/api/api-config.ts` and `next.config.ts`, normalized trailing slashes, and added unit test coverage in `lib/api/api-config.test.ts`. |
+| Low | Direct backend URL resolution differences between server SSR & client proxy | `lib/api/api-config.ts`, `next.config.ts` | Misconfigurations could break backend API rewrites in internal container networks | Support internal SSR URL while keeping client rewrites | **Hardened:** Supported `INTERNAL_API_URL` during SSR in `lib/api/api-config.ts` and `next.config.ts`, normalized trailing slashes, and added unit test coverage in `lib/api/api-config.test.ts`. |
 
 ### 2) Technical Debt
 
-| Debt item              | Why it exists                                     | Where          | Risk if ignored                                                            | Suggested fix                                         |
-| ---------------------- | ------------------------------------------------- | -------------- | -------------------------------------------------------------------------- | ----------------------------------------------------- |
-| E2E test suite missing | Rapid frontend prototyping prioritized unit tests | Workspace root | Potential regressions in complex drag-and-drop or socket interaction flows | Add Playwright / Cypress end-to-end integration tests |
+| Debt item              | Why it exists                                     | Where          | Risk if ignored                                                            | Suggested fix                                         | Status |
+| ---------------------- | ------------------------------------------------- | -------------- | -------------------------------------------------------------------------- | ----------------------------------------------------- | --- |
+| E2E test suite missing | Rapid frontend prototyping prioritized unit tests | Workspace root | Potential regressions in complex drag-and-drop or socket interaction flows | Add Playwright / Cypress end-to-end integration tests | Tracked for future testing milestones; unit/integration test coverage increased to 22 test suites with automated CI. |
 
 ### 3) Security Concerns
 

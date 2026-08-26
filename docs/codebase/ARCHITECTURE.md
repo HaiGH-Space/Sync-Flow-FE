@@ -4,54 +4,69 @@
 
 ### 1) Architectural Style
 
-- Primary style: feature-oriented Next.js App Router with a thin route shell, query/mutation separation, and client-side dashboard state
-- Why this classification: route files own composition and redirects, `queries/` owns query keys/options, `hooks/mutations/` owns writes and invalidation, `lib/api/` owns service wrappers, and `lib/store/` owns persisted UI state
-- Primary constraints: locale-aware routing, backend access through `/api-proxy`, optimistic drag-and-drop updates for board interactions, and standardized offset-based server-side pagination for main resource listings
+- Primary style: Feature-oriented Next.js App Router architecture with a thin routing shell, query/mutation separation, optimistic state flows, and client-side UI persistence.
+- Why this classification: Route files strictly own layout composition and redirects, `queries/` owns query keys and options factories, `hooks/mutations/` owns mutations and cache invalidation, `lib/api/` encapsulates HTTP/WebSocket transport, and `lib/store/` manages persisted client state.
+- Primary constraints: Locale-aware routing (`en` and `vi`), backend access through Next.js `/api-proxy` rewrites (and direct `INTERNAL_API_URL` during SSR), sparse ordering with midpoint math for Kanban drag operations, and zero-manual-memoization architecture powered by the React Compiler.
 
 ### 2) System Flow
 
 ```text
-request -> proxy.ts locale/auth gate -> app/[locale]/layout.tsx providers -> route page/layout -> query hooks or store state -> lib/api/* or socket.io-client -> UI update
+HTTP Request / Route Transition
+       │
+       ▼
+   [proxy.ts Middleware] ───► (Validates locale, checks session_token hygiene, sets security headers)
+       │
+       ▼
+ [app/[locale]/layout.tsx] ──► (Initializes Theme, QueryProvider, and next-intl context)
+       │
+       ▼
+ [Dashboard Shell Layout] ───► (Composes WorkspaceRail, NavigationSidebar, and DashboardContentLayout)
+       │
+       ├───► [queries/*] ───────► (TanStack Query data fetching) ─► [/api-proxy Rewrite] ─► [Backend API]
+       ├───► [hooks/mutations] ─► (Optimistic updates & invalidations) ─► [/api-proxy Rewrite] ─► [Backend API]
+       ├───► [lib/api/chat] ────► (Real-time Socket.IO chat connection) ──────────────────► [Backend WebSockets]
+       ├───► [lib/api/video] ───► (LiveKit WebRTC token & room connection) ───────────────► [LiveKit Cloud]
+       └───► [lib/store/*] ─────► (Persisted Zustand state in LocalStorage)
 ```
 
-1. `proxy.ts` inspects the request locale and the `session_token` cookie before allowing protected routes to continue.
-2. `app/[locale]/layout.tsx` validates the locale, loads providers, and wraps the app with theme, React Query, and `next-intl` context.
-3. Dashboard routes compose `WorkspaceRail`, `NavigationSidebar`, and `DashboardContentLayout` to establish the shell.
-4. Query factories in `queries/*` fetch workspace, project, sprint, column, issue, and channel data through `lib/api/*` service wrappers.
-5. Mutations in `hooks/mutations/*` invalidate or patch cached query data after writes.
-6. Board drag handlers in `components/canvas/board/*` perform optimistic updates, then persist reorders through the API.
+1. **Gatekeeper**: `proxy.ts` middleware verifies the request locale, sanitizes and validates the `session_token` cookie, sets HTTP security response headers (`X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`), and redirects unauthenticated users to `/auth`.
+2. **Provider Root**: `app/[locale]/layout.tsx` hydrates the locale message bundle, wraps the application tree with `QueryProvider` and `ThemeProvider`, and mounts the `GlobalCallProvider`.
+3. **Shell Composition**: Dashboard routes assemble the `WorkspaceRail` (paginated workspace switcher), `NavigationSidebar` (expandable project/sprint/channel trees), and `DashboardContentLayout`.
+4. **Data Synchronization**: TanStack Query handles server state fetching, caching, and background refetches. Mutations apply optimistic UI updates immediately and invalidate matching query key prefixes.
+5. **Real-time WebSockets & Media**: Socket.IO channels subscribe to `/chat` and `/notifications` feeds using authenticated cookie sessions. LiveKit WebRTC handles realtime channel video/audio sessions.
 
 ### 3) Layer/Module Responsibilities
 
-| Layer or module                                | Owns                                                               | Must not own                   | Evidence                                                                        |
-| ---------------------------------------------- | ------------------------------------------------------------------ | ------------------------------ | ------------------------------------------------------------------------------- |
-| `app/[locale]`                                 | Route shell, locale validation, redirects, page composition        | Backend request logic          | `app/[locale]/layout.tsx`, `app/[locale]/(home)/page.tsx`, `proxy.ts`           |
-| `components/dashboard` and `components/canvas` | UI composition, interaction handling, dialogs, drag-and-drop flows | API client construction        | `components/dashboard/layout/*`, `components/canvas/board/*`                    |
-| `components/call`                              | LiveKit video/audio overlay, floating call widget, participant context menu | Direct backend URL resolution  | `components/call/GlobalCallProvider.tsx`, `components/call/FullscreenCallOverlay.tsx` |
-| `queries/`                                     | Query keys, stale times, query option factories                    | Writes or UI state             | `queries/workspace.ts`, `queries/issue.ts`, `queries/column.ts`                 |
-| `hooks/mutations/`                             | API writes and cache invalidation                                  | Query key definitions          | `hooks/mutations/workspace.ts`, `hooks/mutations/column.ts`                     |
-| `lib/api/`                                     | Request transport and service methods                              | Rendering or routing decisions | `lib/api/api.ts`, `lib/api/workspace.ts`, `lib/api/issue.ts`, `lib/api/chat.ts` |
-| `lib/store/`                                   | Persisted client state for dashboard controls                      | Network access                 | `lib/store/use-dashboard.ts`                                                    |
+| Layer or module                                | Owns                                                                         | Must not own                                      | Evidence                                                                               |
+| ---------------------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `app/[locale]`                                 | Route shell, locale validation, redirects, layout composition                | Backend request logic                             | `app/[locale]/layout.tsx`, `app/[locale]/(home)/page.tsx`, `proxy.ts`                  |
+| `components/dashboard` and `components/canvas` | Feature UI, interaction handling, dialogs, drag-and-drop flows               | API client construction                           | `components/dashboard/layout/*`, `components/canvas/board/*`, `components/canvas/backlog/*` |
+| `components/call`                              | LiveKit WebRTC overlay, floating minimized call widget, participant controls | Direct backend URL resolution                     | `components/call/GlobalCallProvider.tsx`, `components/call/FullscreenCallOverlay.tsx` |
+| `queries/`                                     | Query keys, stale times, query option factories, infinite queries            | Writes or UI state                                | `queries/workspace.ts`, `queries/issue.ts`, `queries/column.ts`, `queries/project.ts`   |
+| `hooks/mutations/`                             | API writes, optimistic rollbacks, and cache invalidation                     | Query key definitions                             | `hooks/mutations/workspace.ts`, `hooks/mutations/column.ts`, `hooks/mutations/issue.ts` |
+| `lib/api/`                                     | Request transport, URL resolution, and service wrappers                      | Presentation logic or route composition           | `lib/api/api-config.ts`, `lib/api/api.ts`, `lib/api/chat.ts`, `lib/api/video.ts`      |
+| `lib/store/`                                   | Persisted client state for dashboard and video call controls                 | Network access                                    | `lib/store/use-dashboard.ts`, `lib/store/use-call-store.ts`                             |
 
 ### 4) Reused Patterns
 
-| Pattern                            | Where found                                      | Why it exists                                            |
-| ---------------------------------- | ------------------------------------------------ | -------------------------------------------------------- |
-| Query option factory               | `queries/*.ts`                                   | Keeps query keys, stale times, and fetchers centralized  |
-| Service object wrapper             | `lib/api/*.ts`                                   | Normalizes HTTP access behind small per-resource modules |
-| Zustand persisted store            | `lib/store/use-dashboard.ts`                     | Preserves dashboard UI state across navigations          |
-| Optimistic mutation + invalidation | `hooks/mutations/*`, `components/canvas/board/*` | Keeps drag-and-drop and CRUD flows responsive            |
-| Locale message bundles             | `i18n/en/*`, `i18n/vi/*` (with modular feature sub-modules) | Supports bilingual UI copy through `next-intl`           |
-| LiveKit Call Provider              | `components/call/GlobalCallProvider.tsx`, `hooks/use-video-call.ts` | Manages WebRTC video/audio call state, room connections, minimized floating widget, and fullscreen overlays across routes |
-| Standardized API Pagination       | `queries/*`, `lib/api/api.ts`, `components/canvas/backlog/*` | Wraps API lists in a `PaginatedData` envelope (`items`, `total`, `page`, `limit`) to optimize data transfer and support server-side table pagination |
-| Auto-memoized rendering            | Throughout components under `components/`        | Leverages React Compiler to automatically optimize component rendering performance, eliminating manual `useMemo` and `useCallback` boilerplate |
+| Pattern                            | Where found                                      | Why it exists                                                                                                         |
+| ---------------------------------- | ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| Query option factory               | `queries/*.ts`                                   | Centralizes query keys, stale times, and fetcher invocations with typed options.                                      |
+| Service object wrapper             | `lib/api/*.ts`                                   | Normalizes HTTP transport behind modular per-resource service modules (`workspaceService`, `issueService`, etc.).     |
+| Zustand persisted store            | `lib/store/use-dashboard.ts`, `use-call-store.ts` | Preserves navigation sidebar states, panel sizes, and active call overlays across routes.                             |
+| Optimistic mutation + invalidation | `hooks/mutations/*`, `components/canvas/board/*` | Delivers instant UI feedback during drag-and-drop actions and CRUD operations, synchronizing cache in the background. |
+| Locale message bundles             | `i18n/en/*`, `i18n/vi/*`                         | Supports complete bilingual UI copy through `next-intl` feature sub-modules.                                          |
+| LiveKit Call Provider              | `components/call/GlobalCallProvider.tsx`         | Maintains persistent WebRTC video/audio call sessions across client-side page transitions.                           |
+| Infinite Query Sidebar Pagination  | `queries/workspace.ts`, `queries/project.ts`     | Fetches workspaces, projects, and sprints in paginated chunks to avoid list truncation on large datasets.             |
+| Sparse Reordering Math             | `lib/ordering.ts`, `useIssueMove.ts`             | Computes midpoint order values with 1000-step spacing to prevent index rebalancing on every card move.               |
+| Zero-memoization architecture      | Components under `components/`                   | Eliminates `useMemo`, `useCallback`, and `memo()` boilerplate by relying on the native React Compiler.                |
 
-### 5) Known Architectural Risks
+### 5) Known Architectural Risks and Hardening Status
 
-- Board ordering uses optimistic updates with a "flush-and-sequence" mutation queue (implemented via `useColumnReorder` and `useIssueMove` hooks) to mitigate race conditions or out-of-order writes during rapid drag-and-drop actions.
-- Backend and WebSocket base URL resolution is centralized in `lib/api/api-config.ts` (resolving client-side relative `/api-proxy` paths vs server-side direct backend fetching). However, it must still remain aligned with Next.js rewrite rules configured in `next.config.ts`.
-- Bulk-fetching on navigation controls vs server-side pagination. While the backlog table uses active pagination controls with small page sizes (e.g. limit: 10), other components (sidebar lists, modals) perform bulk queries with `limit: 100`. If workspace, project, or sprint volume exceeds 100, navigation sidebars may not list all items without active UI pagination support.
-- The repo does not include a documented backend contract or intent docs in the workspace; the backend API contract and codebase structure are documented in the backend repository at https://github.com/HaiGH-Space/Sync-Flow-BE (static PRD and ROADMAP documents do not exist in either repository)
+- **Sparse Board Ordering**: Rapid card moves are managed via a flush-and-sequence optimistic mutation queue (`useColumnReorder`, `useIssueMove`) and validated with unit test coverage in `components/canvas/board/useIssueMove.test.ts`.
+- **API URL Resolution**: Centralized in `lib/api/api-config.ts` supporting client-side `/api-proxy` rewrites and SSR direct backend communication via `INTERNAL_API_URL` (covered by unit tests in `lib/api/api-config.test.ts`).
+- **Sidebar Scaling**: Mitigated potential 100-item truncation by upgrading project and workspace queries to TanStack `useInfiniteQuery` with pagination triggers.
+- **Session Cookie Security**: Middleware in `proxy.ts` and cookie helpers in `lib/cookies.ts` enforce session token format hygiene and inject OWASP security response headers.
 
 ### 6) Evidence
 
@@ -60,12 +75,13 @@ request -> proxy.ts locale/auth gate -> app/[locale]/layout.tsx providers -> rou
 - `app/[locale]/(home)/dashboard/layout.tsx`
 - `components/dashboard/layout/DashboardContentLayout.tsx`
 - `components/canvas/board/BoardCanvas.tsx`
-- `components/canvas/board/useBoardDragHandlers.ts`
-- `components/canvas/board/useColumnReorder.ts`
 - `components/canvas/board/useIssueMove.ts`
+- `components/call/GlobalCallProvider.tsx`
 - `lib/api/api-config.ts`
 - `lib/api/api.ts`
 - `lib/store/use-dashboard.ts`
+- `lib/store/use-call-store.ts`
 - `queries/workspace.ts`
+- `queries/project.ts`
 - `hooks/mutations/column.ts`
 - `i18n/en/dashboard/index.ts`

@@ -388,6 +388,7 @@ NEXT_PUBLIC_API_URL=http://127.0.0.1:8000
 None found.
 
 === GIT RECENT COMMITS (last 20) ===
+614c1da docs: add comprehensive codebase documentation and project structure manifest
 411a579 Merge pull request #37 from HaiGH-Space/fix/sidebar-bulk-fetching
 1e699a7 ci: add GitHub Actions test workflow, document codebase concerns, and remove Playwright E2E configuration
 7faa684 feat: implement Playwright E2E testing suite with authentication and navigation coverage and integrate into CI pipeline
@@ -407,29 +408,28 @@ d58890c test: add unit tests for useNotificationChannel hook socket handling and
 8905c0b Merge pull request #34 from HaiGH-Space/fix/call-ui-fullscreen-floatbar
 a6c706e feat: implement useProfile hook and initialize chat and notification WebSocket services
 95fc771 fix(fe): update getChatSocket and getNotificationSocket to accept explicit session token
-dfc9c52 feat: implement API services, user state management, and real-time chat and notification hooks
 
 === HIGH-CHURN FILES (last 90 days, top 20) ===
   36 docs/codebase/CONCERNS.md
+  12 docs/codebase/.codebase-scan.txt
   11 components/dashboard/layout/navigation-sidebar/use-navigation-sidebar.ts
-  11 docs/codebase/.codebase-scan.txt
-  11 components/dashboard/layout/NavigationSidebar.tsx
-  10 components/dashboard/layout/DashboardContentLayout.tsx
+   9 README.md
    9 components/canvas/board/KanbanColumn.tsx
    9 components/canvas/board/useIssueMove.ts
-   9 README.md
-   8 package.json
-   8 pnpm-lock.yaml
+   9 components/dashboard/layout/NavigationSidebar.tsx
    8 components/dashboard/layout/navigation-sidebar/NavigationSidebarSprintList.tsx
+   8 components/dashboard/layout/DashboardContentLayout.tsx
    8 lib/api/notification.ts
+   7 docs/codebase/STACK.md
+   7 package.json
    7 components/dashboard/layout/navigation-sidebar/NavigationSidebarProjectItem.tsx
    7 lib/api/chat.ts
-   6 components/canvas/timeline/useTimelineCanvasModel.ts
-   6 docs/codebase/STACK.md
+   6 docs/codebase/ARCHITECTURE.md
+   6 docs/codebase/INTEGRATIONS.md
    6 docs/codebase/TESTING.md
+   6 pnpm-lock.yaml
+   6 components/canvas/timeline/useTimelineCanvasModel.ts
    6 components/dashboard/layout/navigation-sidebar/NavigationSidebarChannelList.tsx
-   5 hooks/use-current-workspace.ts
-   5 components/canvas/planning/index.tsx
 
 === MONOREPO SIGNALS ===
 Monorepo tool detected: pnpm-workspace.yaml

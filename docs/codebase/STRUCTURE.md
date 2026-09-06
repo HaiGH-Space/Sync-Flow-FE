@@ -10,7 +10,7 @@
 | `components/`    | Shared UI, auth, dashboard, canvas, video call, and channel components  | `components/auth/*`, `components/dashboard/*`, `components/canvas/*`, `components/call/*`, `components/channel/*` |
 | `hooks/`         | Custom React hooks, mutation wrappers, and WebSocket listeners          | `hooks/*`, `hooks/mutations/*`, `hooks/notifications/*`, `hooks/chat/*`                 |
 | `i18n/`          | Locale routing and modular translation message bundles                  | `i18n/routing.ts`, `i18n/request.ts`, `i18n/en/*`, `i18n/vi/*`                          |
-| `lib/`           | API transport, Zustand stores, ordering math, cookies, and logger       | `lib/api/*`, `lib/store/*`, `lib/ordering.ts`, `lib/cookies.ts`, `lib/logger.ts`       |
+| `lib/`           | API transport, Zustand stores, ordering math, board utilities, cookies  | `lib/api/*`, `lib/store/*`, `lib/board/*`, `lib/ordering.ts`, `lib/cookies.ts`, `lib/logger.ts` |
 | `queries/`       | TanStack Query option factories and query keys                          | `queries/*`                                                                             |
 | `types/`         | Shared TypeScript interface and type declarations                       | `types/*`                                                                               |
 | `docs/codebase/` | Structured repository documentation suite                               | `docs/codebase/STACK.md`, `docs/codebase/STRUCTURE.md`, `docs/codebase/ARCHITECTURE.md` |
@@ -42,6 +42,7 @@
 | `hooks/mutations/`                               | Mutation wrappers and cache invalidation                   | Shared fetch client setup                                  |
 | `lib/api/`                                       | API request helpers and service wrappers                   | Presentation logic or route composition                    |
 | `lib/store/`                                     | Persisted client UI state                                  | Data fetching and network writes                           |
+| `lib/board/`                                     | Board card sorting and movement pure selectors             | Network calls or React component rendering                 |
 | `i18n/`                                          | Locale routing and message bundles                         | Feature-specific UI state                                  |
 
 ### 4) Naming and Organization Rules
@@ -66,6 +67,7 @@
 - `components/dashboard/chat/use-composer.ts`
 - `components/call/GlobalCallProvider.tsx`
 - `hooks/use-video-call.ts`
+- `lib/board/issue-move-utils.ts`
 - `tsconfig.json`
 - `package.json`
 - `.github/workflows/test.yml`

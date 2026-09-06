@@ -49,10 +49,12 @@
 - `package.json`
 - `components.json`
 - `vitest.config.ts`
+- `doctor.config.json`
 - `lib/api/api.ts`
 - `lib/api/api-config.ts`
 - `lib/logger.ts`
 - `lib/cookies.ts`
+- `lib/board/issue-move-utils.ts`
 - `proxy.ts`
 - `app/[locale]/layout.tsx`
 - `components/canvas/board/BoardCanvas.tsx`

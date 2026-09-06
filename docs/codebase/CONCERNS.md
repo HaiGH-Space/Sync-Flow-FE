@@ -31,22 +31,30 @@
 
 | Area / File                                                                           | Churn (Commits) | Risk / Reason                                                       | Suggested Handling                                                          | Status / Mitigation                                                                        |
 | ------------------------------------------------------------------------------------- | --------------- | ------------------------------------------------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| `components/dashboard/layout/NavigationSidebar.tsx` (and `use-navigation-sidebar.ts`) | 14              | Frequent UX iterations around workspace/project/sprint expansion    | Keep state logic encapsulated in `use-navigation-sidebar.ts`                | **Hardened:** Extracted `getWorkspaceRole` pure function with full unit test coverage.     |
-| `components/dashboard/layout/DashboardContentLayout.tsx`                              | 13              | Core layout wrapper composing header, rail, sidebar, and panels     | Ensure layout refactors do not break grid/flex responsiveness               | **Hardened:** Extracted `getSidebarActiveStates` for SSR hydration safety with unit tests. |
-| `lib/api/notification.ts`                                                             | 9               | Real-time notification socket payload parsing & cache invalidation  | Maintain strict typing and session token pass-through                       | **Hardened:** Added comprehensive REST API unit tests and socket lifecycle test coverage.  |
+| `components/dashboard/layout/navigation-sidebar/use-navigation-sidebar.ts`           | 11              | Frequent UX iterations around workspace/project/sprint expansion    | Keep state logic encapsulated in `use-navigation-sidebar.ts`                | **Hardened:** Extracted `getWorkspaceRole` pure function with full unit test coverage.     |
+| `components/canvas/board/KanbanColumn.tsx`                                            | 9               | Board rendering performance and dnd-kit integration                 | Maintain `content-visibility: auto` optimizations and memoization avoidance | **Hardened:** Extracted `filterAndSortColumnTasks` pure selector with unit tests.          |
 | `components/canvas/board/useIssueMove.ts`                                             | 9               | Midpoint ordering, column transitions, and flush-and-sequence queue | Thoroughly test drag reordering logic with `lib/ordering.ts`                | **Hardened:** Added unmount timer/map cleanup and unit test coverage for drag hooks.       |
-| `components/canvas/board/KanbanCard.tsx` & `KanbanColumn.tsx`                         | 8               | Board rendering performance and dnd-kit integration                 | Maintain `content-visibility: auto` optimizations and memoization avoidance | **Hardened:** Extracted `filterAndSortColumnTasks` pure selector with unit tests.          |
+| `components/dashboard/layout/NavigationSidebar.tsx`                                   | 9               | Expandable project/sprint tree rendering and workspace selection    | Keep presentational and delegate data to custom hooks                       | **Hardened:** Modularized sprint list and project items into dedicated components.        |
+| `components/dashboard/layout/navigation-sidebar/NavigationSidebarSprintList.tsx`      | 8               | Sprint listing and pagination triggers                              | Keep pagination logic pure and test query boundary                          | **Hardened:** Handled infinite query pagination trigger and empty state cleanly.           |
+| `components/dashboard/layout/DashboardContentLayout.tsx`                              | 8               | Core layout wrapper composing header, rail, sidebar, and panels     | Ensure layout refactors do not break grid/flex responsiveness               | **Hardened:** Extracted `getSidebarActiveStates` for SSR hydration safety with unit tests. |
+| `lib/api/notification.ts`                                                             | 8               | Real-time notification socket payload parsing & cache invalidation  | Maintain strict typing and session token pass-through                       | **Hardened:** Added comprehensive REST API unit tests and socket lifecycle test coverage.  |
+| `components/dashboard/layout/navigation-sidebar/NavigationSidebarProjectItem.tsx`     | 7               | Project item rendering, channel listing, and sprint accordion       | Keep list items responsive and prevent unnecessary tree rerenders           | **Hardened:** Clean component boundary; state delegated to `useNavigationSidebar`.         |
+| `lib/api/chat.ts`                                                                     | 7               | Chat WebSocket connection lifecycle and authentication              | Ensure proper session token propagation and cleanup on disconnect           | **Hardened:** Verified singleton lifecycle and explicit session token propagation in tests.|
+| `components/canvas/timeline/useTimelineCanvasModel.ts`                                | 6               | Timeline calculations, zoom levels, and sprint duration rails       | Keep timeline model math isolated from presentation                         | **Hardened:** Pure model building helpers structured in `buildTimelineModel.ts`.           |
+| `components/dashboard/layout/navigation-sidebar/NavigationSidebarChannelList.tsx`     | 6               | Channel navigation links and active state highlighting              | Presentational subcomponent driven by route params                          | **Hardened:** Isolated channel list rendering.                                             |
 
 ### 6) `[ASK USER]` Questions
 
-None
+None. All architectural patterns, dependencies, test suites, and risk mitigations are verifiable directly from current source files and git history.
 
 ### 7) Evidence
 
 - `.codebase-scan.txt` git churn analysis
 - `components/dashboard/layout/DashboardContentLayout.tsx`
 - `components/dashboard/layout/NavigationSidebar.tsx`
+- `components/dashboard/layout/navigation-sidebar/use-navigation-sidebar.ts`
 - `components/canvas/board/useIssueMove.ts`
+- `components/canvas/board/KanbanColumn.tsx`
 - `components/dashboard/comp/IssueDetailDialog.tsx`
 - `.github/workflows/react-doctor.yml`
 - `.github/workflows/security.yml`
@@ -54,3 +62,4 @@ None
 - `package.json`
 - `lib/api/api.ts`
 - `lib/api/chat.ts`
+- `lib/api/notification.ts`

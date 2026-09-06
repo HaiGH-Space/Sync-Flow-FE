@@ -37,7 +37,7 @@
 | `clsx`                       | `^2.1.1`   | Conditional CSS class builders       | `package.json`, components under `components/`                                       |
 | `emojilib`                   | `^4.0.3`   | Emoji dictionary dataset            | `package.json`, `components/dashboard/chat/EmojiPicker.tsx`                          |
 | `next-themes`                | `^0.4.6`   | Light/dark mode provider & hooks     | `package.json`, `components/ui/theme-provider.tsx`                                   |
-| `radix-ui`                   | `^1.4.3`   | Accessible UI primitives package     | `package.json`, components under `components/ui/`                                    |
+| `radix-ui`                   | `^1.4.3`   | Accessible UI primitives package     | `package.json`, components under `components/`                                       |
 | `react-day-picker`           | `^9.14.0`  | Date picking interface component     | `package.json`, `components/ui/calendar.tsx`                                         |
 | `shadcn`                     | `^3.8.2`   | CLI orchestrator metadata wrapper    | `package.json`, `components.json`                                                    |
 | `tailwind-merge`             | `^3.4.0`   | Dynamic class conflict merging       | `package.json`, `lib/utils.ts`                                                       |
@@ -59,15 +59,34 @@
 > [!NOTE]
 > **React Compiler Native Integration**: The React Compiler is enabled natively via `reactCompiler: true` in `next.config.ts` (leveraging React 19 native optimizations). It analyzes components at build time and automatically caches component results, hooks, and callbacks. Developers should never write manual memoization wrappers (`useMemo`, `useCallback`, `memo()`) as they add redundant overhead and are flagged as issues by static codebase analysis (`pnpm doctor`).
 
-### 4) CI/CD Automation Pipelines
+### 4) Code Metrics and Complexity Signals
+
+| Metric | Measurement | Evidence |
+|---|---|---|
+| Total files scanned | 378 | `docs/codebase/.codebase-scan.txt` |
+| Total lines of code | 19,151 | `docs/codebase/.codebase-scan.txt` |
+| TypeScript source files | 136 | `docs/codebase/.codebase-scan.txt` |
+| TypeScript/React (TSX) files | 110 | `docs/codebase/.codebase-scan.txt` |
+| Other assets/configs | 132 | `docs/codebase/.codebase-scan.txt` |
+| Largest source files (complexity signals) | `components/dashboard/comp/WorkspaceSettingsDialog.tsx` (19.8KB), `components/auth/SuccessState.tsx` (12.3KB) | `docs/codebase/.codebase-scan.txt` |
+
+### 5) CI/CD Automation Pipelines
 
 | Pipeline Workflow | Platform | Trigger Events | Purpose | Evidence |
 |---|---|---|---|---|
-| `test.yml` | GitHub Actions | Push to `master`, Pull Requests to `master` | Runs Vitest automated test suite (`pnpm test`) across 22 test files | `.github/workflows/test.yml` |
+| `test.yml` | GitHub Actions | Push to `master`, Pull Requests to `master` | Runs Vitest automated test suite (`pnpm test`) across 22 test suites (83 tests) | `.github/workflows/test.yml` |
 | `security.yml` | GitHub Actions | Push to `master`, Pull Requests to `master` | Gitleaks secret scanning across full git commit history | `.github/workflows/security.yml` |
 | `react-doctor.yml` | GitHub Actions | Push to `master`, Pull Requests | Automated React Doctor diagnostic scans for React best practices | `.github/workflows/react-doctor.yml` |
 
-### 5) Key Commands
+### 6) Containers, Security & Performance
+
+| Category | Status / Tool | Evidence |
+|---|---|---|
+| **Containers & Orchestration** | None detected for frontend workspace (runs as standalone Next.js client or SSR Node service) | `docs/codebase/.codebase-scan.txt` |
+| **Security & Compliance** | Gitleaks secret scanning in CI, repository security policy, pnpm production dependency audit | `.github/workflows/security.yml`, `.github/SECURITY.md`, `package.json` |
+| **Performance & Diagnostics** | React Compiler native optimization, React Doctor rule analysis, Vitest test suite | `next.config.ts`, `doctor.config.json`, `vitest.config.ts` |
+
+### 7) Key Commands
 
 ```bash
 pnpm dev      # Starts Next.js development server
@@ -79,7 +98,7 @@ pnpm doctor   # Runs React Doctor codebase diagnostics
 pnpm audit    # Runs production security vulnerability auditing
 ```
 
-### 6) Environment and Config
+### 8) Environment and Config
 
 - Config sources: `next.config.ts`, `proxy.ts`, `lib/api/api-config.ts`, `i18n/routing.ts`, `i18n/request.ts`, `tsconfig.json`, `components.json`, `eslint.config.mjs`, `vitest.config.ts`
 - Required env vars:
@@ -90,7 +109,7 @@ pnpm audit    # Runs production security vulnerability auditing
 - Deployment/runtime constraints: locale-aware routing is active for `en` and `vi`; client API requests are routed through the `/api-proxy` rewrite path.
 - The environment variable template is documented in `.env.example` at the workspace root.
 
-### 7) Evidence
+### 9) Evidence
 
 - `package.json`
 - `pnpm-lock.yaml`
@@ -100,9 +119,11 @@ pnpm audit    # Runs production security vulnerability auditing
 - `eslint.config.mjs`
 - `components.json`
 - `vitest.config.ts`
+- `doctor.config.json`
 - `.github/workflows/test.yml`
 - `.github/workflows/security.yml`
 - `.github/workflows/react-doctor.yml`
+- `.github/SECURITY.md`
 - `i18n/routing.ts`
 - `proxy.ts`
 - `lib/api/api-config.ts`

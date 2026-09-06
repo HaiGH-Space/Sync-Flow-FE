@@ -46,6 +46,7 @@ HTTP Request / Route Transition
 | `hooks/mutations/`                             | API writes, optimistic rollbacks, and cache invalidation                     | Query key definitions                             | `hooks/mutations/workspace.ts`, `hooks/mutations/column.ts`, `hooks/mutations/issue.ts` |
 | `lib/api/`                                     | Request transport, URL resolution, and service wrappers                      | Presentation logic or route composition           | `lib/api/api-config.ts`, `lib/api/api.ts`, `lib/api/chat.ts`, `lib/api/video.ts`      |
 | `lib/store/`                                   | Persisted client state for dashboard and video call controls                 | Network access                                    | `lib/store/use-dashboard.ts`, `lib/store/use-call-store.ts`                             |
+| `lib/board/`                                   | Board card sorting and movement pure selectors                               | Network calls or component state                  | `lib/board/issue-move-utils.ts`                                                        |
 
 ### 4) Reused Patterns
 
@@ -63,7 +64,7 @@ HTTP Request / Route Transition
 
 ### 5) Known Architectural Risks and Hardening Status
 
-- **Sparse Board Ordering**: Rapid card moves are managed via a flush-and-sequence optimistic mutation queue (`useColumnReorder`, `useIssueMove`) and validated with unit test coverage in `components/canvas/board/useIssueMove.test.ts`.
+- **Sparse Board Ordering**: Rapid card moves are managed via a flush-and-sequence optimistic mutation queue (`useColumnReorder`, `useIssueMove`) and validated with unit test coverage in `components/canvas/board/useIssueMove.test.ts` and `lib/board/issue-move-utils.test.ts`.
 - **API URL Resolution**: Centralized in `lib/api/api-config.ts` supporting client-side `/api-proxy` rewrites and SSR direct backend communication via `INTERNAL_API_URL` (covered by unit tests in `lib/api/api-config.test.ts`).
 - **Sidebar Scaling**: Mitigated potential 100-item truncation by upgrading project and workspace queries to TanStack `useInfiniteQuery` with pagination triggers.
 - **Session Cookie Security**: Middleware in `proxy.ts` and cookie helpers in `lib/cookies.ts` enforce session token format hygiene and inject OWASP security response headers.
@@ -79,6 +80,7 @@ HTTP Request / Route Transition
 - `components/call/GlobalCallProvider.tsx`
 - `lib/api/api-config.ts`
 - `lib/api/api.ts`
+- `lib/board/issue-move-utils.ts`
 - `lib/store/use-dashboard.ts`
 - `lib/store/use-call-store.ts`
 - `queries/workspace.ts`
